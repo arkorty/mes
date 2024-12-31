@@ -1,0 +1,43 @@
+<div class="wrapper" [class.collapsed]="isCollapsed">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>{{projectName}}</h2>
+            <button class="toggle-btn" (click)="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <ul class="nav-list">
+            @for (item of menuItems(); track item.id) {
+                <li>
+                    @if (!item.children) {
+                        <a (click)="Navigate(item.route!)">
+                            <i [class]="item.icon"></i>
+                            <span>{{item.label}}</span>
+                        </a>
+                    } @else {
+                        <a (click)="toggleSubmenu(item.id)">
+                            <i [class]="item.icon"></i>
+                            <span>{{item.label}}</span>
+                            <i class="fas fa-chevron-down arrow" 
+                               [class.rotated]="activeSubmenu === item.id">
+                            </i>
+                        </a>
+                        <ul class="submenu" [class.active]="activeSubmenu === item.id">
+                            @for (child of item.children; track child.id) {
+                                <li>
+                                    <a (click)="Navigate(child.route!)">
+                                        {{child.label}}
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="main-content">
+        <router-outlet />
+    </div>
+</div>

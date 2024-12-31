@@ -1,0 +1,213 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.sidebar {
+    width: 300px;
+    height: 100vh;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    position: fixed;
+}
+
+.sidebar h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    position: relative;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    transition: background 0.3s;
+    cursor: pointer;
+}
+
+.sidebar ul li a:hover {
+    background-color: #575757;
+}
+
+.submenu {
+    display: none; /* Hide submenu by default */
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.sidebar ul li:hover .submenu {
+    display: block; /* Show submenu on hover */
+}
+
+.submenu li a {
+    background-color: #444; /* Different background for submenu items */
+}
+
+.submenu li a:hover {
+    background-color: #666; /* Change background on hover for submenu */
+}
+
+.wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    transition: all 0.3s;
+
+    &.collapsed {
+        .sidebar {
+            width: 80px;
+            
+            .sidebar-header h2 {
+                display: none;
+            }
+            
+            .nav-list {
+                li a span {
+                    display: none;
+                }
+                
+                .submenu {
+                    position: absolute;
+                    left: 80px;
+                    top: 0;
+                    width: 200px;
+                    background: #fff;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                }
+            }
+        }
+        
+        .main-content {
+            margin-left: 80px;
+        }
+    }
+}
+
+.sidebar {
+    width: 250px;
+    background: #333;
+    color: #fff;
+    transition: all 0.3s;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+
+    .sidebar-header {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 5px;
+            
+            &:hover {
+                color: #ddd;
+            }
+        }
+    }
+
+    .nav-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+
+        li {
+            position: relative;
+            
+            a {
+                padding: 15px 20px;
+                display: flex;
+                align-items: center;
+                color: #fff;
+                text-decoration: none;
+                transition: all 0.3s;
+                
+                i {
+                    margin-right: 10px;
+                    width: 20px;
+                    text-align: center;
+                }
+                
+                .arrow {
+                    margin-left: auto;
+                    transition: transform 0.3s;
+                    
+                    &.rotated {
+                        transform: rotate(180deg);
+                    }
+                }
+                
+                &:hover {
+                    background: #444;
+                }
+            }
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #444;
+            
+            &.active {
+                max-height: 500px;
+            }
+            
+            li a {
+                padding: 10px 20px 10px 50px;
+                font-size: 0.9rem;
+            }
+        }
+    }
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        .sidebar {
+            margin-left: -250px;
+            
+            &.active {
+                margin-left: 0;
+            }
+        }
+        
+        .main-content {
+            margin-left: 0;
+        }
+        
+        &.collapsed {
+            .sidebar {
+                margin-left: 0;
+            }
+        }
+    }
+}
