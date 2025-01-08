@@ -4,7 +4,7 @@ const {  mongoose } = require('mongoose');
 require('dotenv').config();
 
 export const DbConnect=async()=>{     
-   await mongoose.connect(`mongodb+srv://xsubhra100:lXqxWyD8va3CJ44R@cluster0.mnwsb.mongodb.net/`)
+   await mongoose.connect(`mongodb+srv://xsubhra100:GAiDGKDaGZEBOUvb@cluster0.lmfqf.mongodb.net/`)
    .then((res:Response)=>{
      console.log(`Connected to DB`);
    })

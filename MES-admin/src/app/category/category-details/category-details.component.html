@@ -1,0 +1,57 @@
+<div class="row container">
+    <div class="col-12">
+        <h1>{{isUpdate ? 'Update':'Add'}} Category</h1>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <form action="" class="m-3" (ngSubmit)="OnFormSubmit()">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="name">Parent Category</label>
+                            <select (change)="UpdateParent($event)" [(ngModel)]="categoryObj.parentId" name="parentId" id="parentId" class="form-control" >
+                                <option value="{{item._id}}" *ngFor="let item of categoryList">
+                                    {{item.name}}
+                                </option>
+                            </select>
+                            <!-- <input type="text" name="name" class="form-control" [(ngModel)]="categoryObj.name" placeholder="Enter name"> -->
+                          </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" name="name" class="form-control" [(ngModel)]="categoryObj.name" placeholder="Enter name">
+                          </div>
+                    </div>
+                   
+                    <div class="col-4 mb-3">
+                        <label for="coverImage" class="">
+                          Picture <span class="text-danger" *ngIf="!isUpdate">*</span>
+                        </label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="coverImage" 
+                               name="coverImage"
+                               (change)="onFileChange($event, 'picture')"
+                               [required]="!isUpdate">
+                        <small class="text-danger" *ngIf="!isUpdate && formSubmitted && !files['picture']">
+                            Cover image is required
+                        </small>
+                    </div>
+                    <div class="col-4" *ngIf="categoryObj.coverImage">
+                        <img [src]="categoryObj.coverImage" height="150" alt="">
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="price">Description</label>
+                            <textarea  name="description" class="form-control" [(ngModel)]="categoryObj.description" placeholder="Write about the category"></textarea>
+                          </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-2">
+                   <button type="submit" class="btn btn-primary">submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

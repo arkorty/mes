@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import fs from "fs";
+import {promises as fs} from "fs";
 
 export enum UserRole{
     Admin=0,
@@ -44,13 +44,20 @@ export function EncodeBase64(input:string) {
 export function DecodeBase64(input:string) {
     return atob(input);
   }
+export async function fileExists(filePath: string): Promise<boolean> {
+    try {
+        await fs.access(filePath);
+        return true; // File exists
+    } catch (error) {
+        return false; // File does not exist
+    }
+}
 
 //export const razorPayGatewayUrl="https://api.razorpay.com/v1/checkout/embedded?payment_id="
 
 export const FilePaths = {
-    classFilePath: `/uploads/class`,
-    serviceFilePath:`/uploads/service`,
-    productFilePath:`/uploads/product`
+    category: `/uploads/category`,
+    productFilePath:`/uploads/product/`
 };
 
 
@@ -81,7 +88,7 @@ export const GenerateThumbnail= async(filePath:string, size:number, thumbnailFil
      let thumbnailBuffer = await sharp(`${filePath}`)
       .resize(size, size) // Resize to 200x200 pixels
       .toBuffer()
-      fs.writeFileSync(`${thumbnailFilePath}`, thumbnailBuffer);
+      await fs.writeFile(`${thumbnailFilePath}`, thumbnailBuffer);
   } catch (error:any) {
     throw error;
   }

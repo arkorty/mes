@@ -7,10 +7,10 @@ import { Schema } from "mongoose";
 
 const CategorySchema = new mongoose.Schema(
     {
-      name:{type:string},  
-      description:{type:string},
+      name:{type:String},  
+      description:{type:String},
       parentId: { type: Schema.Types.ObjectId, ref: 'Category',default:null},
-      picture:{type:string},
+      picture:{type:String},
       createdOn:{
         type: Date,
         default: new Date()

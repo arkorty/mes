@@ -6,7 +6,7 @@ import { AddUpdateCategory,
     CategoryDetails,CategoryDropdown} from '../Controllers/CategoryController';
 
 
-categoryRouter.put(`/upsert`,AddUpdateCategory)
+categoryRouter.post(`/upsert`,AddUpdateCategory)
 categoryRouter.get('/:id',CategoryDetails).delete('/:id',DeleteCategory)
 categoryRouter.get('',CategoryList)
 categoryRouter.get('/dropdown/list',CategoryDropdown)
