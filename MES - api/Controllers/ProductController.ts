@@ -6,7 +6,8 @@ import { baseUrl, FilePaths, GenerateThumbnail, rootDir } from "../Common/Common
 import { WriteFileToPath } from "../Config/FileStorageConfig";
 import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
-//import { ServiceImage } from "../Models/ServiceImageModel";
+import {UploadProductFileToS3,UpdateImageInS3} from '../Config/AwsS3Config'
+
 
 let AddUpdateProduct = async (req: Request, res: Response) => {
   let productData = req.body;
@@ -39,23 +40,6 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
           modifiedOn: new Date(),
         },
       });
-
-      //remove whole folder with product id
-      if(req.files){
-        let prevFiles = await ProductImage.findOne({
-          product: productData._id,
-        });
-        if(prevFiles){
-          let removeDir = path.join(
-            `${rootDir}${FilePaths.productFilePath}`,
-            `${productId}`
-          );
-          if (fs.existsSync(removeDir)) {
-            await fs.promises.rm(removeDir, { recursive: true, force: true });
-          }
-        }
-        //update db
-      }
     }
     else {
       
@@ -92,40 +76,61 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
         }
       }
     }
+
+
     //handle files
     if(req.files){  
-      const filename = coverImage?.originalname.replace(" ","_");
-      const thumbnailFilename = `thumbnail_${filename}`;     
-      const uploadFilePath = `${rootDir}${FilePaths.productFilePath}/${productId}/`;
-      const thumbnailPath = `${rootDir}${FilePaths.productFilePath}/${productId}/${thumbnailFilename}`;
-      const fileNamePath = `./${FilePaths.productFilePath}/${productId}/${filename}`;
-      fs.mkdirSync(uploadFilePath, { recursive: true }); //make path if not already
-   
+    //update product images
+      if(isUpdate){
+        if(coverImage){
+          let coverFile=await ProductImage.findOne({isCover:true,product:productId})
+          if(coverFile){
+            await UpdateImageInS3(coverImage,coverFile.image,true,coverFile.thumbnail)
+          }
+        }
 
-      if(coverImage){
-        //write file in path and save in db
-        let productCover=await ProductImage.create({
-          product:productId,
-          isCover:true,
-          image:coverImage.originalname
-        })
-        WriteFileToPath(uploadFilePath,coverImage)
-        await GenerateThumbnail(fileNamePath, 200, thumbnailPath);
-        //generate thumbnail
+        if(otherImages){
+        let otherFiles=await ProductImage.find({isCover:false,product:productId})
+         for (let idx = 0; idx < otherImages.length; idx++) {
+          const element = otherImages[idx];
+          
+          
+         } 
+        }
+
       }
-
-      if(otherImages){
-        for (let index = 0; index < otherImages.length; index++) {
-          const element = otherImages[index];
-          let productImage=await ProductImage.create({
-            isCover:false,
+      else{
+        //add product images
+        if(coverImage){
+          const {image,thumbnail,imageUrl,thumbnailUrl}=await UploadProductFileToS3(productId,coverImage,true);
+          let model=await ProductImage.create({
             product:productId,
-            image:element.originalname
+            image,
+            thumbnail,
+            imageUrl,
+            thumbnailUrl,
+            isCover:true
           })
-          WriteFileToPath(uploadFilePath,element)            
+        }
+
+        if(otherImages){
+          for (let index = 0; index < otherImages.length; index++) {
+              const currentFile=otherImages[index];
+              const {image,thumbnail,imageUrl,thumbnailUrl}=await UploadProductFileToS3(productId,currentFile,false);
+              let model=await ProductImage.create({
+                product:productId,
+                image,
+                thumbnail,
+                imageUrl,
+                thumbnailUrl,
+                isCover:false
+              })
+            }
         }
       }
 
+
+   
     }
 
     return res.status(200).json({
@@ -212,12 +217,12 @@ let ProductList = async (req: Request, res: Response) => {
         let variations=productData[1]
 
         if (coverPic) {
-          const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element._id}/thumbnail_${coverPic.image}`;
+        //  const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element._id}/thumbnail_${coverPic.image}`;
        
           productList.push({
             ...element,
             coverImage: {
-              image: coverFilePath,
+              image: coverPic.thumbnailUrl,
               id: coverPic._id,
             },
             variations:(variations.length>0) ? variations:[]
@@ -282,7 +287,7 @@ let ProductDetails = async (req: Request, res: Response) => {
           otherImages.map((image:any)=>{
             otherImageList.push({
               id:image._id,
-              image: `${baseUrl}${FilePaths.productFilePath}/${id}/${image.image}`
+              image: image.imageUrl
           })
           })
          
@@ -290,7 +295,7 @@ let ProductDetails = async (req: Request, res: Response) => {
 
          product={
           ...productObj,
-          coverImage:(images && coverImage) ? {id:coverImage._id,image:`${baseUrl}${FilePaths.productFilePath}/${id}/${coverImage.image}`} : {image:null},
+          coverImage:(images && coverImage) ? {id:coverImage._id,image:coverImage.imageUrl} : {image:null},
           otherImages:otherImageList.length>0? otherImageList:[],
           variations:(variations.length>0) ? variations:[],
         }

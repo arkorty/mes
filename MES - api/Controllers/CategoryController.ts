@@ -1,11 +1,7 @@
 
 import { Request,Response,NextFunction } from "express";
 import { Category } from "../Models/Category";
-import { rootDir } from "../Common/Common";
-import { FilePaths } from "../Common/Common";
-import { WriteFileToPath } from "../Config/FileStorageConfig";
-import fs from "fs";
-import path from "path";
+import { UpdateImageInS3, UploadCategoryFileToS3 } from "../Config/AwsS3Config";
 
 
 let AddUpdateCategory=async(req:Request, res:Response)=>{
@@ -14,53 +10,40 @@ let AddUpdateCategory=async(req:Request, res:Response)=>{
     try {
         
         const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-        let picture = files.coverImage ? files.picture[0] : null;
+        let picture = files.coverImage ? files.picture[0] : null;        
 
         if(req.body._id){
             isUpdate=true;
             //update
-            let categoryObj=await Category.findByIdAndUpdate(req.body._id,
-                { $set: {
-                    ...req.body,
-                    modifiedOn:Date.now()
-                } }
-            );
+            let category=await Category.findById(req.body._id);
+            if(category){
+                    category.name=req.body.name,
+                    category.description=req.body.description,
+                    category.parentId= (req.body.parentId) ? req.body.parentId:null,
+                    category.modifiedOn=Date.now()
+                    await category.save()
+
+                    if(picture){
+                        await UpdateImageInS3(picture,category.image,false)
+                    }
+            }
         }
         else{
+
+            if(!picture) return res.status(400).json({message:`Need picture`})
+
+            const {image,imageUrl}=await UploadCategoryFileToS3(picture)
             //add 
             let model=await Category({
                 name:req.body.name,
                 description:req.body.description,
+                image,
+                imageUrl,
                 parentId: (req.body.parentId) ? req.body.parentId:null
             })
-             // Save the image first
-            if(picture){
-                const uploadPath = `${rootDir}${FilePaths.category}`;
-                fs.mkdirSync(uploadPath, { recursive: true });
-                const fileName = WriteFileToPath(uploadPath, picture);
-                model.picture = fileName; // Set the coverImage before saving
-            }
-            await model.save();
         }
 
-        if(isUpdate && req.files) {
-            const uploadPath = `${rootDir}${FilePaths.category}`;
-            fs.mkdirSync(uploadPath, { recursive: true });
-            let categoryObj = await Category.findById(req.body._id);
-            if(categoryObj && picture) {
-                //remove existing file from path
-                let removeFile = path.join(
-                    `${rootDir}${FilePaths.category}`,
-                    `${categoryObj.picture}`
-                );
-                if (fs.existsSync(removeFile)) {
-                    await fs.promises.rm(removeFile, { recursive: true, force: true });                          
-                }
-                //write new in path and replace file in db
-                categoryObj.picture = WriteFileToPath(uploadPath, picture);
-                await categoryObj.save();
-            }
-        }
+
 
      
         return res.status(200).json({

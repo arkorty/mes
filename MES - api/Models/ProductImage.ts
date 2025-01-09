@@ -8,7 +8,10 @@ import { Schema } from "mongoose";
 const ProductImageSchema = new mongoose.Schema(
     {
       product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-      image:{type:string},
+      image:{type:String},
+      thumbnail:{type:String},
+      imageUrl:{type:String},
+      thumbnailUrl:{type:String},
       isCover:{type:boolean},
       createdOn:{
         type: Date,
