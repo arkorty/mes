@@ -6,7 +6,7 @@ import { baseUrl, FilePaths, GenerateThumbnail, rootDir } from "../Common/Common
 import { WriteFileToPath } from "../Config/FileStorageConfig";
 import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
-import {UploadProductFileToS3,UpdateImageInS3} from '../Config/AwsS3Config'
+import {UploadProductFileToS3,UpdateImageInS3,DeleteImageFromS3} from '../Config/AwsS3Config'
 
 
 let AddUpdateProduct = async (req: Request, res: Response) => {
@@ -149,8 +149,16 @@ let DeleteProduct = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     if (id) {
-      let user = await Product.findById(id);
-      if (user) {
+      let product = await Product.findById(id);
+      if (product) {
+        let images=await ProductImage.find({product:id})
+        if(images){
+          for (let idx = 0; idx < images.length; idx++) {
+            const element = images[idx];
+            if(element.isCover) await DeleteImageFromS3(element.image,true,element.thumbnail)
+            else await DeleteImageFromS3(element.image,false)
+          }
+        }
         let removedProduct = await Product.deleteOne({ _id: id });
         if (removedProduct) {
           return res.status(200).json({

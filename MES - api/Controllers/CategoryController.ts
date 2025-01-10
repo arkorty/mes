@@ -1,7 +1,7 @@
 
 import { Request,Response,NextFunction } from "express";
 import { Category } from "../Models/Category";
-import { UpdateImageInS3, UploadCategoryFileToS3 } from "../Config/AwsS3Config";
+import { DeleteImageFromS3, UpdateImageInS3, UploadCategoryFileToS3 } from "../Config/AwsS3Config";
 
 
 let AddUpdateCategory=async(req:Request, res:Response)=>{
@@ -102,7 +102,7 @@ let DeleteCategory=async(req:Request, res:Response)=>{
         if(id){
             let category=await Category.findById(id)
             if(category){
-
+                await DeleteImageFromS3(category.image,false);
                 let removedCategory=await Category.deleteOne({_id:id});
                 if(removedCategory){
                     return res.status(200).json({
