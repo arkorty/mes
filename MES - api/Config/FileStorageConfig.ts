@@ -3,12 +3,7 @@ import multer from "multer";
 import { FilePaths } from '../Common/Common';
 import path from 'path';
 
-
-const storage = multer.memoryStorage(); // Store files in memory
-export const upload = multer({ storage: storage });
-
-
-export const bulkUpload = multer({ storage: multer.memoryStorage() });
+export const upload = multer({ storage: multer.memoryStorage() });
 
 
 //saving file in path and returning its name so it can be saved in db

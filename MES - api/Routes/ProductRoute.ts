@@ -9,7 +9,7 @@ import {  AddUpdateProduct,
     ProductDetails, } from "../Controllers/ProductController";
     
 productRouter.put('/upsert',
-    upload.fields([{name:`coverImage`,maxCount:1},{name:`otherImages`,maxCount:10}]),
+    upload.fields([{name:`coverImage`,maxCount:1},{name:`otherImages`,maxCount:4}]),
     AddUpdateProduct)   
     
 productRouter.get('/:id',ProductDetails).delete('/:id',DeleteProduct)
