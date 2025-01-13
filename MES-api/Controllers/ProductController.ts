@@ -18,7 +18,7 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
     //getting all the files
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     let coverImage = files.coverImage ? files.coverImage[0] : null;
-    let otherImages = files.images ? files.otherImages : null;
+    let otherImages = files.otherImages || null;
 
     if (productData._id) {
       productId = productData._id;
@@ -44,20 +44,22 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
     else {
       
       //add product
-      let productObj=await Product.create({
+      let productObj = await Product.create({
         name: productData.name,
         slug: productData.slug,
         brand: productData.brand,
-        categoryId:productData.categoryId,
-        subCategoryId:productData.subCategoryId,
-        subSubCategoryId:productData.subSubCategoryId,
+        categoryId: productData.categoryId,
+        subCategoryId: productData.subCategoryId,
+        subSubCategoryId: productData.subSubCategoryId,
         description: productData.description,
         price: productData.price,
-        shortDescription:productData.shortDescription,
-        salePrice:productData.salePrice,
+        shortDescription: productData.shortDescription,
+        salePrice: productData.salePrice,
+        stock: productData.stock,
+        sku: productData.sku,
         modifiedOn: new Date(),
-      })
-      productId=productObj._id
+      });
+      productId = productObj._id;
 
       //add product variations
       if(variations){
@@ -135,7 +137,7 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      message: `Service ${isUpdate ? "updated" : "added"} successfully`,
+      message: `Product ${isUpdate ? "updated" : "added"} successfully`,
     });
   } catch (err: any) {
     return res.status(500).json({

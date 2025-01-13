@@ -3,8 +3,27 @@ import multer from "multer";
 import { FilePaths } from '../Common/Common';
 import path from 'path';
 
-export const upload = multer({ storage: multer.memoryStorage() });
+const storage = multer.memoryStorage();
 
+export const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept images only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('Only image files are allowed!'));
+    }
+    cb(null, true);
+  }
+});
+
+// Export middleware for different upload scenarios
+export const productUpload = upload.fields([
+  { name: 'coverImage', maxCount: 1 },
+  { name: 'images', maxCount: 10 }
+]);
 
 //saving file in path and returning its name so it can be saved in db
 export const WriteFileToPath=(uploadPath:string,file:Express.Multer.File)=>{

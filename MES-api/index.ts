@@ -3,6 +3,7 @@ import cors from "cors";
 import * as dotenv from 'dotenv';
 import { DbConnect } from './Config/DbConfig';
 import categoryRouter from "./Routes/CategoryRoute";
+import productRouter from "./Routes/ProductRoute";
 
 dotenv.config();
 const port=process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use("/uploads",express.static('uploads'));
 
 //routes
 app.use('/api/category/',categoryRouter)
+app.use('/api/products/',productRouter)
 
 
 
