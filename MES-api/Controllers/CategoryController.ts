@@ -2,7 +2,7 @@
 import { Request,Response,NextFunction } from "express";
 import { Category } from "../Models/Category";
 import { DeleteImageFromS3, UpdateImageInS3, UploadCategoryFileToS3 } from "../Config/AwsS3Config";
-
+import {ICategory,ISubCategory,ISubSubCategory} from '../Models/Interface/ICategoryList';
 
 let AddUpdateCategory=async(req:Request, res:Response)=>{
     let isUpdate:boolean = false

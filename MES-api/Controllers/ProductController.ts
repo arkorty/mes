@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { Product } from "../Models/Product";
-
-import { WriteFileToPath } from "../Config/FileStorageConfig";
 import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
 import {
@@ -20,7 +18,7 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
     //getting all the files
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     let coverImage = files.coverImage ? files.coverImage[0] : null;
-    let otherImages = files.images ? files.otherImages : null;
+    let otherImages = files.otherImages || null;
 
     if (productData._id) {
       productId = productData._id;
@@ -144,7 +142,7 @@ let AddUpdateProduct = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      message: `Service ${isUpdate ? "updated" : "added"} successfully`,
+      message: `Product ${isUpdate ? "updated" : "added"} successfully`,
     });
   } catch (err: any) {
     return res.status(500).json({
@@ -269,6 +267,7 @@ let ProductList = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 let ProductDetails = async (req: Request, res: Response) => {
   const { id } = req.params;
   let product: any;
