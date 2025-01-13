@@ -70,6 +70,35 @@ CategoryDropdown(){
   return axios.get(`${AppConstants.baseUrl}${AppConstants.categoryDropdown}`);
 }
 
+//products api --------------------------------
+
+GetProducts(){
+  return axios.get(`${AppConstants.baseUrl}${AppConstants.product}`);
+}
+
+GetProductDetails(id:any){
+  return axios.get(`${AppConstants.baseUrl}${AppConstants.product}/${id}`);
+}
+
+UpsertProduct(data:any){
+  return axios.post(`${AppConstants.baseUrl}${AppConstants.addUpdateProduct}`,data);
+}
+
+DeleteProduct(id:any){
+  return axios.delete(`${AppConstants.baseUrl}${AppConstants.product}/${id}`);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

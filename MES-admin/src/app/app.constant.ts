@@ -1,7 +1,6 @@
 export const  AppConstants={
    // baseUrl:`http://localhost:3000/api`,   
     baseUrl:`http://localhost:5000/api`,   
-
     //users
     getAllUserList:`/user/all`,
     getUserDetails:`/user/`,
@@ -13,8 +12,13 @@ export const  AppConstants={
     //categories
     category:`/category`,
     addUpdateCategory:`/category/upsert`,
-    categoryDropdown:`/category/dropdown/list`
+    categoryDropdown:`/category/dropdown/list`,
 
+
+    //products
+    product:`/product`,
+    addUpdateProduct:`/product/upsert`,
+    productDropdown:`/product/dropdown/list`,
 
 }
 

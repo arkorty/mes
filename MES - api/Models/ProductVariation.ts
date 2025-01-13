@@ -10,6 +10,7 @@ const ProductVariationSchema = new mongoose.Schema(
       product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
       size:{type:String},
       color:{type:String},
+      isBaseVariation: { type: Boolean, default: false },
       gender:{type:String},
       weight:{type:Number},
       height:{type:Number},

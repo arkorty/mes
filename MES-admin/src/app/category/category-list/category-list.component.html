@@ -16,7 +16,7 @@
        </div>
 
     </div>
-    <div class="row mt-5">
+    <!-- <div class="row mt-5">
         <div class="col-12">
             <table class="table table-bordered">
                 <thead>
@@ -43,14 +43,36 @@
                 </tbody>
             </table>
         </div>
-        <!-- <div class="col-12">
-            <mat-paginator [length]="totalCount"
-            [pageSize]="5"
-            [pageSizeOptions]="[5, 10, 25, 100]"
-            aria-label="Select page"
-            (page)="onPageChange($event)"
-            >
-            </mat-paginator>
-        </div> -->
+    </div> -->
+    <div class="row">
+        <div>
+            <h2>Select Category</h2>
+            <form [formGroup]="form">
+              <div>
+                <label for="category">Category:</label>
+                <select id="category" formControlName="category" (change)="onCategoryChange()">
+                  <option value="" disabled selected>Select Category</option>
+                  <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
+                </select>
+              </div>
+          
+              <div *ngIf="selectedCategory">
+                <label for="subCategory">Sub Category:</label>
+                <select id="subCategory" formControlName="subCategory" (change)="onSubCategoryChange()">
+                  <option value="" disabled selected>Select Sub Category</option>
+                  <option *ngFor="let sub of selectedCategory.subCategories" [value]="sub._id">{{ sub.name }}</option>
+                </select>
+              </div>
+          
+              <div *ngIf="selectedSubCategory">
+                <label for="subSubCategory">Sub Sub Category:</label>
+                <select id="subSubCategory" formControlName="subSubCategory">
+                  <option value="" disabled selected>Select Sub Sub Category</option>
+                  <option *ngFor="let subSub of selectedSubCategory.subSubCategories" [value]="subSub._id">{{ subSub.name }}</option>
+                </select>
+              </div>
+            </form>
+          </div>
     </div>
+
 </div>

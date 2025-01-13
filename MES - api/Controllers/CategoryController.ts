@@ -60,19 +60,68 @@ let AddUpdateCategory=async(req:Request, res:Response)=>{
 }
 
 let CategoryList=async(req:Request, res:Response)=>{
-    const limit = Number(req.query.limit) || 5;
-    const search = String(req.query.search) || "";
     const currentPage = Number(req.query.page) || 1;
+    const categoryList:ICategory[]=[]  
     try {
-        // let categories=await Category.find({ name: { $regex: search, $options: "i" }})
-        // .sort({ createdOn: -1 })
-        // .skip((currentPage - 1) * limit)
-        // .limit(limit);
-
         // let totalCategoryCount = await Category.find({}).countDocuments();
-        const categories = await Category.find().populate('parentId');
-        const categoryTree = BuildCategoryTree(categories);
+        const categories = await Category.find({parentId:null})
+        if(categories){
+            for (let idx = 0; idx < categories.length; idx++) {
+                //category loop
+                const category = categories[idx];
+                const categoryObj:ICategory={
+                    _id:category._id,
+                    name:category.name,
+                    parentId:category.parentId,
+                    description:category.description,
+                    imageUrl:category.imageUrl,
+                    subCategories:[]
+                };
+                const subCategoryList:ISubCategory[]=[]
 
+                //sub categories for single category
+                let subCategories=await Category.find({parentId:category._id})
+                if(subCategories){
+                    for (let idx2 = 0; idx2 < subCategories.length; idx2++) {
+                        const subCategory = subCategories[idx2];
+                        const subCategoryObj:ISubCategory={
+                            _id:subCategory._id,
+                            name:subCategory.name,
+                            parentId:subCategory.parentId,
+                            description:subCategory.description,
+                            imageUrl:subCategory.imageUrl,
+                            subSubCategories:[]
+                        }
+                        const subSubCategoryList:ISubSubCategory[]=[]
+
+                        //get sub sub categories
+                        let subSubCategories=await Category.find({parentId:subCategory._id})
+                        if(subSubCategories){
+                            for (let idx3 = 0; idx3 < subSubCategories.length; idx3++) {
+                                const subSubCategory = subSubCategories[idx3];
+                                const subSubCategoryObj:ISubSubCategory={
+                                    _id:subSubCategory._id,
+                                    name:subSubCategory.name,
+                                    parentId:subSubCategory.parentId,
+                                    description:subSubCategory.description,
+                                    imageUrl:subSubCategory.imageUrl,
+                                }
+                                subSubCategoryList.push(subSubCategoryObj)
+                            }
+                        }
+
+                        subCategoryObj.subSubCategories=subSubCategoryList;                        
+                        subCategoryList.push(subCategoryObj)
+                    }
+                }
+
+                categoryObj.subCategories=subCategoryList;
+
+                //add category to list
+                categoryList.push(categoryObj)
+            }
+        }
+        
         if(categories.length==0){
             return res.status(404).json({
                 success:false,
@@ -82,7 +131,7 @@ let CategoryList=async(req:Request, res:Response)=>{
 
         return res.status(200).json({
             success:true,
-            data:categoryTree,
+            data:categoryList,
             page:currentPage
         })
 
@@ -195,24 +244,6 @@ let CategoryDropdown=async(req:Request, res:Response)=>{
     }
 }
 
-function BuildCategoryTree(categories:any) {
-    const map:any = {};
-    const roots:any[] = [];
-
-    categories.forEach((category:any) => {
-        map[category._id] = { ...category._doc, children: [] }; // Add children array
-    });
-
-    categories.forEach((category:any) => {
-        if (category.parentId) {
-            map[category.parentId].children.push(map[category._id]);
-        } else {
-            roots.push(map[category._id]);
-        }
-    });
-
-    return roots;
-}
 
 export {
     AddUpdateCategory,

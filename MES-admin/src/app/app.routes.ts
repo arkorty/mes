@@ -48,5 +48,12 @@ export const routes: Routes = [
             loadComponent: () => import('./category/category-details/category-details.component').then((m) => m.CategoryDetailsComponent),
           },
     ]
-    }
+    },
+    {
+      path: '**',
+      loadComponent: () => import('./pagenotfound/pagenotfound.component').then(m => m.PagenotfoundComponent),
+      data: {
+        title: 'Page not found'
+      }
+  },
 ];

@@ -1,1 +1,56 @@
-<p>product-list works!</p>
+<div class="">
+    <h1>Products</h1>
+    <!-- searchbar -->
+    <div class="row">
+       <div class="col-6">
+        <div class="search-container">
+            <input  type="text" placeholder="Search..." name="search" [(ngModel)]=searchValue class="search-input">
+            <button class="search-button">
+                <i class="fas fa-search"></i> <!-- Font Awesome Search Icon -->
+            </button>
+        </div>
+       </div>
+       <div class="col-12 mt-3">
+        <button class="btn btn-success mx-1" (click)="AddProduct()">Add Product </button>
+        <button class="btn btn-primary">Download CSV</button>
+       </div>
+
+    </div>
+    <div class="row mt-5">
+        <div class="col-12">
+            <table class="table table-bordered">
+                <thead>
+                    <th>Sl No</th>
+                    <th>Name </th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let class of productList;let i=index" >
+                        <td>{{i+1}}</td>
+                        <td (click)="EditProduct(class._id)">
+                            <img src="{{class.coverImage.image}}" alt="">
+                            {{class.name}}</td>
+                        <td (click)="EditProduct(class._id)">{{class.description}}</td>
+                        <td (click)="EditProduct(class._id)">{{class.categoryId }}</td>
+                        <td (click)="EditProduct(class._id)"> {{class.price }} </td>
+                        <td>
+                            <a class="del-btn" (click)="DeleteProduct(class._id)"><i class="las la-trash"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- <div class="col-12">
+            <mat-paginator [length]="totalCount"
+            [pageSize]="5"
+            [pageSizeOptions]="[5, 10, 25, 100]"
+            aria-label="Select page"
+            (page)="onPageChange($event)"
+            >
+            </mat-paginator>
+        </div> -->
+    </div>
+</div>

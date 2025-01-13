@@ -1,1 +1,141 @@
-<p>product-details works!</p>
+<div class="row container">
+    <div class="col-12">
+        <h1>{{isUpdate ? 'Update':'Add'}} product</h1>
+    </div>
+    <div class="col-12">
+        <form [formGroup]="productForm" (ngSubmit)="OnFormSubmit()">
+          <div class="row">
+            <div class="form-group col-4">
+                <label for="name">Product Name:</label>
+                <input id="name" formControlName="name" class="form-control">
+                <div *ngIf="productForm.get('name')?.invalid && productForm.get('name')?.touched">
+                  Name is required and must be at least 3 characters long.
+                </div>
+            </div>
+            
+            <div class="form-group col-4">
+                <label for="slug">Slug:</label>
+                <input id="slug" formControlName="slug" class="form-control">
+                <div *ngIf="productForm.get('slug')?.invalid && productForm.get('slug')?.touched">
+                  Slug is required.
+                </div>
+            </div>
+
+            <div class="form-group col-4">
+                <label for="brand">Brand:</label>
+                <input id="brand" formControlName="brand" class="form-control">
+                <div *ngIf="productForm.get('brand')?.invalid && productForm.get('brand')?.touched">
+                  Brand is required.
+                </div>
+            </div>
+
+            <!-- category -->
+              <div class="form-group col-4">
+                <label for="categoryId">Category ID:</label>
+                <select formControlName="categoryId" id="categoryId" class="form-control" (change)="OnCategoryChange($event)">
+                  <option value="" disabled selected>Select Category</option>
+                  <option *ngFor="let category of dummyCategories" [value]="category._id">{{ category.name }}</option>
+                </select>
+                <div *ngIf="productForm.get('categoryId')?.invalid && productForm.get('categoryId')?.touched">
+                  Category is required.
+                </div>
+              </div>
+
+              <div class="form-group col-4" *ngIf="selectedCategory && selectedCategory?.subCategories">
+                <label for="subCategory">Sub Category:</label>
+                <select id="subCategoryId" formControlName="subCategoryId" class="form-control" (change)="OnSubCategoryChange($event)">
+                  <option value="" disabled selected>Select Sub Category</option>
+                  <option *ngFor="let sub of selectedCategory?.subCategories" [value]="sub._id">{{ sub.name }}</option>
+                </select>
+              </div>
+              
+              <div class="form-group col-4" *ngIf="selectedSubCategory">
+                <label for="subSubCategory">Sub Sub Category:</label>
+                <select id="subSubCategoryId" formControlName="subSubCategoryId" class="form-control" (change)="OnSubSubCategoryChange($event)">
+                  <option value="" disabled selected>Select Sub Sub Category</option>
+                  <option *ngFor="let subSub of selectedSubCategory?.subSubCategories" [value]="subSub._id">{{ subSub.name }}</option>
+                </select>
+              </div>
+
+              <div class="form-group col-4" >
+                <label for="shortDescription">Short Description:</label>
+                <input id="shortDescription" class="form-control" formControlName="shortDescription"/>
+                <div *ngIf="productForm.get('shortDescription')?.invalid && productForm.get('shortDescription')?.touched">
+                  Short Description is required and must be at most 200 characters long.
+                </div>
+              </div>
+
+              <div class="form-group col-12" >
+                <label for="description">Description:</label>
+                <textarea id="description" class="form-control" formControlName="description"></textarea>
+                <div *ngIf="productForm.get('description')?.invalid && productForm.get('description')?.touched">
+                  Description is required.
+                </div>
+              </div>
+
+              <div class="form-group col-4" >
+                <label for="price">Price:</label>
+                <input id="price" class="form-control" type="number" formControlName="price">
+                <div *ngIf="productForm.get('price')?.invalid && productForm.get('price')?.touched">
+                  Price is required and must be a positive number.
+                </div>
+              </div>
+            
+              <div class="form-group col-4" >
+                <label for="salePrice">Sale Price:</label>
+                <input id="salePrice" class="form-control" type="number" formControlName="salePrice">
+                <div *ngIf="productForm.get('salePrice')?.invalid && productForm.get('salePrice')?.touched">
+                  Sale Price must be a positive number.
+                </div>
+              </div>
+
+          
+          </div>
+
+          <!-- Variations -->
+          <div class="row">
+            <h4>Variations</h4>
+
+            
+          </div>
+
+          <!-- images -->
+          <div class="row">
+            <h4>Images</h4>
+            <div class="form-group col-12 mt-5 mb-5">
+              <label for="coverImage">Cover Image:</label>
+              <input id="coverImage" type="file" (change)="OnFileChange($event,'coverImage')">
+              <div *ngIf="productForm.get('coverImage')?.invalid && productForm.get('coverImage')?.touched">
+                Cover Image is required.
+              </div>
+            </div>
+
+            <!-- <div class="form-group col-12">
+              <label>Other Images</label>
+              <div *ngFor="let image of otherImages.controls; let i = index">
+                <input type="file" class="form-control-file" multiple >
+                <button type="button" class="btn btn-danger" (click)="RemoveOtherImage(i)">Remove</button>
+              </div>
+            </div> -->
+
+            <div class="form-group col-12" formArrayName="otherImages">
+              <div *ngFor="let image of otherImages.controls; let i = index" [formGroupName]="i">
+                <label for="additionalImage-{{ i }}">Image {{ i + 1 }}:</label>
+                <input id="additionalImage-{{ i }}" type="file" (change)="OnFileChange($event, 'otherImages', i)">
+                <button type="button" (click)="RemoveOtherImage(i)">Remove</button>
+                <div *ngIf="productForm.get('imageUrl')?.invalid && image.get('imageUrl')?.touched">
+                  Image is required.
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          
+         
+          
+         
+
+        </form>
+    </div>
+</div>

@@ -1,8 +1,17 @@
 import { ProductVariation } from "../Models/ProductVariation";
 
 // generate sku for prod variation
-const GenerateSKUForProduct=()=>{
-
+const GenerateSKUForProductVariation=async(productName:string,color?:string,size?:string)=>{
+  try{
+    const baseSKU = productName.replace(" ","-").replace(/\s+/g, '-').toUpperCase();
+    const attributes: string[] = [];
+    if(size) attributes.push(`SIZE-${size}`)
+    if(color) attributes.push(`COLOR-${color}`)
+    return `${baseSKU}-${attributes.join('-')}`;
+  }
+  catch(error:any){
+    throw error;
+  }
 }
 
 let IsProductsAvailable = async (orderObj: any): Promise<Boolean> => {
@@ -19,9 +28,9 @@ let IsProductsAvailable = async (orderObj: any): Promise<Boolean> => {
         return true;
     }
     return true;
-  };
+};
 
-  let UpdateProductStock = async(orderId:string,cartItems: any[]): Promise<Boolean> => {
+let UpdateProductStock = async(orderId:string,cartItems: any[]): Promise<Boolean> => {
     try {
       if(cartItems.length>0){
         for(let item of cartItems) {
@@ -44,11 +53,12 @@ let IsProductsAvailable = async (orderObj: any): Promise<Boolean> => {
     } catch (error: any) {
       return false;
     }
-  };
+};
 
 
   export {
     IsProductsAvailable,
-    UpdateProductStock
+    UpdateProductStock,
+    GenerateSKUForProductVariation
   }
   
