@@ -284,9 +284,11 @@ let ProductDetails = async (req: Request, res: Response) => {
       let response = await Promise.all([
         await ProductImage.find({ productId: id }),
         await ProductVariation.find({ product: id }),
+        await GetSimilarProductsList(id)
       ]);
       let images = response[0];
       let variations = response[1];
+      let similarProducts = response[2];
 
       if (images.length > 0) {
         let coverImage = images.filter(
@@ -317,6 +319,7 @@ let ProductDetails = async (req: Request, res: Response) => {
       return res.status(200).json({
         success: true,
         data: product,
+        similarProducts:similarProducts ? similarProducts:[]
       });
     } else {
       return res.status(500).json({
@@ -324,7 +327,41 @@ let ProductDetails = async (req: Request, res: Response) => {
         message: `Provide Id`,
       });
     }
-  } catch (err: any) {}
+  } catch (err: any) {
+    return res.status(500).json({
+      success: false,
+      message: err,
+    });
+  }
 };
+
+let GetSimilarProductsList=async(id:string)=>{
+ 
+  try {
+    if(id){
+        const product = await Product.findById(id);
+        if (!product) {
+            return []
+        }
+        const similarProducts = await Product.find({
+          _id: { $ne: id }, // Exclude the current product
+          $or: [
+              { categoryId: product.categoryId },
+              { name: { $in: product.name } }
+          ],
+          isActive: true
+      }).limit(4);
+
+      return similarProducts;
+
+    }
+    else{
+      return []
+    }
+    
+  } catch (error:any) {
+    throw error;
+  }
+}
 
 export { AddUpdateProduct, DeleteProduct, ProductList, ProductDetails };
