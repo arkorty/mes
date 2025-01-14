@@ -196,7 +196,7 @@ let DeleteProduct = async (req: Request, res: Response) => {
 
 let ProductList = async (req: Request, res: Response) => {
   const limit = Number(req.query.limit) || 5;
-  const search = String(req.query.search) || "";
+  const search = req.query.search ? String(req.query.search) : "";
   const currentPage = Number(req.query.page) || 1;
   const category = req.query.category || ``;
 

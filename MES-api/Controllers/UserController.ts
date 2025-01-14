@@ -9,7 +9,7 @@ import { EncodeBase64,DecodeBase64, UserRole } from "../Common/Common";
 
 let UserList=async(req:Request, res:Response)=>{
     const limit = Number(req.query.limit) || 5;
-    const search = String(req.query.search) || "";
+    const search = req.query.search ? String(req.query.search) : "";
     const currentPage = Number(req.query.page) || 1;
     try {
         let users=await User.find({ name: { $regex: search, $options: "i" }})
