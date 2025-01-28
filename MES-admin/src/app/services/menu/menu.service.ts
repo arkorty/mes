@@ -13,7 +13,7 @@ export class MenuService {
     },
     {
       id: 'users',
-      label: 'Users',
+      label: 'User Management',
       icon: 'fa-solid fa-user',
       children: [
         {
@@ -32,7 +32,7 @@ export class MenuService {
     },
     {
       id: 'products',
-      label: 'Products',
+      label: 'Product Management',
       icon: 'fa-solid fa-box',
       children: [
         {
@@ -65,6 +65,25 @@ export class MenuService {
           label: 'View categories',
           icon: '',
           route: 'categories'
+        }
+      ]
+    },
+    {
+      id: 'orders',
+      label: 'Order Management',
+      icon: 'fa-solid fa-list',
+      children: [
+        // {
+        //   id: 'add-order',
+        //   label: 'Add order',
+        //   icon: '',
+        //   route: 'category/0'
+        // },
+        {
+          id: 'view-orders',
+          label: 'View orders',
+          icon: '',
+          route: 'orders'
         }
       ]
     },

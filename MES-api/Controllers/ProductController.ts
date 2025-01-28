@@ -7,7 +7,7 @@ import {
   UpdateImageInS3,
   DeleteImageFromS3,
 } from "../Config/AwsS3Config";
-import { GenerateSKUForProductVariation } from "../Services/ProductService";
+import { GenerateSKUForProductVariation } from "../Common/Common";
 
 let AddUpdateProduct = async (req: Request, res: Response) => {
   let productData = req.body;

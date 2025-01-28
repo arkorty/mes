@@ -1,21 +1,7 @@
 import { ProductVariation } from "../Models/ProductVariation";
 
-// generate sku for prod variation
-const GenerateSKUForProductVariation=async(productName:string,color?:string,size?:string)=>{
-  try{
-    const baseSKU = productName.replace(" ","-").replace(/\s+/g, '-').toUpperCase();
-    const attributes: string[] = [];
-    if(size) attributes.push(`SIZE-${size}`)
-    if(color) attributes.push(`COLOR-${color}`)
-    return `${baseSKU}-${attributes.join('-')}`;
-  }
-  catch(error:any){
-    throw error;
-  }
-}
-
-let IsProductsAvailable = async (orderObj: any): Promise<Boolean> => {
-
+export class ProductService{
+  public async IsProductsAvailable(orderObj: any): Promise<Boolean>{
     if (orderObj.length > 0) {
         for(let order of orderObj) {
           let currentProductStock = await ProductVariation.findById(
@@ -28,37 +14,32 @@ let IsProductsAvailable = async (orderObj: any): Promise<Boolean> => {
         return true;
     }
     return true;
-};
+  };
 
-let UpdateProductStock = async(orderId:string,cartItems: any[]): Promise<Boolean> => {
-    try {
-      if(cartItems.length>0){
-        for(let item of cartItems) {
-          let stockUpdate=await Promise.all([await ProductVariation.findById(item.productVariationId),
-          ])
-          if(stockUpdate){
-            let prodVariationData=stockUpdate[0];            
-            prodVariationData.quantity-=item.quantity;
-            prodVariationData.modifiedOn=Date.now();
-  
-            await Promise.all([
-              await prodVariationData.save(),
+  public async UpdateProductStock(orderId:string,cartItems: any[]): Promise<Boolean> {
+      try {
+        if(cartItems.length>0){
+          for(let item of cartItems) {
+            let stockUpdate=await Promise.all([await ProductVariation.findById(item.productVariationId),
             ])
-          } else return false;
+            if(stockUpdate){
+              let prodVariationData=stockUpdate[0];            
+              prodVariationData.quantity-=item.quantity;
+              prodVariationData.modifiedOn=Date.now();
+    
+              await Promise.all([
+                await prodVariationData.save(),
+              ])
+            } else return false;
+          }
+          
+        return true;
         }
-        
-      return true;
+        else return false;
+      } catch (error: any) {
+        return false;
       }
-      else return false;
-    } catch (error: any) {
-      return false;
-    }
-};
+  };
+}
 
 
-  export {
-    IsProductsAvailable,
-    UpdateProductStock,
-    GenerateSKUForProductVariation
-  }
-  

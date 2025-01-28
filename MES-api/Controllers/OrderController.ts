@@ -10,11 +10,13 @@ import { Product } from "../Models/Product";
 import { CalculateOrderSummary } from "../Services/OrderService";
 import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
-import { ClearUserCart } from "../Services/CartService";
+import { CartService } from "../Services/CartService";
 import { User } from "../Models/User";
 import { IsProductsAvailable } from "../Services/ProductService";
 import { Payment } from "../Models/Payment";
 
+
+const cartService = new CartService();
 
 export function CalculateOrderTotalPrice(order: any) {
   order.subTotal = order.items.reduce(async (sum: number, element: any) => {
@@ -93,16 +95,10 @@ let CreateOrder = async (req: Request, res: Response) => {
       }
 
       //clear cart
-      await ClearUserCart(req.body.userId);
-
-      //update product stock
-    //let updateStock = await UpdateProductStock(order._id, req.body.items);
-    //if (!updateStock)
-    //  return res
-    //    .status(400)
-    //    .json({ success: false, message: `Stock not updated` });
-      //clear user cart
-
+      const result=await  cartService.ClearUserCart(req.body.userId);
+      if(!result){
+        return res.status(500).json({message:`Could not clear user cart`})
+      }
       //ClearUserCart(req.body.userId);
       return res.status(200).json({
         success: true,

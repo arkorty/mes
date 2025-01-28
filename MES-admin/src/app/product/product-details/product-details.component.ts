@@ -165,7 +165,11 @@ export class ProductDetailsComponent {
   get otherImages() {
     return this.productForm.get('otherImages') as FormArray;
   }
+  get variations(): FormArray {
+    return this.productForm.get('variations') as FormArray;
+  }
 
+  //--------------------------------------------
 
   async GetProductDetails(id: any) {
     Notiflix.Loading.circle();
@@ -265,25 +269,26 @@ export class ProductDetailsComponent {
 //-categories end ----------------------------------------------------
 
 //variations start ---------------------
-AddVariation() {
+AddVariation(): void {
   const variationGroup = this.fb.group({
-    size: ['', Validators.required],
-    color: ['', Validators.required],
-    gender: ['', Validators.required],
-    weight: [null, Validators.required],
-    height: [null, Validators.required],
-    width: [null, Validators.required],
-    breadth: [null, Validators.required],
-    quantity: [null, Validators.required],
-    price: [null, Validators.required],
-    image: [null] // Optional image field for variations
+    size: new FormControl('', [Validators.required]),
+    color: new FormControl('', [Validators.required]),
+    gender: new FormControl('', [Validators.required]),
+    weight: new FormControl(0, [Validators.required, Validators.min(0)]),
+    height: new FormControl(0, [Validators.required, Validators.min(0)]),
+    width: new FormControl(0, [Validators.required, Validators.min(0)]),
+    breadth: new FormControl(0, [Validators.required, Validators.min(0)]),
+    quantity: new FormControl(0, [Validators.required, Validators.min(0)]),
+    price: new FormControl(0, [Validators.required, Validators.min(0)]),
+    image: new FormControl('', [Validators.required]),
   });
-  this.productForm.value.variations.push(variationGroup);
+  this.variations.push(variationGroup);
 }
 
 
-
-
+RemoveVariation(index: number): void {
+  this.variations.removeAt(index);
+}
 
 
 

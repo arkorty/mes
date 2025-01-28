@@ -1,16 +1,17 @@
 import { Cart } from "../Models/Cart"
 
-let ClearUserCart=async(userId:string)=>{
-   try {
-    let userCart=await Cart.findOne({userId:userId})
-    if(userCart){
-        let removeCart=await Cart.deleteOne({userId:userId})
-        return true;
+export class CartService{    
+    public async ClearUserCart(userId: string): Promise<boolean> {
+            try {
+                const userCart = await Cart.findOne({ userId: userId });
+                if (userCart) {
+                    await Cart.deleteOne({ userId: userId });
+                    return true;
+                }
+                return false; // Cart not found
+            } catch (error: any) {
+                console.error('Error clearing user cart:', error);
+                return false; // Return false in case of an error
+            }
     }
-   } catch (error:any) {
-        return false;
-   }
-}
-export {
-    ClearUserCart 
 }

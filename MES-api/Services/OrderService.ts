@@ -72,6 +72,10 @@ const CalculateShipping=async(cartItems:any[])=>{
 }
 
 
+export class OrderService{
+  
+}
+
   export {
     CalculateOrderSummary
   }
