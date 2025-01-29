@@ -1,4 +1,3 @@
-
 import { Request,Response,NextFunction } from "express";
 import { Category } from "../Models/Category";
 import { DeleteImageFromS3, UpdateImageInS3, UploadCategoryFileToS3 } from "../Config/AwsS3Config";
@@ -20,10 +19,10 @@ let AddUpdateCategory=async(req:Request, res:Response)=>{
                     category.name=req.body.name,
                     category.description=req.body.description,
                     category.parentId= (req.body.parentId) ? req.body.parentId:null,
-                    category.modifiedOn=Date.now()
+                    category.modifiedOn= new Date(),
                     await category.save()
 
-                    if(picture){
+                    if(picture && category.image){
                         await UpdateImageInS3(picture,category.image,false)
                     }
             }
@@ -34,13 +33,14 @@ let AddUpdateCategory=async(req:Request, res:Response)=>{
 
             const {image,imageUrl}=await UploadCategoryFileToS3(picture)
             //add 
-            let model=await Category({
+            let model=new Category({
                 name:req.body.name,
                 description:req.body.description,
                 image,
                 imageUrl,
                 parentId: (req.body.parentId) ? req.body.parentId:null
             })
+            await model.save()
         }
 
 
@@ -70,11 +70,11 @@ let CategoryList=async(req:Request, res:Response)=>{
                 //category loop
                 const category = categories[idx];
                 const categoryObj:ICategory={
-                    _id:category._id,
-                    name:category.name,
-                    parentId:category.parentId,
-                    description:category.description,
-                    imageUrl:category.imageUrl,
+                    _id:category._id.toString(),
+                    name:category.name || '',
+                    parentId:category.parentId?.toString() || '',
+                    description:category.description || '',
+                    imageUrl:category.imageUrl || '',
                     subCategories:[]
                 };
                 const subCategoryList:ISubCategory[]=[]
@@ -85,11 +85,11 @@ let CategoryList=async(req:Request, res:Response)=>{
                     for (let idx2 = 0; idx2 < subCategories.length; idx2++) {
                         const subCategory = subCategories[idx2];
                         const subCategoryObj:ISubCategory={
-                            _id:subCategory._id,
-                            name:subCategory.name,
-                            parentId:subCategory.parentId,
-                            description:subCategory.description,
-                            imageUrl:subCategory.imageUrl,
+                            _id:subCategory._id.toString(),
+                            name:subCategory.name || '',
+                            parentId:subCategory.parentId?.toString() || '',
+                            description:subCategory.description || '',
+                            imageUrl:subCategory.imageUrl || '',
                             subSubCategories:[]
                         }
                         const subSubCategoryList:ISubSubCategory[]=[]
@@ -100,11 +100,11 @@ let CategoryList=async(req:Request, res:Response)=>{
                             for (let idx3 = 0; idx3 < subSubCategories.length; idx3++) {
                                 const subSubCategory = subSubCategories[idx3];
                                 const subSubCategoryObj:ISubSubCategory={
-                                    _id:subSubCategory._id,
-                                    name:subSubCategory.name,
-                                    parentId:subSubCategory.parentId,
-                                    description:subSubCategory.description,
-                                    imageUrl:subSubCategory.imageUrl,
+                                    _id:subSubCategory._id.toString(),
+                                    name:subSubCategory.name || '',
+                                    parentId:subSubCategory.parentId?.toString() || '',
+                                    description:subSubCategory.description || '',
+                                    imageUrl:subSubCategory.imageUrl || '',
                                 }
                                 subSubCategoryList.push(subSubCategoryObj)
                             }
@@ -150,7 +150,7 @@ let DeleteCategory=async(req:Request, res:Response)=>{
     try {
         if(id){
             let category=await Category.findById(id)
-            if(category){
+            if(category && category.image){
                 await DeleteImageFromS3(category.image,false);
                 let removedCategory=await Category.deleteOne({_id:id});
                 if(removedCategory){
