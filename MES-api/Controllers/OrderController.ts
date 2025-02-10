@@ -12,10 +12,10 @@ import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
 import { CartService } from "../Services/CartService";
 import { User } from "../Models/User";
-import { IsProductsAvailable } from "../Services/ProductService";
+import {ProductService } from "../Services/ProductService";
 import { Payment } from "../Models/Payment";
 
-
+const productService=new ProductService();
 const cartService = new CartService();
 
 export function CalculateOrderTotalPrice(order: any) {
@@ -35,7 +35,7 @@ let CreateOrder = async (req: Request, res: Response) => {
     return res.status(400).json({ success: false, message: `Invalid payload` });
 
   //check if each selected product has stock
-  let isAvailable = await IsProductsAvailable(req.body.items);
+  let isAvailable = await productService.IsProductsAvailable(req.body.items);
   if (!isAvailable)
     return res
       .status(400)
@@ -149,8 +149,6 @@ let GetUserOrders = async (req: Request, res: Response) => {
   const { id } = req.params;
   let orderList:any[]=[]
   try {
-    
-    
     let orders = await Order.find({ userId: id })
       .populate("items.productId")
       .populate("items.productVariationId")
@@ -262,8 +260,6 @@ let CancelOrder = async (req: Request, res: Response) => {
     });
   }
 };
-
-
 
 let GetOrderSummary = async (req: Request, res: Response) => {
   const { cartItems } = req.body;

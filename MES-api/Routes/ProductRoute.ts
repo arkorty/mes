@@ -3,17 +3,15 @@ const productRouter=express.Router();
 import { upload } from "../Config/FileStorageConfig";
 
 
-import {  AddUpdateProduct,
-    DeleteProduct,
-    ProductList,
-    ProductDetails, } from "../Controllers/ProductController";
+import { productController } from "../Controllers/ProductController";
     
-productRouter.put('/upsert',
-    upload.fields([{name:`coverImage`,maxCount:1},{name:`otherImages`,maxCount:4}]),
-    AddUpdateProduct)   
-    
-productRouter.get('/:id',ProductDetails).delete('/:id',DeleteProduct)
-productRouter.get('',ProductList)
+ productRouter.put('/upsert',
+     upload.fields([{name:`coverImage`,maxCount:1},{name:`otherImages`,maxCount:4}]),
+     (req,res)=>productController.UpsertProduct(req,res))   
+     
+productRouter.get('/:id',(req,res)=>productController.ProductDetails(req,res))
+.delete('/:id',(req,res)=>productController.ProductDetails(req,res))
+productRouter.get('',(req,res)=>productController.ProductList(req,res))
 
 
 export default productRouter

@@ -23,8 +23,7 @@ const CalculateOrderSummary=async(cartItems:any[],payload?:any)=>{
 } 
 
 const CalculateSubTotal=async(cartItems:any[])=>{
-  let total=0;
-  
+  let total=0;  
   try {
     if(cartItems.length>0){
       for(let item of cartItems){
@@ -34,7 +33,6 @@ const CalculateSubTotal=async(cartItems:any[])=>{
         }
       }
     }
-    console.log(total)
     return total;
   } catch (error:any) {
     
