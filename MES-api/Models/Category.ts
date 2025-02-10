@@ -1,6 +1,4 @@
-const Joi=require('joi');
-const mongoose=require('mongoose');
-import { boolean, string } from "joi/lib";
+import mongoose from "mongoose";
 import { Schema } from "mongoose";
 
 
