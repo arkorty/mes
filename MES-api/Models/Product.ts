@@ -45,21 +45,7 @@ const productSchema = new Schema({
       required: true,
       maxlength: 200
     },
-    price: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-    salePrice: {
-      type: Number,
-      min: 0
-    },
-    stock: {
-      type: Number,
-      required: true,
-      min: 0
-    },
-   
+   specifications:{type:String},
     isActive: {
       type: Boolean,
       default: true
@@ -79,14 +65,5 @@ const productSchema = new Schema({
     toObject: { virtuals: true }
   });
   
-  // Indexes
-  // productSchema.index({ name: 'text', description: 'text' });
-  // productSchema.index({ categoryId: 1, isActive: 1 });
-  // productSchema.index({ brand: 1 });
-  // productSchema.index({ tags: 1 });
-  // productSchema.index({ slug: 1 });
-  
-  // Auto-generate slug before saving
-
   
   export const Product = mongoose.model('Product', productSchema);

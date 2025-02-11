@@ -1,228 +1,92 @@
 import { Request,Response,NextFunction } from "express";
-import { Product } from "../Models/Product";
-import { Cart } from "../Models/Cart";
-import { ProductVariation } from "../Models/ProductVariation";
-import { ProductImage } from "../Models/ProductImage";
-import { baseUrl } from "../Common/Common";
-import { FilePaths } from "../Common/Common";
+import { CartService } from "../Services/CartService";
 
-
-function CalculateCartTotalPrice(cart:any) {
-    let totalPrice = 0;
-    cart.items.forEach(async (product:any) => {
-      let variation=await ProductVariation.findById(product.productVariationId)
-      totalPrice += product.quantity * variation.price;
-    });  
-    cart.subTotal = totalPrice;
-    cart.total=totalPrice;
-}
-
-
-let AddProductToCart = async (req:Request, res:Response) => {
-    const { productId,productVariationId, quantity } = req.body;
-    const {id:userId}=req.params
-    try {
-
-        //check if product exist
-        let prod=await Product.findById(productId)
-        if(!prod) {
-            return res.status(400).json({
-                success:false,
-                message:'Product not found'
-            })
+export class CartController {
+    private _cartService: CartService;
+    constructor(private cartService: CartService) {
+        this._cartService = cartService;
+    }
+    public async AddItemToCart(req:Request, res: Response){
+        const {productId,productVariationId,quantity} = req.body;
+        const {id}=req.params;
+        try {
+            if(!id ||
+                !productId || 
+                !productVariationId || 
+                !quantity) return res.status(400).json({success:false,message:"Invalid request"});
+                
+            let productCartDto:IProductCartDto = {
+                userId:id,
+                productId:productId,
+                productVariationId:productVariationId,
+                quantity:quantity
+            };
+            let result = await this._cartService.AddProductToCart(productCartDto);
+            if(result) res.status(200).json({success:true,message:"Product added to cart successfully"});
+            else res.status(400).json({success:false,message:"Failed to add product to cart"});
+        }   
+        catch (error: any) {
+            return res.status(500).json({message:error.message});
         }
-        //check if particular product variation has quantity left 
-        let variation=await ProductVariation.findById(productVariationId);
-        if(variation){
-            if(variation.quantity < quantity) 
-                return res.status(400).json({
-                    success:false,
-                    message:'Item not available'
-            })
+    }
+    public async RemoveItemFromCart(req:Request, res: Response){
+        const {productId,userId}=req.params;
+        try {
+            if(!productId || !userId) return res.status(400).json({success:false,message:"Invalid request"});
+            let result = await this._cartService.RemoveProductFromCart(productId,userId);
+            if(result) return res.status(200).json({success:true,message:"Product removed from cart successfully"});
+            else res.status(400).json({success:false,message:"Failed to remove product from cart"});
+            
+        } catch (error: any) {
+            return res.status(500).json({success:false,message:error.message});
         }
-        let cart = await Cart.findOne({
-        userId: userId, 
-        });
-
-        if(cart){
-             // Cart exists, check if the product is already in the cart
-            const existingProduct = cart.items.find((product:any) => product.productId.equals(productId));
-           
-            if(existingProduct) existingProduct.quantity += quantity;
-            else cart.items.push({ productId, productVariationId, quantity });
-
-            await cart.save();
-        }
-        else{
-            //cart does not exist so create new  
-            cart = new Cart({ userId, items: [{ productId, productVariationId, quantity }] });
-            CalculateCartTotalPrice(cart);
-            await cart.save();
-        }
-        return res.status(200).json({ message: 'Product added to cart successfully',success:true });
-   
-    } catch (err:any) {
-        return res.status(500).json({
-            success:false,
-            message:`${err.message}`
-        })
-    }    
-
-}
-
-let RemoveProductFromCart=async (req:Request, res:Response) => {
-    const {productId,userId}=req.params;
-
-    // Check if the cart exists for the user
-    const cart = await Cart.findOne({ userId });
-    if (!cart) {
-      return res.status(404).json({ message: 'Cart not found' });
     }
 
-     // Check if the product exists in the cart
-     const productIndex = cart.items.findIndex((product:any) => product.productId.equals(productId));
-     if (productIndex === -1) {
-       return res.status(404).json({ message: 'Product not found in cart' });
-     }
-
-     // Remove the product from the cart
-    cart.items.splice(productIndex, 1);
-    CalculateCartTotalPrice(cart);
-    await cart.save();
-    //if discount
-    // if (result.discount) {
-    //   result.totalPriceAfterDiscount =
-    //     result.totalPrice - (result.totalPrice * result.discount) / 100;
-    // }
-    return res.status(200).json({
-        success:true,
-        message:`Product removed from cart successfully`
-    })
-}
-
-let UpdateProductQuantity=async(req:Request, res:Response)=>{   
-    //send userid,quantity in req.body
-    const {userId,quantity} = req.body;
-    const {productId}=req.params;
-    try {
-        // Check if the cart exists for the user
-        const cart = await Cart.findOne({ userId });
-        if (!cart) {
-        return res.status(404).json({ message: 'Cart not found' });
+    public async UpdateItemInCart(req:Request, res: Response){
+        const {productId,productVariationId,quantity} = req.body;
+        const {userId}=req.params;
+        try {
+            let productCartDto:IProductCartDto = {
+                userId:userId,
+                productId:productId,
+                productVariationId:productVariationId,
+                quantity:quantity
+            };
+            let result = await this._cartService.UpdateProductFromCart(productCartDto);
+            if(result) res.status(200).json({success:true,message:"Product updated in cart successfully"});
+            else res.status(400).json({success:false,message:"Failed to update product in cart"});
+        } catch (error: any) {
+            return res.status(500).json({success:false,message:error.message});
         }
-
-        // Check if the product exists in the cart
-        const productIndex = cart.items.findIndex((product:any) => product.productId.equals(productId));
-        if (productIndex === -1) {
-        return res.status(404).json({ message: 'Product not found in cart' });
-        }
-
-        // Update the product quantity
-        const currentProduct = cart.items[productIndex];
-        currentProduct.quantity = quantity;
-
-         // Check if the quantity is valid
-        if (quantity < 1) {
-            return res.status(400).json({ message: 'Quantity must be at least 1' });
-        }
-
-        // Check if the product is available in stock
-
-        // const productDoc = await Product.findById(productId);
-        // if (productDoc.stock < quantity) {
-        // return res.status(400).json({ message: 'Product is out of stock' });
-        // }
-        CalculateCartTotalPrice(cart);
-        await cart.save();
-      
-        let isCartExist = await Cart.findOne({ userId: req.body.userId });
-      
-        let item = isCartExist.items.find((elm:any) => elm.productId == req.params.id);
-        if (item) {
-          item.quantity = req.body.quantity;
-        }
-        CalculateCartTotalPrice(isCartExist);
-      
-        // if (isCartExist.discount) {
-        //   isCartExist.totalPriceAfterDiscount =
-        //     isCartExist.totalPrice -
-        //     (isCartExist.totalPrice * isCartExist.discount) / 100;
-        // }
-       
-      
-       return res.status(200).json({ success:true,  message: 'Product quantity updated successfully' });
-        
-    } catch (err:any) {
-        return res.status(500).json({
-            success:false,
-            message:err.message
-        })
     }
-}
 
-let GetUserCartData=async(req:Request, res:Response)=>{
-    const {id}=req.params; //userId
-    try {
-
-       if(id){
-        let userCart=await Cart.findOne({userId:id}).populate('items.productId')
-        .populate('items.productVariationId')
-    //    
-        if(userCart){
-            let items=userCart.items.map((item:any) =>{
-                return {
-                 id:item.productId._id,
-                 name:item.productId.name,
-                 productVariationId:item.productVariationId._id,
-                 variationName:item.productVariationId.size,
-                 quantity:item.quantity,
-                }
-            })
-     
-            for (let index = 0; index < items.length; index++) {
-                 const element = items[index];
-                 let currentCoverPic=await ProductImage.findOne({
-                     productId: element.id,
-                     isCover: true,})
-                     let variation=await ProductVariation.findById(element.productVariationId)    
-                     console.log(currentCoverPic)
-                     const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}`;    
-                     element.picture=coverFilePath;
-                     element.price=variation.retailPrice*element.quantity
-     
-            }
-             
-            return res.status(200).json({
-                success:true,
-                products: items,
-                itemCount:userCart.items.length
-            })
+    public async GetUserCart(req:Request, res: Response){
+        const {id}=req.params;
+        try {
+            let result = await this._cartService.GetUserCart(id);
+            if(result) res.status(200).json(result);
+            else res.status(400).json({success:false,message:"Failed to get cart"});
+        } catch (error: any) {
+            return res.status(500).json({success:false,message:error.message});
         }
-        else{
-            return res.status(404).json({ message: 'Cart not found',success:false });
-        }
-       }
-       else return res.status(400).json({ message: 'Invalid request',success:false });
-
-        
-    } catch (err:any) {
-        return res.status(500).json({
-            success:false,
-            message:err.message
-        })
     }
+
+    public async GetCartTotalPrice(req:Request, res: Response){
+        const {id}=req.params;
+        try {
+            let result = await this._cartService.GetCartSummary(id);
+            if(result) res.status(200).json(result);
+            else res.status(400).json({success:false,message:"Failed to get cart summary"});
+        } catch (error: any) {
+            return res.status(500).json({success:false,message:error.message});
+        }
+    }
+
 }
 
-
-
-
-export {
-    AddProductToCart,
-    RemoveProductFromCart,
-    UpdateProductQuantity,
-    GetUserCartData,
-    
-}
+const cartService = new CartService();
+const cartController = new CartController(cartService);
+export {cartController};
 
 
 
