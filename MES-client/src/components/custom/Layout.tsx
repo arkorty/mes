@@ -6,7 +6,7 @@ export default function Layout() {
   return (
     <div>
       <Header/>
-    <main className=' py-12'>
+    <main className=' py-12 overflow-auto'>
       
       <div className=' py-12'>
         <Outlet/>

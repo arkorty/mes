@@ -24,15 +24,21 @@ const staggerContainer = {
 export default function Apparel() {
   return (
     <motion.section
-      className="container h-screen py-12 mx-auto px-4 bg-gray-50"
+      className="container min-h-screen w-[96%] md:w-[90%] py-12 mx-auto px-4 "
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={staggerContainer}
     >
-      <motion.h2 className="text-xl font-semibold mb-4 mt-10" variants={fadeIn}>
+        <div className="flex w-full mb-6 justify-between">
+      <h2 className=" w-[60%] md:w-[80%] text-sm md:text-xl  font-semibold " >
         For All The Apparels Your Vacation Wants
-      </motion.h2>
+      </h2>
+
+      <button className=" px-2 py-1 md:px-6 md:py-2 text-white bg-[#003EA5] rounded-3xl flex items-center justify-center md:text-sm text-xs">
+        Learn more
+      </button>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((item, index) => (
@@ -61,11 +67,7 @@ export default function Apparel() {
         ))}
       </div>
 
-      <div className="flex justify-end mt-4">
-        <Link to="/" className="bg-blue-600 text-white text-xs font-semibold px-6 py-2 rounded-md inline-block">
-          LEARN MORE
-        </Link>
-      </div>
+      
     </motion.section>
   )
 }

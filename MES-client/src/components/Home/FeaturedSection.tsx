@@ -24,7 +24,7 @@ const staggerContainer = {
 export default function FeaturedSection() {
   return (
     <motion.section
-      className="container h-screen mx-auto px-4 py-12 "
+      className="container min-h-screen mx-auto px-4 py-12  "
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
@@ -34,9 +34,9 @@ export default function FeaturedSection() {
         Featured
       </motion.h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[92vh]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Left large card */}
-        <motion.div className="md:col-span-2 relative overflow-hidden rounded-md h-64 md:h-full" variants={fadeIn}>
+        <motion.div className="md:col-span-2 relative overflow-hidden rounded-md h-64 md:h-[30rem]" variants={fadeIn}>
           <img
             src={homeImg || "/placeholder.svg"}
             alt="Gears, boots, bindings"
@@ -54,13 +54,13 @@ export default function FeaturedSection() {
         </motion.div>
 
         {/* Right column with 3 cards */}
-        <div className="md:col-span-1 g rid grid-cols-1 gap-4  flex flex-col justify-between h-full ">
+        <div className="md:col-span-1 g rid grid-cols-1 gap-4  flex flex-col justify-between h-full md:h-[30rem] ">
           {[
             { title: "OUTDOOR GEARS AND EQUIPMENT", image: homeImg },
             { title: "CAMPING GEAR", image: homeImg },
             { title: "HIKING GEAR", image: homeImg },
           ].map((item, index) => (
-            <motion.div key={index} className="relative overflow-hidden rounded-lg h-[11rem]" variants={fadeIn}>
+            <motion.div key={index} className="relative overflow-hidden rounded-lg h-56 md:h- [8rem]" variants={fadeIn}>
               <img src={item.image || "/placeholder.svg"} alt={item.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/30 flex flex-col justify-center p-4">
                 <h3 className="text-white text-sm font-bold">{item.title}</h3>
