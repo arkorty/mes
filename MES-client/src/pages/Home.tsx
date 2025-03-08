@@ -3,7 +3,7 @@ import { AnimatedTestimonialsDemo } from "../components/Home/AnimatedTestimonial
 import Apparel from "../components/Home/Apparel";
 import Contactus from "../components/Home/Contactus";
 import FeaturedSection from "../components/Home/FeaturedSection";
-import TestimonialCarousel from "../components/Home/TesimonialCarousel";
+
 
 export default function Home() {
   return (
