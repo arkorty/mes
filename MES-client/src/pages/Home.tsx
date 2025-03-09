@@ -1,9 +1,15 @@
 import homeImg from "../assets/homeImg.png";
+import { AnimatedTestimonialsDemo } from "../components/Home/AnimatedTestimonialsDemo";
+import Apparel from "../components/Home/Apparel";
+import Contactus from "../components/Home/Contactus";
+import FeaturedSection from "../components/Home/FeaturedSection";
+
 
 export default function Home() {
   return (
+    <div>
     <section className="min-h-screen">
-      <div className="flex justify-center flex-col items-center">
+      <div className="flex justify-center flex-col items-center py-6">
         {/* 1st section */}
         <div className="flex flex-col items-center">
           {/* Image Container */}
@@ -49,22 +55,17 @@ export default function Home() {
         </div>
 
         {/* Feature section */}
-        <div className="flex flex-col items-start mt-5">
-          <h1 className="text-2xl font-semibold mb-5">Featured</h1>
-          <div className="flex flex-row items-center justify-center gap-5">
-            {/* left side */}
-            <div className="w-[400px] h-[400px] bg-red-500">
+        
+        
 
-            </div>
-            {/* right side */}
-            <div className="flex flex-col bg-blue-500 w-[400px] h-[400px] justify-between items-center px-3">
-              <div className="bg-yellow-400 w-[350px] h-[110px] rounded-md"></div>
-              <div className="bg-yellow-400 w-[350px] h-[110px] rounded-md"></div>
-              <div className="bg-yellow-400 w-[350px] h-[110px] rounded-md"></div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
+    <FeaturedSection />
+
+    <Apparel />
+    <Contactus />
+    {/* <TestimonialCarousel /> */}
+    <AnimatedTestimonialsDemo />
+    </div>
   );
 }

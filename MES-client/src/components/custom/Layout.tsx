@@ -4,10 +4,19 @@ import Footer from './Footer'
 
 export default function Layout() {
   return (
-    <main>
+    <div>
       <Header/>
-      <Outlet/>
-      <Footer/>
+    <main className=' py-12 overflow-auto'>
+      
+      <div className=' py-12'>
+        <Outlet/>
+      </div>
+      
+      
     </main>
+    <footer>
+      <Footer />
+    </footer>
+    </div>
   )
 }
