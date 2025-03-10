@@ -40,7 +40,7 @@ export class CartService {
       let variation = await ProductVariation.findById(
         productCartDto.productVariationId
       );
-      if (variation) {
+      if (variation ) {
         if (variation.quantity < productCartDto.quantity) return false;
 
         let cart = await Cart.findOne({
@@ -146,6 +146,7 @@ export class CartService {
   }
 
   public async GetUserCart(userId: string): Promise<any> {
+    let userItems:any[]=[];
     try {
       let userCart = await Cart.findOne({ userId })
         .populate("items.productId")
@@ -174,14 +175,23 @@ export class CartService {
           let currentCoverPic = productInfos[0];
           let variation = productInfos[1];
           const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}`;
-          element.picture = coverFilePath;
-          element.price = variation.retailPrice * element.quantity;
+         
+          if(variation){
+
+            userItems.push({
+              ...element,
+              picture: coverFilePath,
+              price: variation.retailPrice * element.quantity,
+            })
+
+          }
+         
         }
 
         return {
           success: true,
-          data: items,
-          itemCount: userCart.items.length,
+          data: userItems,
+          itemCount: userItems.length,
         };
       } else return null;
     } catch (error: any) {
@@ -218,7 +228,7 @@ export class CartService {
         const variation = await ProductVariation.findById(
           product.productVariationId
         );
-        return variation ? product.quantity * variation.price : 0; // Return 0 if variation not found
+        return variation ? product.quantity * variation.retailPrice : 0; // Return 0 if variation not found
       });
 
       // Wait for all promises to resolve

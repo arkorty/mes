@@ -1,19 +1,23 @@
-import { Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
-const Joi=require('joi');
-const mongoose=require('mongoose');
+interface IWishList extends Document {
+    userId?: string; // ObjectId
+    productId?: string; // ObjectId
+    productVariationId?: string; // ObjectId
+    createdOn: Date;
+    modifiedOn?: Date;
+}
 
-
-
-const WishListSchema=new mongoose.Schema({
-    userId:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
-    productId:{type:mongoose.Schema.Types.ObjectId, ref : "Product"},
-    productVariationId: {type:mongoose.Schema.Types.ObjectId,ref:'ProductVariation'},
-    createdOn:{
+const WishListSchema = new mongoose.Schema<IWishList>({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+    productVariationId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProductVariation', required: true },
+    createdOn: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
-    modifiedOn:{ type:Date },
-})
+    modifiedOn: { type: Date },
+});
 
-export const WishList=mongoose.model('WishList',WishListSchema);
+export const WishList = mongoose.model<IWishList>('WishList', WishListSchema);

@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import slugify from 'slugify';
 
 const dimensionsSchema = new Schema({
@@ -9,7 +9,23 @@ const dimensionsSchema = new Schema({
 }, { _id: false });
 
 
-const productSchema = new Schema({
+
+interface IProduct extends Document {
+    name: string;
+    slug?: string;
+    brand: string;
+    categoryId?: string; // ObjectId
+    subCategoryId?: string; // ObjectId
+    subSubCategoryId?: string; // ObjectId
+    description: string;
+    shortDescription: string;
+    specifications?: string;
+    isActive: boolean;
+    isFeatured: boolean;
+    tags: string[];
+}
+
+const productSchema = new Schema<IProduct>({
     name: {
       type: String,
       required: true,
@@ -66,4 +82,4 @@ const productSchema = new Schema({
   });
   
   
-  export const Product = mongoose.model('Product', productSchema);
+  export const Product = mongoose.model<IProduct>('Product', productSchema);
