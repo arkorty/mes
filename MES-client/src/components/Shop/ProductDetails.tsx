@@ -307,7 +307,8 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="details">
+          <AccordionItem value="specifications"
+          defaultChecked>
             <AccordionTrigger className="px-4 py-3 hover:no-underline">
               <span className="font-bold">PRODUCT SPECIFICATIONS</span>
             </AccordionTrigger>
@@ -319,7 +320,7 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
               </p>
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="details">
+          <AccordionItem value="information">
             <AccordionTrigger className="px-4 py-3 hover:no-underline">
               <span className="font-bold">TECHNICAL INFORMATION</span>
             </AccordionTrigger>
@@ -332,7 +333,7 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="specifications">
+          <AccordionItem value="material">
             <AccordionTrigger className="px-4 py-3 hover:no-underline">
               <span className="font-bold">MATERIAL & CARE</span>
             </AccordionTrigger>
