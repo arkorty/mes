@@ -48,9 +48,11 @@ export class ProductService implements IProductService{
           let currentProductStock = await ProductVariation.findById(
             order.productVariationId
           );
-          if (currentProductStock.quantity < order.quantity) {
-            return false;
+
+          if(currentProductStock){
+            if (currentProductStock.quantity < order.quantity) return false;
           }
+          
         }
         return true;
     }
@@ -64,13 +66,14 @@ export class ProductService implements IProductService{
             let stockUpdate=await Promise.all([await ProductVariation.findById(item.productVariationId),
             ])
             if(stockUpdate){
-              let prodVariationData=stockUpdate[0];            
+              let prodVariationData=stockUpdate[0];   
+              
+            if(prodVariationData){
               prodVariationData.quantity-=item.quantity;
-              prodVariationData.modifiedOn=Date.now();
-    
-              await Promise.all([
-                await prodVariationData.save(),
-              ])
+              prodVariationData.modifiedOn=new Date();    
+              await prodVariationData.save();
+            }
+              
             } else return false;
           }
           
@@ -92,8 +95,11 @@ export class ProductService implements IProductService{
                      if (images) {
                        for (let idx = 0; idx < images.length; idx++) {
                          const element = images[idx];
-                         if (element.isCover)  await DeleteImageFromS3(element.image, true, element.thumbnail);                          
-                         else await DeleteImageFromS3(element.image, false);
+                         if(element.image){
+                          if (element.isCover)  await DeleteImageFromS3(element.image, true, element.thumbnail);                          
+                          else await DeleteImageFromS3(element.image, false);
+                         }
+                         else return false;                    
                        }
                      }
                      let removedProduct = await Product.deleteOne({ _id: id });
@@ -265,7 +271,7 @@ export class ProductService implements IProductService{
                   isCover: true,
                   product: productId,
                 });
-                if (coverFile) {
+                if (coverFile && coverFile.image) {
                   await UpdateImageInS3(
                     coverImage,
                     coverFile.image,

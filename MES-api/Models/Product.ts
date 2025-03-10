@@ -12,14 +12,14 @@ const dimensionsSchema = new Schema({
 
 interface IProduct extends Document {
     name: string;
-    slug?: string;
+    slug: string;
     brand: string;
     categoryId?: string; // ObjectId
     subCategoryId?: string; // ObjectId
     subSubCategoryId?: string; // ObjectId
     description: string;
     shortDescription: string;
-    specifications?: string;
+    specifications: string;
     isActive: boolean;
     isFeatured: boolean;
     tags: string[];
