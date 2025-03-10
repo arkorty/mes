@@ -2,11 +2,11 @@ import homeImg from "../../assets/homeImg.png";
 
 const Hero = () => {
   return (
-    <div>
-         <div className="flex flex-col items-center">
+    <div className="container min-h-screen mx-auto  w-full  ">
+         <div className="flex flex-col   mx-auto  ">
           {/* Image Container */}
-          <div>
-            <div className="w-full h-[400px] mb-8 relative">
+          <div className=" lg:w-[98%] mx-auto ">
+            <div className="w-full  h- [400px] mb-8 relative">
               <img
                 src={homeImg}
                 alt="Mountain expedition"

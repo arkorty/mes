@@ -6,9 +6,9 @@ export default function Layout() {
   return (
     <div>
       <Header/>
-    <main className=' py-12 overflow-auto'>
+    <main className=' overflow-auto'>
       
-      <div className=' py-12'>
+      <div className=' py-4 12'>
         <Outlet/>
       </div>
       
