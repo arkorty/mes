@@ -31,9 +31,9 @@ const Header: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
         <div className="flex items-center space-x-4">
-          <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {/* <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu className="h-6 w-6" />
-          </button>
+          </button> */}
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
           
           {/* ✅ Fixed the Nested Button Issue */}
