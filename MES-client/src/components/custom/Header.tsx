@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Define types for menu items
 type MenuItems = {
@@ -34,7 +35,9 @@ const Header: React.FC = () => {
           {/* <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <Menu className="h-6 w-6" />
           </button> */}
+          <Link to="/">
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
+          </Link>
           
           {/* ✅ Fixed the Nested Button Issue */}
           <div className="flex items-center space-x-2">

@@ -1,111 +1,405 @@
 [
-    {
-      "id": 1,
-      "name": "Men's Black T-Shirt",
-      "price": 250,
-      "image": "/src/assets/Shop/product.png",
-      "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
-      "category": "Apparel",
-      "rating": 4.5
-    },
-    {
-      "id": 2,
-      "name": "Men's White T-Shirt",
-      "price": 260,
-      "image": "/src/assets/Shop/product.png",
-      "description": "High-quality white t-shirt for daily use and trekking.",
-      "category": "Apparel",
-      "rating": 4.7
-    },
-    {
-      "id": 3,
-      "name": "Men's Hiking Shoes",
-      "price": 120,
-      "image": "/src/assets/Shop/product.png",
-      "description": "Durable and comfortable hiking shoes for mountain adventures.",
-      "category": "Footwear",
-      "rating": 4.8
-    },
-    {
-      "id": 4,
-      "name": "Men's Waterproof Jacket",
-      "price": 350,
-      "image": "/src/assets/Shop/product.png",
-      "description": "Stay dry and warm with this premium waterproof jacket.",
-      "category": "Outerwear",
-      "rating": 4.6
-    },
-    {
-        "id": 5,
-        "name": "Men's Black T-Shirt",
-        "price": 250,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
-        "category": "Apparel",
-        "rating": 4.5
+  {
+    "id": 1,
+    "name": "Men's Black T-Shirt",
+    "price": 250,
+    "originalPrice": 300,
+    "discount": 16,
+    "stock": 50,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+    "category": "Apparel",
+    "rating": 4.5,
+    "availableColors": [
+      { "name": "Black", "value": "#000000" },
+      { "name": "Gray", "value": "#808080" }
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
       },
       {
-        "id": 6,
-        "name": "Men's White T-Shirt",
-        "price": 260,
-        "image": "/src/assets/Shop/product.png",
-        "description": "High-quality white t-shirt for daily use and trekking.",
-        "category": "Apparel",
-        "rating": 4.7
-      },
-      {
-        "id": 7,
-        "name": "Men's Hiking Shoes",
-        "price": 120,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Durable and comfortable hiking shoes for mountain adventures.",
-        "category": "Footwear",
-        "rating": 4.8
-      },
-      {
-        "id": 8,
-        "name": "Men's Waterproof Jacket",
-        "price": 350,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Stay dry and warm with this premium waterproof jacket.",
-        "category": "Outerwear",
-        "rating": 4.6
-      },
-      {
-        "id": 9,
-        "name": "Men's Black T-Shirt",
-        "price": 250,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
-        "category": "Apparel",
-        "rating": 4.5
-      },
-      {
-        "id": 10,
-        "name": "Men's White T-Shirt",
-        "price": 260,
-        "image": "/src/assets/Shop/product.png",
-        "description": "High-quality white t-shirt for daily use and trekking.",
-        "category": "Apparel",
-        "rating": 4.7
-      },
-      {
-        "id": 11,
-        "name": "Men's Hiking Shoes",
-        "price": 120,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Durable and comfortable hiking shoes for mountain adventures.",
-        "category": "Footwear",
-        "rating": 4.8
-      },
-      {
-        "id": 12,
-        "name": "Men's Waterproof Jacket",
-        "price": 350,
-        "image": "/src/assets/Shop/product.png",
-        "description": "Stay dry and warm with this premium waterproof jacket.",
-        "category": "Outerwear",
-        "rating": 4.6
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
       }
-  ]
-  
+    ],
+    "features": [
+      "100% Cotton",
+      "Machine Washable",
+      "Breathable Fabric"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Men's White T-Shirt",
+    "price": 260,
+    "originalPrice": 320,
+    "discount": 18,
+    "stock": 40,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "High-quality white t-shirt for daily use and trekking.",
+    "category": "Apparel",
+    "rating": 4.7,
+    "availableColors": [
+      { "name": "White", "value": "#FFFFFF" },
+      { "name": "Blue", "value": "#0000FF" }
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      },
+      {
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Men's Hiking Shoes",
+    "price": 120,
+    "originalPrice": 150,
+    "discount": 20,
+    "stock": 30,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Durable and comfortable hiking shoes for mountain adventures.",
+    "category": "Footwear",
+    "rating": 4.8,
+    "availableColors": [
+      { "name": "Brown", "value": "#8B4513" },
+      { "name": "Black", "value": "#000000" }
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      },
+      {
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      }
+    ]
+   
+  },
+  {
+    "id": 4,
+    "name": "Men's Waterproof Jacket",
+    "price": 350,
+    "originalPrice": 420,
+    "discount": 17,
+    "stock": 25,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Stay dry and warm with this premium waterproof jacket.",
+    "category": "Outerwear",
+    "rating": 4.6,
+    "availableColors": [
+      { "name": "Red", "value": "#FF0000" },
+      { "name": "Black", "value": "#000000" }
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      },
+      {
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Men's Black T-Shirt",
+    "price": 250,
+    "originalPrice": 300,
+    "discount": 16,
+    "stock": 50,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+    "category": "Apparel",
+    "rating": 4.5,
+    "availableColors": [
+      { "name": "Black", "value": "#000000" }
+    ],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      },
+      {
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Men's White T-Shirt",
+    "price": 260,
+    "originalPrice": 320,
+    "discount": 18,
+    "stock": 40,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    
+    "description": "High-quality white t-shirt for daily use and trekking.",
+    "category": "Apparel",
+    "rating": 4.7,
+    "availableColors": [
+      { "name": "White", "value": "#FFFFFF" },
+      { "name": "Beige", "value": "#F5F5DC" }
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "reviews": [
+      {
+        "id": 1,
+        "userName": "Amit Kumar",
+        "rating": 5,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 5,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      },
+      {
+        "id": 2,
+        "userName": "John Doe",
+        "rating": 4,
+        "comment": "Superb quality, soft fabric and comfortable fit.",
+        "date": "10 hours ago",
+        "location": "India",
+        "verified": true,
+        "ratings": {
+          "value": 4,
+          "warmth": 4,
+          "breathability": 5,
+          "lightweight": 5
+        }
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Men's Hiking Shoes",
+    "price": 120,
+    "originalPrice": 150,
+    "discount": 20,
+    "stock": 30,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Durable and comfortable hiking shoes for mountain adventures.",
+    "category": "Footwear",
+    "rating": 4.8,
+    "reviews": [],
+    "features": [
+      "Waterproof Material",
+      "Rubber Sole",
+      "Shock Absorption"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Men's Waterproof Jacket",
+    "price": 350,
+    "originalPrice": 420,
+    "discount": 17,
+    "stock": 25,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png",
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Stay dry and warm with this premium waterproof jacket.",
+    "category": "Outerwear",
+    "rating": 4.6,
+    "reviews": [],
+    "features": [
+      "Waterproof & Windproof",
+      "Breathable Fabric",
+      "Adjustable Hood"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Men's Black T-Shirt",
+    "price": 250,
+    "originalPrice": 300,
+    "discount": 16,
+    "stock": 50,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png"
+    ],
+    "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+    "category": "Apparel",
+    "rating": 4.5,
+    "reviews": [],
+    "features": []
+  },
+  {
+    "id": 10,
+    "name": "Men's White T-Shirt",
+    "price": 260,
+    "originalPrice": 320,
+    "discount": 18,
+    "stock": 40,
+    "image": "/src/assets/Shop/product.png",
+    "additionalImages": [
+      "/src/assets/Shop/product.png"
+    ],
+    "availableSizes": ["XS", "S", "M", "L"],
+    "description": "High-quality white t-shirt for daily use and trekking.",
+    "category": "Apparel",
+    "rating": 4.7,
+    "reviews": [],
+    "features": []
+  }
+]
