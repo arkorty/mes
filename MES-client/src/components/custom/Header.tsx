@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
-  Menu,  Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X} from "lucide-react";
+  Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
+} from "lucide-react";
 
 // Define types for menu items
 type MenuItems = {
@@ -30,16 +31,18 @@ const Header: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
         <div className="flex items-center space-x-4">
-          <button className=" cursor-pointer md:hidden " onClick={() => setIsMenuOpen(!isMenuOpen)}>
-             <Menu className="h-6 w-6" />
+          <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <Menu className="h-6 w-6" />
           </button>
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
-          <button className="flex items-center space-x-2">
-          <button className=" cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-             <Menu className="h-6 w-6" />
-          </button>
+          
+          {/* ✅ Fixed the Nested Button Issue */}
+          <div className="flex items-center space-x-2">
+            <button className="cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              <Menu className="h-6 w-6" />
+            </button>
             <span className="font-semibold uppercase hidden md:block">All Gears</span>
-          </button>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -94,9 +97,10 @@ const Header: React.FC = () => {
       {/* Dropdown Menu */}
       {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
-          <button className=" cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <X className="h-6 w-6 text-green-900 " />
-          </button>
+          {/* ✅ Fixed Close Button by using a <span> instead of <button> */}
+          <span className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <X className="h-6 w-6 text-green-900" />
+          </span>
           
           <div className="flex space-x-6 border-b">
             {Object.keys(menuItems).map((tab) => (

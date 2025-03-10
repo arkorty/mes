@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import homeImg from "../../assets/homeImg.png";
 
 const Hero = () => {
@@ -39,9 +40,13 @@ const Hero = () => {
                 custom services so you can get out & play!
               </p>
 
-              <button className="bg-blue-700 text-white px-16 py-2 rounded-full hover:bg-blue-800 transition-colors">
+              <Link to="/shop">
+              <button
+                className="bg-blue-700 text-white px-16 py-2 rounded-full hover:bg-blue-800 cursor-pointer transition-colors"
+              >
                 SHOP
               </button>
+            </Link>
             </div>
           </div>
         </div>
