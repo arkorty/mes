@@ -1,0 +1,111 @@
+[
+    {
+      "id": 1,
+      "name": "Men's Black T-Shirt",
+      "price": 250,
+      "image": "/src/assets/Shop/product.png",
+      "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+      "category": "Apparel",
+      "rating": 4.5
+    },
+    {
+      "id": 2,
+      "name": "Men's White T-Shirt",
+      "price": 260,
+      "image": "/src/assets/Shop/product.png",
+      "description": "High-quality white t-shirt for daily use and trekking.",
+      "category": "Apparel",
+      "rating": 4.7
+    },
+    {
+      "id": 3,
+      "name": "Men's Hiking Shoes",
+      "price": 120,
+      "image": "/src/assets/Shop/product.png",
+      "description": "Durable and comfortable hiking shoes for mountain adventures.",
+      "category": "Footwear",
+      "rating": 4.8
+    },
+    {
+      "id": 4,
+      "name": "Men's Waterproof Jacket",
+      "price": 350,
+      "image": "/src/assets/Shop/product.png",
+      "description": "Stay dry and warm with this premium waterproof jacket.",
+      "category": "Outerwear",
+      "rating": 4.6
+    },
+    {
+        "id": 5,
+        "name": "Men's Black T-Shirt",
+        "price": 250,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+        "category": "Apparel",
+        "rating": 4.5
+      },
+      {
+        "id": 6,
+        "name": "Men's White T-Shirt",
+        "price": 260,
+        "image": "/src/assets/Shop/product.png",
+        "description": "High-quality white t-shirt for daily use and trekking.",
+        "category": "Apparel",
+        "rating": 4.7
+      },
+      {
+        "id": 7,
+        "name": "Men's Hiking Shoes",
+        "price": 120,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Durable and comfortable hiking shoes for mountain adventures.",
+        "category": "Footwear",
+        "rating": 4.8
+      },
+      {
+        "id": 8,
+        "name": "Men's Waterproof Jacket",
+        "price": 350,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Stay dry and warm with this premium waterproof jacket.",
+        "category": "Outerwear",
+        "rating": 4.6
+      },
+      {
+        "id": 9,
+        "name": "Men's Black T-Shirt",
+        "price": 250,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Comfortable black t-shirt for outdoor activities and casual wear.",
+        "category": "Apparel",
+        "rating": 4.5
+      },
+      {
+        "id": 10,
+        "name": "Men's White T-Shirt",
+        "price": 260,
+        "image": "/src/assets/Shop/product.png",
+        "description": "High-quality white t-shirt for daily use and trekking.",
+        "category": "Apparel",
+        "rating": 4.7
+      },
+      {
+        "id": 11,
+        "name": "Men's Hiking Shoes",
+        "price": 120,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Durable and comfortable hiking shoes for mountain adventures.",
+        "category": "Footwear",
+        "rating": 4.8
+      },
+      {
+        "id": 12,
+        "name": "Men's Waterproof Jacket",
+        "price": 350,
+        "image": "/src/assets/Shop/product.png",
+        "description": "Stay dry and warm with this premium waterproof jacket.",
+        "category": "Outerwear",
+        "rating": 4.6
+      }
+  ]
+  
