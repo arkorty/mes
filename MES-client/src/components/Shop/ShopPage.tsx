@@ -58,7 +58,7 @@ const ShopPage: React.FC = () => {
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
       
       {/* Filter Section */}
-      <div className="w-[25%] hidden md:block border-r pr-6">
+      <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">
         <h2 className="text-xl font-semibold mb-4">Filters</h2>
         
         {/* Price Range */}
@@ -158,7 +158,7 @@ const ShopPage: React.FC = () => {
         {/* Category */}
         <div className=" py-2">
           <h3 className="font-medium mb-2">Category</h3>
-          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2" />
+          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2 bg-white" />
           <div className="  flex flex-col gap-1">
           <label><input type="checkbox" onChange={() => setSelectedCategory("Fleece")} className="accent-green-900" /> Fleece</label>
           <label><input type="checkbox" onChange={() => setSelectedCategory("Sweatshirt")} className="accent-green-900" /> Sweatshirt</label>
@@ -169,7 +169,7 @@ const ShopPage: React.FC = () => {
         {/* Size */}
         <div className=" py-2">
           <h3 className="font-medium mb-2">Size</h3>
-          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2" />
+          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2 bg-white" />
           <div className="  flex flex-col gap-1">
           <label><input type="checkbox" onChange={() => setSelectedSize("XL")} className="accent-green-900" /> xl</label>
           <label><input type="checkbox" onChange={() => setSelectedSize("XXL")} className="accent-green-900" /> xxl</label>
@@ -180,7 +180,7 @@ const ShopPage: React.FC = () => {
         {/* Gear Type */}
         <div>
           <h3 className="font-medium mb-2">Gear Type</h3>
-          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2" />
+          <input type="text" placeholder="Search" className="w-full p-1 border rounded-3xl px-4 mb-2 bg-white" />
           <div className="  flex flex-col gap-1">
           <label><input type="checkbox" onChange={() => setSelectedGearType("XL")} className="accent-green-900" /> xl</label>
           <label><input type="checkbox" onChange={() => setSelectedGearType("XXL")} className="accent-green-900" /> xxl</label>
