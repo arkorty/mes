@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { Schema } from "mongoose";
 
-interface ICategory extends Document {
+export interface ICategory extends Document {
   name: string;
   description?: string;
   parentId?: string; // ObjectId

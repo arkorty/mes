@@ -11,7 +11,7 @@ interface IOrderService {
   CancelOrder(orderId: string): Promise<boolean>;
   CreateOrder(data: any): Promise<any>;
   GetOrderDetails(orderId: string): Promise<any>;
-  GetUserOrders(userId: string): Promise<any>;
+  GetUserOrders(userId: string, currentPage: number): Promise<any>;
   GetOrderList(
     search: string,
     currentPage: number,
@@ -63,17 +63,8 @@ export class OrderService implements IOrderService {
 
   public async CreateOrder(data: any): Promise<any> {
     try {
-      //check availbility of product
-      let isStockAvailable = await this._productService.IsProductsAvailable(
-        data.items
-      );
-      if (!isStockAvailable)
-        return {
-          success: false,
-          message: `Product is not available`,
-          data: null,
-        };
-
+     //check prod stock
+     
       //calculate order summary
       let orderSummary = await this.CalculateOrderSummary(data.items, data);
       let shippingCost = orderSummary?.shipping ?? 0;
@@ -142,9 +133,16 @@ export class OrderService implements IOrderService {
     }
   }
 
-  public async GetUserOrders(userId: string) {
+  public async GetUserOrders(userId: string, currentPage: number) {
+      const limit: number = 5;
     try {
-      let userOrders = await Order.find({ userId: userId });
+      let userOrders = await Order.find({ userId: userId })
+      .populate("items.productId")
+      .populate("items.productVariationId")
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * limit)
+      .limit(5);
+
       if (userOrders) return userOrders;
       return null;
     } catch (error: any) {
@@ -173,6 +171,8 @@ export class OrderService implements IOrderService {
     }
   }
 
+
+  //private methods
   private async CalculateSubTotal(cartItems: any[]): Promise<any> {
     let total: number = 0;
     try {

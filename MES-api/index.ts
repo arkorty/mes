@@ -23,7 +23,7 @@ app.use("/uploads",express.static('uploads'));
 
 //routes
 app.use('/api/category/',categoryRouter)
-app.use('/api/products/',productRouter)
+app.use('/api/product/',productRouter)
 
 
 

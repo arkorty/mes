@@ -3,7 +3,7 @@ import { PaymentStatus } from "../Common/Common";
 import mongoose, { Document, Schema } from 'mongoose';
 
 
-interface ISale extends Document {
+export interface ISale extends Document {
     userId?: string; // ObjectId
     productId?: string; // ObjectId
     productVariationId?: string; // ObjectId

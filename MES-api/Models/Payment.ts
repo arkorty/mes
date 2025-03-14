@@ -6,7 +6,7 @@ const Joi=require('joi');
 
 
 
-interface IPayment extends Document {
+export interface IPayment extends Document {
     id: string;
     userId?: string; // ObjectId
     orderId?: string; // ObjectId

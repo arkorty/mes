@@ -10,7 +10,7 @@ const dimensionsSchema = new Schema({
 
 
 
-interface IProduct extends Document {
+export interface IProduct extends Document {
     name: string;
     slug: string;
     brand: string;
@@ -23,6 +23,8 @@ interface IProduct extends Document {
     isActive: boolean;
     isFeatured: boolean;
     tags: string[];
+    productCategoryDepth: number;
+    parentProductCategoryId: string; //immediate parent category
 }
 
 const productSchema = new Schema<IProduct>({

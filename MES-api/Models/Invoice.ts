@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-interface IInvoice extends Document {
+export interface IInvoice extends Document {
     invoiceNo: string;
     userId?: string; // ObjectId
     orderId?: string; // ObjectId

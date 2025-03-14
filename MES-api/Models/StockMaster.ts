@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 const Joi=require('joi');
 
 
-interface IStockMaster extends Document {
+export interface IStockMaster extends Document {
     product?: string; // ObjectId
     variation?: string; // ObjectId
     quantity: number;

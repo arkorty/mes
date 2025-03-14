@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-interface IWishList extends Document {
+export interface IWishList extends Document {
     userId?: string; // ObjectId
     productId?: string; // ObjectId
     productVariationId?: string; // ObjectId

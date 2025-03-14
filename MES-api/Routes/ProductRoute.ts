@@ -10,7 +10,7 @@ import { productController } from "../Controllers/ProductController";
      (req,res)=>productController.UpsertProduct(req,res))   
      
 productRouter.get('/:id',(req,res)=>productController.ProductDetails(req,res))
-.delete('/:id',(req,res)=>productController.ProductDetails(req,res))
+.delete('/:id',(req,res)=>productController.DeleteProduct(req,res))
 productRouter.get('',(req,res)=>productController.ProductList(req,res))
 
 

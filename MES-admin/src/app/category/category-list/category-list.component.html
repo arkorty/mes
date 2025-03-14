@@ -4,7 +4,7 @@
     <div class="row">
        <div class="col-6">
         <div class="search-container">
-            <input  type="text" placeholder="Search..." name="search" [(ngModel)]=searchValue class="search-input">
+            <input type="text" placeholder="Search..." name="search" [(ngModel)]="searchValue" class="search-input">
             <button class="search-button">
                 <i class="fas fa-search"></i> <!-- Font Awesome Search Icon -->
             </button>
@@ -14,65 +14,56 @@
         <button class="btn btn-success mx-1" (click)="AddCategory()">Add Category </button>
         <button class="btn btn-primary">Download CSV</button>
        </div>
-
     </div>
-    <!-- <div class="row mt-5">
+    <div class="row mt-5">
         <div class="col-12">
-            <table class="table table-bordered">
-                <thead>
-                    <th>Sl No</th>
-                    <th>Name </th>
-                    <th>Description</th>
-                    <th>Start Date</th>
-                    <th>Price</th>
-                    <th>Seats Available</th>
-                    <th>Actions</th>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let class of categoryList;let i=index" >
-                        <td>{{i+1}}</td>
-                        <td (click)="EditCategory(class._id)">{{class.name}}</td>
-                        <td (click)="EditCategory(class._id)">{{class.description}}</td>
-                        <td (click)="EditCategory(class._id)">{{class.startDate }}</td>
-                        <td (click)="EditCategory(class._id)"> {{class.price }} </td>
-                        <td (click)="EditCategory(class._id)"> {{class.seatsAvailable}} </td>
-                        <td>
-                            <a class="del-btn" (click)="DeleteCategory(class._id)"><i class="las la-trash"></i></a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+          <ng-container *ngFor="let item of categoryList; ">
+            <mat-expansion-panel class="category-panel mt-3">
+              <mat-expansion-panel-header class="mb-3">
+                <mat-panel-title>                  
+                  {{item.name}} 
+                </mat-panel-title>    
+                <mat-panel-description>
+                   <button mat-icon-button color="primary" class="edit" (click)="EditItem(item._id)" aria-label="Edit">
+                    <i class="las la-edit"></i>
+                </button>
+                
+                <button mat-icon-button color="warn" class="delete" (click)="DeleteItem(item._id)" aria-label="Delete">
+                  <i class="las la-trash-alt"></i>
+                </button> </mat-panel-description>
+              </mat-expansion-panel-header>
+              <ng-container *ngFor="let subCategory of item.subCategories; ">
+                <mat-expansion-panel class="subcategory-panel">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>                  
+                      {{subCategory.name}} 
+                    </mat-panel-title>    
+                    <mat-panel-description>
+                      <button mat-icon-button color="primary" class="edit" (click)="EditItem(subCategory._id)" aria-label="Edit">
+                        <i class="las la-edit"></i>
+                    </button>
+                    
+                    <button mat-icon-button color="warn" class="delete" (click)="DeleteItem(subCategory._id)" aria-label="Delete">
+                      <i class="las la-trash-alt"></i>
+                    </button>
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  <ng-container *ngFor="let subSubCategory of subCategory.subSubCategories;">
+                    <div class="subsubcategory-content d-flex gap-2 my-auto">
+                      <p class="mt-3">{{subSubCategory.name}}</p>
+                        <button mat-icon-button color="primary" class="edit" (click)="EditItem(subSubCategory._id)" aria-label="Edit">
+                        <i class="las la-edit"></i>
+                    </button>
+                    
+                    <button mat-icon-button color="warn" class="delete" (click)="DeleteItem(subSubCategory._id)" aria-label="Delete">
+                      <i class="las la-trash-alt"></i>
+                    </button>
+                    </div>
+                  </ng-container>
+                </mat-expansion-panel>
+              </ng-container>
+            </mat-expansion-panel>
+          </ng-container>
         </div>
-    </div> -->
-    <div class="row">
-        <div>
-            <h2>Select Category</h2>
-            <form [formGroup]="form">
-              <div>
-                <label for="category">Category:</label>
-                <select id="category" formControlName="category" (change)="onCategoryChange()">
-                  <option value="" disabled selected>Select Category</option>
-                  <option *ngFor="let category of categories" [value]="category._id">{{ category.name }}</option>
-                </select>
-              </div>
-          
-              <div *ngIf="selectedCategory">
-                <label for="subCategory">Sub Category:</label>
-                <select id="subCategory" formControlName="subCategory" (change)="onSubCategoryChange()">
-                  <option value="" disabled selected>Select Sub Category</option>
-                  <option *ngFor="let sub of selectedCategory.subCategories" [value]="sub._id">{{ sub.name }}</option>
-                </select>
-              </div>
-          
-              <div *ngIf="selectedSubCategory">
-                <label for="subSubCategory">Sub Sub Category:</label>
-                <select id="subSubCategory" formControlName="subSubCategory">
-                  <option value="" disabled selected>Select Sub Sub Category</option>
-                  <option *ngFor="let subSub of selectedSubCategory.subSubCategories" [value]="subSub._id">{{ subSub.name }}</option>
-                </select>
-              </div>
-            </form>
-          </div>
     </div>
-
 </div>

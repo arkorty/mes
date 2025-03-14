@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 
-interface IProductVariation extends Document {
+export interface IProductVariation extends Document {
   product?: string; // ObjectId
   size: string;
   color: string;

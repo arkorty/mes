@@ -1,8 +1,8 @@
 export interface ICommonCategoryFields{
-    _id:string,
-    parentId:string,
+    _id:string | any,
+    parentId:string | null,
     description:string,
-    imageUrl:string,
+    imageUrl:string | null,
     name:string,
 }
 

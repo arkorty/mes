@@ -59,10 +59,11 @@ export class OrderController{
 
   public async GetUserOrders(req: Request, res: Response){
     const {id}=req.params;
+    const currentPage:number = Number(req.query.page) || 1;
     try{
       if(!id) return res.status(400).json({message:`Invalid payload`})
-      let result=await this._orderService.GetUserOrders(id);
-      if(result) return res.status(200).json({success:true,data:result});
+      let result=await this._orderService.GetUserOrders(id,currentPage);
+      if(result) return res.status(200).json({success:true,data:result,page:currentPage});
       else return res.status(404).json({success:false,message:`No orders found`}); 
     }
     catch(error:any){

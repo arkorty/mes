@@ -3,7 +3,7 @@ import { OrderStatus, PaymentStatus } from "../Common/Common";
 import { AddressSchema } from "./User";
 import { IAddress } from '../types/models';
 
-interface IOrder extends Document {
+export interface IOrder extends Document {
     id: string;
     userId?: string; // ObjectId
     items: {

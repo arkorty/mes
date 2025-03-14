@@ -8,12 +8,21 @@
                 <div class="row">
                     <div class="col-4">
                         <div class="form-group">
-                            <label for="name">Parent Category</label>
+                            <!-- <mat-form-field>
+                                <mat-label>Parent Category</mat-label>
+                                <mat-select (selectionChange)="UpdateParent($event)" [(ngModel)]="categoryObj.parentId" name="parentId" id="parentId">
+                                  @for (item of categoryList; track item) {
+                                    <mat-option [value]="item._id">{{item.name}}</mat-option>
+                                  }
+                                </mat-select>
+                              </mat-form-field> -->
+                             <label for="name">Parent Category</label>
                             <select (change)="UpdateParent($event)" [(ngModel)]="categoryObj.parentId" name="parentId" id="parentId" class="form-control" >
+                                <option value="">Select parent category</option>
                                 <option value="{{item._id}}" *ngFor="let item of categoryList">
                                     {{item.name}}
                                 </option>
-                            </select>
+                            </select> 
                             <!-- <input type="text" name="name" class="form-control" [(ngModel)]="categoryObj.name" placeholder="Enter name"> -->
                           </div>
                     </div>
@@ -38,8 +47,8 @@
                             Cover image is required
                         </small>
                     </div>
-                    <div class="col-4" *ngIf="categoryObj.coverImage">
-                        <img [src]="categoryObj.coverImage" height="150" alt="">
+                    <div class="col-4" *ngIf="categoryObj.imageUrl">
+                        <img [src]="categoryObj.imageUrl" height="150" alt="">
                     </div>
                     <div class="col-12">
                         <div class="form-group">
