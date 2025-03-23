@@ -12,7 +12,7 @@ export interface IProductVariation extends Document {
   width: number;
   breadth: number;
   quantity: number;
-  retailPrice: number;
+  price: number;
   image: string;
   imageUrl: string;
   sku: string;
@@ -32,7 +32,7 @@ const ProductVariationSchema = new mongoose.Schema<IProductVariation>(
       width:{type:Number},
       breadth:{type:Number},
       quantity:{type:Number},
-      retailPrice:{type:Number},
+      price:{type:Number},
       image:{type:String},
       imageUrl:{type:String},
       sku:{type:String},

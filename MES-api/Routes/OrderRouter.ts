@@ -10,7 +10,7 @@ orderRouter.get("/summary", (req, res) =>
 orderRouter.get("/user/:id", (req, res) =>
   orderController.GetUserOrders(req, res)
 );
-orderRouter.get("cancel/:id", (req, res) =>
+orderRouter.get("/cancel/:id", (req, res) =>
   orderController.CancelOrder(req, res)
 );
 orderRouter.get("/:id", (req, res) =>
