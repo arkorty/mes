@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { ArrowRight, Mail, Lock, User, Github, Twitter } from "lucide-react"
+import { ArrowRight, Mail, Lock, User, Github, Twitter, ChevronLeft } from "lucide-react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
+import { useNavigate } from "react-router-dom"
 
 export default function SwapAuth() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -12,13 +13,17 @@ export default function SwapAuth() {
     setIsSignUp(!isSignUp)
   }
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
       <div className="relative mx-auto h-[600px] w-full max-w-4xl overflow-hidden rounded-xl bg-white shadow-2xl sm:h-[550px]">
-        <div className="absolute inset-0 flex">
+        <div className="absolute inset-0 flex ">
           {/* Blue animated div */}
+
+          
           <motion.div
-            className="relative z-10 flex items-center justify-center bg-blue-600 text-white"
+            className="relative z-10 flex items-center justify-center bg-[#164734] text-white"
             initial={{ width: "50%", left: 0 }}
             animate={{
               width: ["50%", "50%"],
@@ -29,6 +34,8 @@ export default function SwapAuth() {
               ease: "easeInOut",
             }}
           >
+
+            
             <div className="relative w-full max-w-md p-8 text-center">
               <motion.div
                 initial={{ opacity: 1 }}
@@ -36,20 +43,31 @@ export default function SwapAuth() {
                 transition={{ duration: 0.3 }}
                 className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${isSignUp ? "pointer-events-none" : ""}`}
               >
+
+              <button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center text-sm font-medium mb-6 hover:underline cursor-pointer"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> BACK
+                  </button>
+
+
+
+
                 <h2 className="mb-6 text-3xl font-bold">Welcome Back!</h2>
                 <p className="mb-8">Sign in to access your account and continue your journey with us</p>
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-600"
+                  className="border-white text-blue-800 white hover:bg-white hover:text-blue-600"
                   onClick={toggleForm}
                 >
                   Create Account <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
                 {/* Decorative elements */}
-                <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-blue-500 opacity-20"></div>
-                <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-blue-400 opacity-20"></div>
-                <div className="absolute bottom-12 right-12 h-24 w-24 rounded-full bg-blue-300 opacity-20"></div>
+                <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
+                <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
+                <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
               </motion.div>
 
               <motion.div
@@ -58,20 +76,28 @@ export default function SwapAuth() {
                 transition={{ duration: 0.3 }}
                 className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${isSignUp ? "" : "pointer-events-none"}`}
               >
+
+<               button
+                    onClick={() => navigate(-1)}
+                    className="inline-flex items-center text-sm font-medium mb-6 hover:underline cursor-pointer"
+                  >
+                    <ChevronLeft className="h-4 w-4 mr-1" /> BACK
+                  </button>
+
                 <h2 className="mb-6 text-3xl font-bold">Hello, Friend!</h2>
                 <p className="mb-8">Already have an account? Sign in to continue your experience</p>
                 <Button
                   variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-blue-600"
+                  className="border-white text-blue-800 hover:bg-white hover:text-blue-600"
                   onClick={toggleForm}
                 >
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
                 {/* Decorative elements */}
-                <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-blue-500 opacity-20"></div>
-                <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-blue-400 opacity-20"></div>
-                <div className="absolute bottom-12 right-12 h-24 w-24 rounded-full bg-blue-300 opacity-20"></div>
+                <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
+                <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
+                <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
               </motion.div>
             </div>
           </motion.div>
