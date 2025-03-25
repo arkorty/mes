@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Define types for menu items
 type MenuItems = {
@@ -18,6 +18,8 @@ const Header: React.FC = () => {
     Apparel: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
     Shoes: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
   };
+
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white text-white">
@@ -70,27 +72,29 @@ const Header: React.FC = () => {
           </div>
 
           {/* User & Store Icons */}
-          <button className="flex items-center space-x-1">
+          <button className="flex items-center space-x-1 cursor-pointer" 
+           onClick={() => navigate("/auth")}>
             <User className="h-5 w-5" />
             <span className="hidden md:block">Sign In</span>
           </button>
 
-          <button className="flex items-center space-x-1">
+          <button className="flex items-center space-x-1 cursor-pointer"
+          onClick={() => navigate("/shop")}>
             <Store className="h-5 w-5" />
             <span className="hidden md:block">My Store</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1">
-            <HelpCircle className="h-5 w-5" />
+          <button className="hidden md:flex items-center space-x-1 cursor-pointer">
+            <HelpCircle className="h-5 w-5 " />
             <span>Support</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1">
+          <button className="hidden md:flex items-center space-x-1 cursor-pointer">
             <Heart className="h-5 w-5" />
             <span>Wishlist</span>
           </button>
 
-          <button className="flex items-center space-x-1">
+          <button className="flex items-center space-x-1 cursor-pointer">
             <ShoppingCart className="h-5 w-5" />
             <span className="hidden md:block">Cart</span>
           </button>
