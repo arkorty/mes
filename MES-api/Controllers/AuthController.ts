@@ -18,9 +18,9 @@ const signToken = (userId: string): string => {
 export const Register = async(req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, email, mobile, password, role, address, picture } = req.body;
-
+    console.log(req.body)
   // Hash the password before savingnodeo
-  const hashedPassword = await bcrypt.hash(password, process.env.hashSecret as string);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await User.create({
     name,
@@ -31,7 +31,7 @@ export const Register = async(req: Request, res: Response, next: NextFunction): 
     address,
     picture,
   });
-
+  console.log(newUser);
   const token = signToken(newUser._id);
 
   res.status(201).json({

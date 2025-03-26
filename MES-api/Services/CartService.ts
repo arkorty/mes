@@ -9,6 +9,7 @@ import {
   ISubCategory,
   ISubSubCategory,
 } from "../Models/Interface/ICategoryList";
+import { IProductCartDto } from "../Models/Dto/IProductCartDto";
 
 interface ICartService {
   ClearUserCart(userId: string): Promise<boolean>;
@@ -180,13 +181,13 @@ export class CartService implements ICartService {
           ]);
           let currentCoverPic = productInfos[0];
           let variation = productInfos[1];
-          const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}`;
+          const coverFilePath = currentCoverPic ? `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}` : '';
 
           if (variation) {
             userItems.push({
               ...element,
               picture: coverFilePath,
-              price: variation.retailPrice * element.quantity,
+              price: variation.price * element.quantity,
             });
           }
         }
@@ -230,7 +231,7 @@ export class CartService implements ICartService {
         const variation = await ProductVariation.findById(
           product.productVariationId
         );
-        return variation ? product.quantity * variation.retailPrice : 0; // Return 0 if variation not found
+        return variation ? product.quantity * variation.price : 0; // Return 0 if variation not found
       });
       // Wait for all promises to resolve
       const prices = await Promise.all(variationPromises);

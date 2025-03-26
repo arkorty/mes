@@ -2,6 +2,7 @@ const Joi=require('joi');
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
+  _id:string;
   name: string;
   email: string;
   mobile: string;

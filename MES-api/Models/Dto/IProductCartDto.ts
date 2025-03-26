@@ -1,4 +1,4 @@
-interface IProductCartDto {
+export interface IProductCartDto {
     productId:string,
     quantity:number,
     userId:string,
