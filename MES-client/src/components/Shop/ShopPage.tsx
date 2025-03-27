@@ -301,40 +301,103 @@ const ShopPage: React.FC = () => {
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
       {/* Filter Section */}
-      <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10">
-        <h2 className="text-xl font-semibold mb-4">Filters</h2>
+      
+       {/* Filter Section */}
+      <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">
+         <h2 className="text-xl font-semibold mb-4">Filters</h2>
         
-        {/* Price Range */}
-        <div>
-          <h3 className="font-medium mb-2">Price</h3>
-          <div className="relative w-full flex items-center">
-            <div className="absolute left-0 top-1/2 w-full h-[4px] bg-gray-300 rounded-full"></div>
-            <div
-              className="absolute top-1/2 h-[4px] bg-green-900 rounded-full"
-              style={{
-                left: `${((priceRange[0] - 299) / (11999 - 299)) * 100}%`,
-                width: `${((priceRange[1] - priceRange[0]) / (11999 - 299)) * 100}%`,
-              }}
-            ></div>
-            <input type="range" min="299" max="11998" value={priceRange[0]} onChange={handleMinChange} className="absolute w-full appearance-none bg-transparent pointer-events-auto" />
-            <input type="range" min="299" max="11999" value={priceRange[1]} onChange={handleMaxChange} className="absolute w-full appearance-none bg-transparent pointer-events-auto" />
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="px-3 py-1 bg-gray-100 rounded">{priceRange[0]}</span>
-            <span>To</span>
-            <span className="px-3 py-1 bg-gray-100 rounded">{priceRange[1]}</span>
-          </div>
-        </div>
+         {/* Price Range */}
+        
 
-        {/* Gender Filter */}
-        <div className="py-2">
-          <h3 className="font-medium mb-2">Gender</h3>
-          <div className="flex flex-col gap-1">
-            <label><input type="radio" name="gender" value="Women" onChange={() => setSelectedGender("Women")} className="accent-green-900"/> Women</label>
-            <label><input type="radio" name="gender" value="Men" onChange={() => setSelectedGender("Men")} className="accent-green-900"/> Men</label>
-          </div>
-        </div>
+      <div>
+       <h3 className="font-medium mb-2">Price</h3>
+       <div className="relative w-full flex items-center">
+         {/* Slider Background */}
+         <div className="absolute left-0 top-1/2 w-full h-[4px] bg-gray-300 rounded-full"></div>
+
+         {/* Selected Range Highlight */}
+         <div
+          className="absolute top-1/2 h-[4px] bg-green-900 rounded-full"
+          style={{
+            left: `${((priceRange[0] - 299) / (11999 - 299)) * 100}%`,
+            width: `${
+              ((priceRange[1] - priceRange[0]) / (11999 - 299)) * 100
+            }%`,
+          }}
+        ></div>
+
+        {/* Min Range Slider */}
+        <input
+          type="range"
+          min="299"
+          max="11998"
+          value={priceRange[0]}
+          onChange={handleMinChange}
+          className="absolute w-full appearance-none bg-transparent pointer-events-auto"
+          style={{
+            zIndex: 2,
+            WebkitAppearance: "none",
+            appearance: "none",
+          }}
+        />
+
+        {/* Max Range Slider */}
+        <input
+          type="range"
+          min="299"
+          max="11999"
+          value={priceRange[1]}
+          onChange={handleMaxChange}
+          className="absolute w-full appearance-none bg-transparent pointer-events-auto"
+          style={{
+            zIndex: 2,
+            WebkitAppearance: "none",
+            appearance: "none",
+          }}
+        />
       </div>
+
+      {/* Price Display */}
+      <div className="flex justify-between mt-2">
+        <span className="px-3 py-1 bg-gray-100 rounded">{priceRange[0]}</span>
+        <span>To</span>
+        <span className="px-3 py-1 bg-gray-100 rounded">{priceRange[1]}</span>
+      </div>
+
+      {/* Style the pointers (thumbs) */}
+      <style>
+        {`
+          input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: #4ade80; /* green-400 */
+            border-radius: 50%;
+            cursor: pointer;
+          }
+
+          input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background-color: #4ade80; /* green-400 */
+            border-radius: 50%;
+            cursor: pointer;
+          }
+        `}
+      </style>
+      </div>
+
+       
+        {/* Gender */}
+        <div className=" py-2">
+          <h3 className="font-medium mb-2">Gender</h3>
+          <div className=" flex flex-col gap-1">
+          <label><input type="radio" name="gender" value="Women" onChange={() => setSelectedGender("Women")} className="accent-green-900"/> Women</label>
+          <label><input type="radio" name="gender" value="Men" onChange={() => setSelectedGender("Men")} className="accent-green-900" /> Men</label>
+        </div>
+        </div>
+        </div>
 
       {/* Product Listing Section */}
       <div className="w-full md:w-[80%]">

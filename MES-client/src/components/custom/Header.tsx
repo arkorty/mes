@@ -37,14 +37,12 @@ const Header: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
         <div className="flex items-center space-x-4">
-          {/* <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <Menu className="h-6 w-6" />
-          </button> */}
+          
           <Link to="/">
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
           </Link>
           
-          {/* ✅ Fixed the Nested Button Issue */}
+          
           <div className="flex items-center space-x-2">
             <button className="cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               <Menu className="h-6 w-6" />
@@ -97,16 +95,16 @@ const Header: React.FC = () => {
             <span>Wishlist</span>
           </button>
 
-          <button className="flex items-center space-x -1 cursor-pointer">
-            {/* <ShoppingCart className="h-5 w-5" /> */}
-
+          <button className="flex items-center space-x-1 cursor-pointer">
+            
             <ShoppingCart className="h-5 w-5" />
             {cartQuantity > 0 && (
-              <span className="ab solute relative -top-[14px] right-[12px]  bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+              <span className="re lative -t op-[14px] r ight-[12px]
+              absolute top-[50px] right-[36px]  bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                 {cartQuantity}
               </span>
             )}
-            <span className="hidden md:block -ml-4">Cart</span>
+            <span className="hidden md:block ">Cart</span>
           </button>
         </div>
       </div>
@@ -114,7 +112,7 @@ const Header: React.FC = () => {
       {/* Dropdown Menu */}
       {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
-          {/* ✅ Fixed Close Button by using a <span> instead of <button> */}
+          
           <span className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <X className="h-6 w-6 text-green-900" />
           </span>
