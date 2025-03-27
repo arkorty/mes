@@ -3,6 +3,8 @@ import {
   Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 // Define types for menu items
 type MenuItems = {
@@ -20,6 +22,7 @@ const Header: React.FC = () => {
   };
 
   const navigate = useNavigate();
+  const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
 
   return (
     <nav className="bg-white text-white">
@@ -94,9 +97,16 @@ const Header: React.FC = () => {
             <span>Wishlist</span>
           </button>
 
-          <button className="flex items-center space-x-1 cursor-pointer">
+          <button className="flex items-center space-x -1 cursor-pointer">
+            {/* <ShoppingCart className="h-5 w-5" /> */}
+
             <ShoppingCart className="h-5 w-5" />
-            <span className="hidden md:block">Cart</span>
+            {cartQuantity > 0 && (
+              <span className="ab solute relative -top-[14px] right-[12px]  bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                {cartQuantity}
+              </span>
+            )}
+            <span className="hidden md:block -ml-4">Cart</span>
           </button>
         </div>
       </div>

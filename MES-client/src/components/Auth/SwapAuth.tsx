@@ -336,7 +336,7 @@ export default function SwapAuth() {
                 <p className="mb-8">Sign in to access your account and continue your journey with us</p>
                 <Button
                   variant="outline"
-                  className="border-white text-blue-800 white hover:bg-white hover:text-blue-600"
+                  className="border-white text-blue-800 white hover:bg-white hover:text-blue-600 cursor-pointer"
                   onClick={toggleForm}
                 >
                   Create Account <ArrowRight className="ml-2 h-4 w-4" />
@@ -365,7 +365,7 @@ export default function SwapAuth() {
                 <p className="mb-8">Already have an account? Sign in to continue your experience</p>
                 <Button
                   variant="outline"
-                  className="border-white text-blue-800 hover:bg-white hover:text-blue-600"
+                  className="border-white text-blue-800 hover:bg-white hover:text-blue-600 cursor-pointer"
                   onClick={toggleForm}
                 >
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
@@ -498,7 +498,7 @@ export default function SwapAuth() {
                   </button>
                   <Button
                     variant="outline"
-                    className="text-sm border-blue-600 text-blue-600 hover:bg-blue-50"
+                    className="text-sm border-blue-600 text-blue-600 hover:bg-blue-50 cursor-pointer"
                     onClick={toggleForm}
                   >
                     Sign In <ArrowRight className="ml-1 h-3 w-3" />
@@ -547,7 +547,7 @@ export default function SwapAuth() {
                     </label>
                   </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Create Account</Button>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Create Account</Button>
                 </form>
 
                 <div className=" mt-2 md:mt-4">
