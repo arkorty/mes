@@ -7,40 +7,42 @@ import { cn } from "../../lib/util"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import prdctdetails from "../../lib/product.json"
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/redux/cartSlice";
 
 // Enhanced product type with additional images
-interface Product {
-  id: number
-  name: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  image: string
-  additionalImages: string[]
-  description: string
-  category: string
-  rating: number
-  color?: string
-  availableColors?: { name: string; value: string }[]
-  availableSizes?: string[]
-  reviews?: Review[]
-}
+// interface Product {
+//   id: number
+//   name: string
+//   price: number
+//   originalPrice?: number
+//   discount?: number
+//   image: string
+//   additionalImages: string[]
+//   description: string
+//   category: string
+//   rating: number
+//   color?: string
+//   availableColors?: { name: string; value: string }[]
+//   availableSizes?: string[]
+//   reviews?: Review[]
+// }
 
-interface Review {
-  id: number
-  userName: string
-  rating: number
-  comment: string
-  date: string
-  location: string
-  verified: boolean
-  ratings: {
-    value: number
-    warmth: number
-    breathability: number
-    lightweight: number
-  }
-}
+// interface Review {
+//   id: number
+//   userName: string
+//   rating: number
+//   comment: string
+//   date: string
+//   location: string
+//   verified: boolean
+//   ratings: {
+//     value: number
+//     warmth: number
+//     breathability: number
+//     lightweight: number
+//   }
+// }
 
 
 const enhancedProducts = prdctdetails;
@@ -81,6 +83,8 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
   }
 
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -255,7 +259,8 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700">ADD TO CART</Button>
+            <Button className="flex-1 bg-blue-600 hover:bg-blue-700"
+            onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price }))}>ADD TO CART</Button>
             <Button variant="outline" className="flex-1">
               ADD TO WISHLIST
             </Button>
