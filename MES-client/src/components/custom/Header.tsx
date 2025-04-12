@@ -24,6 +24,9 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
 
+  const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+
+
   return (
     <nav className="bg-white text-white">
       {/* Top Navigation */}
@@ -90,12 +93,20 @@ const Header: React.FC = () => {
             <span>Support</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1 cursor-pointer">
+
+          <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
             <Heart className="h-5 w-5" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                {wishlistCount}
+              </span>
+            )}
             <span>Wishlist</span>
           </button>
 
-          <button className="flex items-center space-x-1 cursor-pointer">
+
+          <button className="flex items-center space-x-1 cursor-pointer" 
+          onClick={() => navigate("/cart")}>
             
             <ShoppingCart className="h-5 w-5" />
             {cartQuantity > 0 && (
@@ -145,3 +156,21 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
