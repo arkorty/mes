@@ -11,7 +11,6 @@ import { UserList,UserDetails,DeleteUser } from '../Controllers/UserController';
 const userRouter = express.Router();
 
 
-
 // Route for user registration
 userRouter.post('/register', Register);
 userRouter.post('/login', Login);

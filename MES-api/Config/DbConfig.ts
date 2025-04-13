@@ -4,6 +4,7 @@ const {  mongoose } = require('mongoose');
 require('dotenv').config();
 
 export const DbConnect=async()=>{     
+  //TODO replace with client's mongoose
    await mongoose.connect(`mongodb+srv://xsubhra100:GAiDGKDaGZEBOUvb@cluster0.lmfqf.mongodb.net/`)
    .then((res:Response)=>{
      console.log(`Connected to DB`);
