@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
+  Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X,
+  LogOut
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { getUserDetails } from "../../api";
 
 // Define types for menu items
 type MenuItems = {
@@ -14,6 +16,11 @@ type MenuItems = {
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Gears & Equipments");
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<any>(null);
+
+  
+
 
   const menuItems: MenuItems = {
     "Gears & Equipments": ["Winter Sports →", "Camping →", "Hiking →"],
@@ -25,6 +32,49 @@ const Header: React.FC = () => {
   const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
 
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+
+  // Effect hook to check if the user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token"); 
+  
+    if (!token) {
+      setIsLoggedIn(false);
+      setUser(null);
+      return;
+    }
+  
+    const fetchUser = async () => {
+      try {
+        const { data, error } = await getUserDetails(token);
+  
+        if (error || !data) {
+          console.error("Failed to fetch user:", error);
+          setIsLoggedIn(false);
+          setUser(null);
+          localStorage.removeItem("token"); // Clear invalid token
+        } else {
+          setIsLoggedIn(true);
+          setUser(data);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    };
+  
+    fetchUser();
+  }, []);
+  
+
+  // Handle Sign Out
+  const handleSignOut = () => {
+    localStorage.removeItem("token"); // Remove the token from localStorage
+    setIsLoggedIn(false); // Set login state to false
+    setUser(null); // Clear user data
+    navigate("/auth"); // Redirect to the login page
+  };
+
 
 
   return (
@@ -76,11 +126,32 @@ const Header: React.FC = () => {
           </div>
 
           {/* User & Store Icons */}
-          <button className="flex items-center space-x-1 cursor-pointer" 
-           onClick={() => navigate("/auth")}>
-            <User className="h-5 w-5" />
-            <span className="hidden md:block">Sign In</span>
-          </button>
+
+          {!isLoggedIn ? (
+              <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/auth")}>
+                <User className="h-5 w-5" />
+                <span className="hidden md:block">Sign In</span>
+              </button>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  {/* Optional: Show user image if available */}
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="User"
+                      className="w-8 h-8 rounded-full border border-white"
+                    />
+                  ) : (
+                    <LogOut className="h-5 w-5" />
+                  )}
+                  <button onClick={handleSignOut} className="hidden md:block text-sm font-medium hover:underline">
+                    Sign Out
+                  </button>
+                </div>
+              )}
+
+
+
 
           <button className="flex items-center space-x-1 cursor-pointer"
           onClick={() => navigate("/shop")}>
