@@ -38,6 +38,10 @@ const CheckoutPage: React.FC = () => {
           <h3 className="text-lg font-semibold mb-4 text-blue-600">Order Summary</h3>
           {cart.map((item) => (
             <div key={item.id} className="flex justify-between mb-2">
+              <div className="w-16 h-16 mr-4">
+                <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded" />
+              </div>
+
               <div>
                 <p className="font-medium">{item.name}</p>
                 <p className="text-sm text-gray-500">
