@@ -292,6 +292,8 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import { FormEvent } from "react"
 
 export default function SwapAuth() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -301,6 +303,58 @@ export default function SwapAuth() {
   }
 
   const navigate = useNavigate()
+
+  const [signUpData, setSignUpData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  })
+
+  // SignIn State
+  const [signInData, setSignInData] = useState({
+    email: "",
+    password: ""
+  })
+
+
+  
+const handleSignUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/register`, signUpData)
+    console.log("SignUp Success:", res.data)
+    navigate('/');
+    // redirect or show success toast here
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      console.error("SignUp Error:", err.response?.data || err.message)
+    } else {
+      console.error("Unexpected Error:", err)
+    }
+  }
+}
+  
+ 
+
+  // Handle SignIn Submit
+  const handleSignInSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, signInData)
+      console.log("SignIn Success:", res.data)
+      navigate('/');
+      // save token / redirect
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("SignIn Error:", err.response?.data || err.message)
+      } else {
+        console.error("Unexpected Error:", err)
+      }
+    }
+  }
+
+
+
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
@@ -415,12 +469,12 @@ export default function SwapAuth() {
                 <h2 className="mb-6 text-3xl font-bold text-gray-900">Sign In</h2>
                 <p className="mb-8 text-gray-600">Please sign in to your account</p>
 
-                <form className="space-y-4">
+                <form onSubmit={handleSignInSubmit} className="space-y-4">
                   <div className="space-y-2 ">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-2 h-5 w-5 text-gray-400" />
-                      <Input id="email" type="email" placeholder="Enter your email" className="pl-10" />
+                      <Input id="email" type="email" placeholder="Enter your email" className="pl-10" value={signInData.email} onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}  />
                     </div>
                   </div>
 
@@ -428,7 +482,7 @@ export default function SwapAuth() {
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-2 h-5 w-5 text-gray-400" />
-                      <Input id="password" type="password" placeholder="Enter your password" className="pl-10" />
+                      <Input id="password" type="password" placeholder="Enter your password" className="pl-10" value={signInData.password} onChange={(e) => setSignInData({ ...signInData, password: e.target.value })} />
                     </div>
                   </div>
 
@@ -508,12 +562,12 @@ export default function SwapAuth() {
                 <h2 className=" mb-4  text-xl md:text-3xl font-bold text-gray-900">Create Account</h2>
                 <p className=" mb-6  text-gray-600">Sign up to get started with our platform</p>
 
-                <form className=" space-y-2 md:space-y-4 text-sm md:text-base">
+                <form onSubmit={handleSignUpSubmit} className=" space-y-2 md:space-y-4 text-sm md:text-base">
                   <div className=" space-y-1 md:space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="name" type="text" placeholder="Enter your name" className="pl-10" />
+                      <Input id="name" type="text" placeholder="Enter your name" className="pl-10" value={signUpData.name} onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })} />
                     </div>
                   </div>
 
@@ -521,7 +575,7 @@ export default function SwapAuth() {
                     <Label htmlFor="signup-email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="signup-email" type="email" placeholder="Enter your email" className="pl-10" />
+                      <Input id="signup-email" type="email" placeholder="Enter your email" className="pl-10" value={signUpData.email} onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })} />
                     </div>
                   </div>
 
@@ -529,7 +583,7 @@ export default function SwapAuth() {
                     <Label htmlFor="signup-password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="signup-password" type="password" placeholder="Create a password" className="pl-10" />
+                      <Input id="signup-password" type="password" placeholder="Create a password" className="pl-10" value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} />
                     </div>
                   </div>
 
