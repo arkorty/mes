@@ -2,7 +2,9 @@ import { useState } from "react";
 import {
   Menu, Search, MapPin, User, Store, Heart, ShoppingCart, HelpCircle, X
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 // Define types for menu items
 type MenuItems = {
@@ -19,6 +21,12 @@ const Header: React.FC = () => {
     Shoes: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
   };
 
+  const navigate = useNavigate();
+  const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
+
+  const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
+
+
   return (
     <nav className="bg-white text-white">
       {/* Top Navigation */}
@@ -32,14 +40,12 @@ const Header: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
         <div className="flex items-center space-x-4">
-          {/* <button className="cursor-pointer md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <Menu className="h-6 w-6" />
-          </button> */}
+          
           <Link to="/">
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
           </Link>
           
-          {/* ✅ Fixed the Nested Button Issue */}
+          
           <div className="flex items-center space-x-2">
             <button className="cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               <Menu className="h-6 w-6" />
@@ -70,29 +76,46 @@ const Header: React.FC = () => {
           </div>
 
           {/* User & Store Icons */}
-          <button className="flex items-center space-x-1">
+          <button className="flex items-center space-x-1 cursor-pointer" 
+           onClick={() => navigate("/auth")}>
             <User className="h-5 w-5" />
             <span className="hidden md:block">Sign In</span>
           </button>
 
-          <button className="flex items-center space-x-1">
+          <button className="flex items-center space-x-1 cursor-pointer"
+          onClick={() => navigate("/shop")}>
             <Store className="h-5 w-5" />
             <span className="hidden md:block">My Store</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1">
-            <HelpCircle className="h-5 w-5" />
+          <button className="hidden md:flex items-center space-x-1 cursor-pointer">
+            <HelpCircle className="h-5 w-5 " />
             <span>Support</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1">
+
+          <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
             <Heart className="h-5 w-5" />
+            {wishlistCount > 0 && (
+              <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                {wishlistCount}
+              </span>
+            )}
             <span>Wishlist</span>
           </button>
 
-          <button className="flex items-center space-x-1">
+
+          <button className="flex items-center space-x-1 cursor-pointer" 
+          onClick={() => navigate("/cart")}>
+            
             <ShoppingCart className="h-5 w-5" />
-            <span className="hidden md:block">Cart</span>
+            {cartQuantity > 0 && (
+              <span className="re lative -t op-[14px] r ight-[12px]
+              absolute top-[50px] right-[36px]  bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                {cartQuantity}
+              </span>
+            )}
+            <span className="hidden md:block ">Cart</span>
           </button>
         </div>
       </div>
@@ -100,7 +123,7 @@ const Header: React.FC = () => {
       {/* Dropdown Menu */}
       {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
-          {/* ✅ Fixed Close Button by using a <span> instead of <button> */}
+          
           <span className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             <X className="h-6 w-6 text-green-900" />
           </span>
@@ -133,3 +156,21 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -7,10 +7,17 @@ import { cn } from "../../lib/util"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import prdctdetails from "../../lib/product.json"
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "@/redux/cartSlice";
+import { RootState } from "@/redux/store"
+import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
+
+
+
 
 // Enhanced product type with additional images
 interface Product {
-  id: number
+  id: string 
   name: string
   price: number
   originalPrice?: number
@@ -45,7 +52,7 @@ interface Review {
 
 const enhancedProducts = prdctdetails;
 
-export default function ProductDetail({ productId = 1 }: { productId?: number }) {
+export default function ProductDetail({ productId = '1' }: { productId?: string }) {
   const product = enhancedProducts.find((p) => p.id === productId) || enhancedProducts[0]
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedColor, setSelectedColor] = useState(product.availableColors?.[0]?.value || "#000000")
@@ -80,7 +87,23 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
     setSelectedImage((prev) => (prev === 0 ? product.additionalImages.length : prev - 1))
   }
 
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+
+
+  const isInCart = (id: string) => {
+    return cartItems.some((item) => item.id === id);
+  };
+  
+  
+
+  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+
+  const isInWishlist = (id: string | number) =>
+    wishlistItems.some((item) => item.id === id);
+
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -255,10 +278,49 @@ export default function ProductDetail({ productId = 1 }: { productId?: number })
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700">ADD TO CART</Button>
-            <Button variant="outline" className="flex-1">
-              ADD TO WISHLIST
-            </Button>
+            <Button className="flex-1 bg-blue-600 hover:bg-blue-700"
+            onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price, image: product.image }))}>ADD TO CART</Button>
+
+          {/* <Button
+            className={`flex-1 ${isInCart(product.id.toString()) ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}`}
+            onClick={() => {
+              if (!isInCart(product.id)) {
+                dispatch(
+                  addToCart({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image
+                  })
+                );
+              }
+            }}
+          >
+            {isInCart(product.id) ? "ADDED TO CART" : "ADD TO CART"}
+          </Button> */}
+
+
+            <Button
+            variant={isInWishlist(product.id) ? "default" : "outline"}
+            className="flex-1"
+            onClick={() => {
+              if (isInWishlist(product.id)) {
+                dispatch(removeFromWishlist(product.id));
+              } else {
+                dispatch(
+                  addToWishlist({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                  })
+                );
+              }
+            }}
+          >
+            {isInWishlist(product.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
+          </Button>
+          
           </div>
 
           {/* Delivery and Services */}

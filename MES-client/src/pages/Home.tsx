@@ -9,14 +9,7 @@ import Hero from "../components/Home/Hero";
 export default function Home() {
   return (
     <div>
-    {/* <section className="min-h-screen">
-      <div className="flex justify-center flex-col items-center py-6">
-        
-        
-        
-
-      </div>
-    </section> */}
+    
     <Hero />
     <FeaturedSection />
 
