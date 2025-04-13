@@ -2,11 +2,10 @@ import { Product } from "../Models/Product";
 import { ProductVariation } from "../Models/ProductVariation";
 import { ProductImage } from "../Models/ProductImage";
 import { DeleteImageFromS3, UpdateImageInS3, UploadProductFileToS3 } from "../Config/AwsS3Config";
-import { GenerateSKUForProductVariation } from "../Common/Common";
+import { IStockDto } from "../Models/Dto/IStockDto";
+import { StockService } from "./StockService";
 
 interface IProductService{
-  IsProductsAvailable(orderObj: any): Promise<Boolean>;
-  UpdateProductStock(orderId:string,cartItems: any[]): Promise<Boolean>;
   DeleteProduct(id:string): Promise<Boolean>;
   GetProductById(id:string): Promise<any>;
   GetSimilarProducts(id:string): Promise<any>;
@@ -16,6 +15,11 @@ interface IProductService{
 
 export class ProductService implements IProductService{
   
+  private _stockService: StockService;
+  constructor(private stockService: StockService ) {
+    this._stockService = stockService;    
+  }
+
   public async GetProductList(search: string, category: string, currentPage: number, limit: number): Promise<any> {
     try {
         const query: any = {};
@@ -33,6 +37,8 @@ export class ProductService implements IProductService{
             .skip((currentPage - 1) * limit)
             .limit(limit);
 
+
+
         return {
             total: totalProducts,
             products: products
@@ -41,46 +47,6 @@ export class ProductService implements IProductService{
         throw new Error(error);
     }
   }
-
-  public async IsProductsAvailable(orderObj: any): Promise<Boolean>{
-    if (orderObj.length > 0) {
-        for(let order of orderObj) {
-          let currentProductStock = await ProductVariation.findById(
-            order.productVariationId
-          );
-          if (currentProductStock.quantity < order.quantity) {
-            return false;
-          }
-        }
-        return true;
-    }
-    return true;
-  };
-
-  public async UpdateProductStock(orderId:string,cartItems: any[]): Promise<Boolean> {
-      try {
-        if(cartItems.length>0){
-          for(let item of cartItems) {
-            let stockUpdate=await Promise.all([await ProductVariation.findById(item.productVariationId),
-            ])
-            if(stockUpdate){
-              let prodVariationData=stockUpdate[0];            
-              prodVariationData.quantity-=item.quantity;
-              prodVariationData.modifiedOn=Date.now();
-    
-              await Promise.all([
-                await prodVariationData.save(),
-              ])
-            } else return false;
-          }
-          
-        return true;
-        }
-        else return false;
-      } catch (error: any) {
-        return false;
-      }
-  };
 
   public async DeleteProduct(id:string): Promise<Boolean> {
     try {
@@ -92,8 +58,11 @@ export class ProductService implements IProductService{
                      if (images) {
                        for (let idx = 0; idx < images.length; idx++) {
                          const element = images[idx];
-                         if (element.isCover)  await DeleteImageFromS3(element.image, true, element.thumbnail);                          
-                         else await DeleteImageFromS3(element.image, false);
+                         if(element.image){
+                          if (element.isCover)  await DeleteImageFromS3(element.image, true, element.thumbnail);                          
+                          else await DeleteImageFromS3(element.image, false);
+                         }
+                         else return false;                    
                        }
                      }
                      let removedProduct = await Product.deleteOne({ _id: id });
@@ -122,6 +91,7 @@ export class ProductService implements IProductService{
           await ProductVariation.find({ product: id }),
           await this.GetSimilarProducts(id)
         ]);
+        
         let images = response[0];
         let variations = response[1];
         let similarProducts = response[2];
@@ -193,11 +163,27 @@ export class ProductService implements IProductService{
       let coverImage = files.coverImage ? files.coverImage[0] : null;
       let otherImages = files.otherImages || null;
       let { variations } = productObj;
+      let parentProductCategoryId;
+
+      //defining categoryDepth of product
+      let categoryDepth:number = 0;
+      if (productObj.categoryId){
+        categoryDepth = 1;
+        parentProductCategoryId=productObj.categoryId;
+      }
+      if (productObj.subCategoryId){
+        categoryDepth = 2;
+        parentProductCategoryId=productObj.subCategoryId;
+      }
+      if (productObj.subSubCategoryId){
+        categoryDepth = 3;
+        parentProductCategoryId=productObj.subSubCategoryId;
+      }
 
       if (productObj._id) {
             productId = productObj._id;
             isUpdate = true;
-      
+
             let productModel = await Product.findByIdAndUpdate(productObj._id, {
               $set: {
                 name: productObj.name,
@@ -211,10 +197,25 @@ export class ProductService implements IProductService{
                 shortDescription: productObj.shortDescription,
                 salePrice: productObj.salePrice,
                 stock: productObj.stock,
+                parentProductCategoryId:parentProductCategoryId,
+                productCategoryDepth: categoryDepth,
                 modifiedOn: new Date(),
               },
             });
             product=productModel;
+
+            //update product variations stock
+            if(variations){
+              for (let index = 0; index < variations.length; index++) {
+                let productItem = variations[index];
+                const model:IStockDto={
+                  productId:productId,
+                  productVariationId:productItem._id,
+                  quantity:productItem.quantity
+                }
+                await this._stockService.UpdateStock(model);
+              }
+            }
       } 
       else {
             //add product
@@ -229,6 +230,8 @@ export class ProductService implements IProductService{
               price: productObj.price,
               shortDescription: productObj.shortDescription,
               salePrice: productObj.salePrice,
+              parentProductCategoryId:parentProductCategoryId,
+              productCategoryDepth: categoryDepth,
               modifiedOn: new Date(),
             });
             productId = prodModel._id;
@@ -239,7 +242,7 @@ export class ProductService implements IProductService{
               for (let index = 0; index < variations.length; index++) {
                 let productItem = variations[index];
                 //generate sku for element
-                let generatedSku = await GenerateSKUForProductVariation(
+                let generatedSku = await this.GenerateSKUForProductVariation(
                   productObj.name,
                   productItem.color,
                   productItem.size
@@ -248,11 +251,19 @@ export class ProductService implements IProductService{
                   ...productItem,
                   product: productId,
                   sku: generatedSku,
-                };
-      
+                };      
                 let addVariation = await ProductVariation.create(productItem);
-                //add item to stock
+                //add prod variation stock
+                const model:IStockDto={
+                  productId:productId,
+                  productVariationId:addVariation._id as string,
+                  quantity:productItem.quantity
+                }
+                await this._stockService.AddSingleStock(model);
+
               }
+
+              
             }
       }
 
@@ -265,7 +276,7 @@ export class ProductService implements IProductService{
                   isCover: true,
                   product: productId,
                 });
-                if (coverFile) {
+                if (coverFile && coverFile.image) {
                   await UpdateImageInS3(
                     coverImage,
                     coverFile.image,
@@ -323,7 +334,18 @@ export class ProductService implements IProductService{
     }
   }
 
-
+  private async GenerateSKUForProductVariation(productName:string,color?:string,size?:string){
+    try{
+      const baseSKU = productName.replace(" ","-").replace(/\s+/g, '-').toUpperCase();
+      const attributes: string[] = [];
+      if(size) attributes.push(`SIZE-${size}`)
+      if(color) attributes.push(`COLOR-${color}`)
+      return `${baseSKU}-${attributes.join('-')}`;
+    }
+    catch(error:any){
+      throw error;
+    }
+  }
 
 
 }

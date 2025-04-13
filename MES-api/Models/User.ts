@@ -1,15 +1,24 @@
 const Joi=require('joi');
-const mongoose=require('mongoose');
+import mongoose, { Document, Schema } from 'mongoose';
 
-export const AddressSchema={
-  address:{type:String},
-  state:{type:String},
-  city:{type:String},
-  zipCode:{type:String},  
+export interface IUser extends Document {
+  _id:string;
+  name: string;
+  email: string;
+  mobile: string;
+  password: string;
+  role: number;
+  picture?: string;
+  address?: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  createdOn: Date;
+  modifiedOn?: Date;
 }
 
 
-const UserSchema = new mongoose.Schema(
+
+const UserSchema = new mongoose.Schema<IUser>(
     {
       name: {  type: Joi.string().required(),  },
       email:{type: Joi.string(),required: true,unique: true},
@@ -28,7 +37,17 @@ const UserSchema = new mongoose.Schema(
     },    
   );
 
- export const User=mongoose.model('Users',UserSchema)
+ export const User=mongoose.model<IUser>('Users',UserSchema)
+
+
+
+ 
+export const AddressSchema={
+  address:{type:String},
+  state:{type:String},
+  city:{type:String},
+  zipCode:{type:String},  
+}
 
 
 

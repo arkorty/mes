@@ -11,7 +11,7 @@ export class CategoryController {
     let categoryData = req.body;
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
-      let picture = files.coverImage ? files.picture[0] : null;
+      let picture = files.picture ? files.picture[0] : null;
       if (!categoryData._id && !picture)
         return res
           .status(400)
@@ -21,10 +21,8 @@ export class CategoryController {
         categoryData,
         files
       );
-      if (categoryObj)
-        return res
-          .status(200)
-          .json({ success: true, message: `Category  successfully` });
+      if (categoryObj)  return res.status(200).json({ success: true, message: `Category  successfully` });
+      else res.status(500).json({ success: false, message: `Error while adding/updating category` });  
     } catch (error: any) {
       return res.status(500).json({
         success: false,
@@ -103,6 +101,41 @@ export class CategoryController {
           .status(404)
           .json({ success: false, message: `Category not found` });
     } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  public async GetCategoryTree(req: Request, res: Response) {
+    try {
+      const categoryTree = await this._categoryService.GetCategoryFilterData();
+      if (categoryTree)
+        return res.status(200).json({ success: true, data: categoryTree });
+      else
+        return res
+          .status(404)
+          .json({ success: false, message: `Category not found` });
+    } catch (error: any) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  public async CategoryDropdown(req: Request, res: Response) {
+    try {
+      const categoryTree = await this._categoryService.CategoryDropdownAdmin();
+      if (categoryTree)
+        return res.status(200).json({ success: true, data: categoryTree });
+      else
+        return res
+          .status(404)
+          .json({ success: false, message: `Category not found` });
+    }
+    catch (error: any) {
       return res.status(500).json({
         success: false,
         message: error.message,

@@ -1,10 +1,31 @@
 import { string } from "joi";
 import { PaymentStatus } from "../Common/Common";
+import mongoose, { Document, Schema } from 'mongoose';
 
 const Joi=require('joi');
-const mongoose=require('mongoose');
 
-const PaymentSchema=new mongoose.Schema({
+
+
+export interface IPayment extends Document {
+    id: string;
+    userId?: string; // ObjectId
+    orderId?: string; // ObjectId
+    paymentMethod?: string;
+    paymentStatus?: string;
+    amount: number;
+    currency: string;
+    card: {
+        name: string;
+        number: string;
+        exp_month: number;
+        exp_year: number;
+        cvv: string;
+        card_type: string;
+    };
+    createdOn: Date;
+}
+
+const PaymentSchema=new mongoose.Schema<IPayment>({
     id:{type:String},
     userId:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
     orderId:{type:mongoose.Schema.Types.ObjectId,ref:'Order'},

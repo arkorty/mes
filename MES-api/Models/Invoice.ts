@@ -1,15 +1,25 @@
+import mongoose, { Schema, Document } from 'mongoose';
 
-const mongoose=require('mongoose');
+export interface IInvoice extends Document {
+    invoiceNo: string;
+    userId?: string; // ObjectId
+    orderId?: string; // ObjectId
+    totalAmount: number;
+    createdOn: Date;
+}
 
-const InvoiceSchema=new mongoose.Schema({
-    invoiceNo:{type:String},
-    userId:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
-    orderId:{type:mongoose.Schema.Types.ObjectId,ref:'Order'},
-    totalAmount:{type:Number},
-    createdOn:{
+const InvoiceSchema = new mongoose.Schema<IInvoice>({
+    invoiceNo: { type: String, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order', required: true },
+    totalAmount: { type: Number, required: true },
+    createdOn: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
-})
+});
 
-export const Invoice= mongoose.model('Invoice',InvoiceSchema);
+const Invoice = mongoose.model<IInvoice>('Invoice', InvoiceSchema);
+
+export default Invoice;

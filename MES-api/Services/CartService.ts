@@ -1,8 +1,15 @@
 import { Product } from "../Models/Product";
-import { Cart } from "../Models/Cart";
+import { Cart, ICart } from "../Models/Cart";
 import { ProductVariation } from "../Models/ProductVariation";
 import { baseUrl, FilePaths } from "../Common/Common";
 import { ProductImage } from "../Models/ProductImage";
+import { Category } from "../Models/Category";
+import {
+  ICategory,
+  ISubCategory,
+  ISubSubCategory,
+} from "../Models/Interface/ICategoryList";
+import { IProductCartDto } from "../Models/Dto/IProductCartDto";
 
 interface ICartService {
   ClearUserCart(userId: string): Promise<boolean>;
@@ -13,7 +20,7 @@ interface ICartService {
   GetCartSummary(userId: string): Promise<any>;
 }
 
-export class CartService {
+export class CartService implements ICartService {
   public async ClearUserCart(userId: string): Promise<boolean> {
     try {
       const userCart = await Cart.findOne({ userId: userId });
@@ -146,6 +153,7 @@ export class CartService {
   }
 
   public async GetUserCart(userId: string): Promise<any> {
+    let userItems: any[] = [];
     try {
       let userCart = await Cart.findOne({ userId })
         .populate("items.productId")
@@ -173,15 +181,21 @@ export class CartService {
           ]);
           let currentCoverPic = productInfos[0];
           let variation = productInfos[1];
-          const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}`;
-          element.picture = coverFilePath;
-          element.price = variation.retailPrice * element.quantity;
+          const coverFilePath = currentCoverPic ? `${baseUrl}${FilePaths.productFilePath}/${element.id}/thumbnail_${currentCoverPic.image}` : '';
+
+          if (variation) {
+            userItems.push({
+              ...element,
+              picture: coverFilePath,
+              price: variation.price * element.quantity,
+            });
+          }
         }
 
         return {
           success: true,
-          data: items,
-          itemCount: userCart.items.length,
+          data: userItems,
+          itemCount: userItems.length,
         };
       } else return null;
     } catch (error: any) {
@@ -190,29 +204,28 @@ export class CartService {
     }
   }
 
-    public async GetCartSummary(userId: string): Promise<any> {
-        try {
-        let userCart = await Cart.findOne({ userId });
-        if (userCart)  
-            return {
-                success: true,
-                data: {
-                    items:userCart.items,
-                    subTotal: userCart.subTotal,
-                    total: userCart.total,
-                }
-            };            
-        else return null;
-        } catch (error: any) {
-        console.error("Error getting cart summary:", error);
-        return null; // Return null in case of an error
-        }
+  public async GetCartSummary(userId: string): Promise<any> {
+    try {
+      let userCart = await Cart.findOne({ userId });
+      if (userCart)
+        return {
+          success: true,
+          data: {
+            items: userCart.items,
+            subTotal: userCart.subTotal,
+            total: userCart.total,
+          },
+        };
+      else return null;
+    } catch (error: any) {
+      console.error("Error getting cart summary:", error);
+      return null; // Return null in case of an error
     }
+  }
 
-  private async CalculateCartTotalPrice(cart: any) {
+  private async CalculateCartTotalPrice(cart: ICart) {
     try {
       let totalPrice = 0;
-
       // Collect all promises for fetching variations
       const variationPromises = cart.items.map(async (product: any) => {
         const variation = await ProductVariation.findById(
@@ -220,13 +233,11 @@ export class CartService {
         );
         return variation ? product.quantity * variation.price : 0; // Return 0 if variation not found
       });
-
       // Wait for all promises to resolve
       const prices = await Promise.all(variationPromises);
 
       // Calculate total price
       totalPrice = prices.reduce((acc, price) => acc + price, 0);
-
       cart.subTotal = totalPrice;
       cart.total = totalPrice;
     } catch (error: any) {

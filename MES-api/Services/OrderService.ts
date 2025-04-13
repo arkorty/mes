@@ -11,7 +11,7 @@ interface IOrderService {
   CancelOrder(orderId: string): Promise<boolean>;
   CreateOrder(data: any): Promise<any>;
   GetOrderDetails(orderId: string): Promise<any>;
-  GetUserOrders(userId: string): Promise<any>;
+  GetUserOrders(userId: string, currentPage: number): Promise<any>;
   GetOrderList(
     search: string,
     currentPage: number,
@@ -28,6 +28,7 @@ export class OrderService implements IOrderService {
     cartItems: any[],
     payload?: any
   ): Promise<any> {
+    console.log(cartItems,"Calculate Order summary")
     try {
       let OrderSummary = await Promise.all([
         await this.CalculateSubTotal(cartItems),
@@ -51,8 +52,8 @@ export class OrderService implements IOrderService {
     try {
       let order = await Order.findById(orderId);
       if (order) {
-        if (order.status == OrderStatus.Cancelled) return false;
-        order.status = OrderStatus.Cancelled;
+        if (order.status === OrderStatus.Cancelled.toString()) return false;
+        order.status = OrderStatus.Cancelled.toString();
         await order.save();
         return true;
       } else return false;
@@ -63,19 +64,12 @@ export class OrderService implements IOrderService {
 
   public async CreateOrder(data: any): Promise<any> {
     try {
-      //check availbility of product
-      let isStockAvailable = await this._productService.IsProductsAvailable(
-        data.items
-      );
-      if (!isStockAvailable)
-        return {
-          success: false,
-          message: `Product is not available`,
-          data: null,
-        };
-
+     //check prod stock
+     
       //calculate order summary
+      console.log(data);
       let orderSummary = await this.CalculateOrderSummary(data.items, data);
+      console.log(orderSummary,"ORDER SUMMARY")
       let shippingCost = orderSummary?.shipping ?? 0;
       let taxCost = orderSummary?.tax ?? 0;
       let subTotal = orderSummary?.subTotal ?? 0;
@@ -101,6 +95,9 @@ export class OrderService implements IOrderService {
       let itemResult: any[] = [];
       let orderObj = await Order.findById(orderId);
 
+      if (!orderObj) {
+        return null;
+      }
       for (let index = 0; index < orderObj.items.length; index++) {
         const item = orderObj.items[index];
         //  console.log(item)
@@ -117,34 +114,42 @@ export class OrderService implements IOrderService {
         let variation = response[0];
         let cover = response[1];
         let product = response[2];
-        const coverFilePath = `${baseUrl}${FilePaths.productFilePath}/${item.productId}/thumbnail_${cover.image}`;
+        const coverFilePath = cover ? `${baseUrl}${FilePaths.productFilePath}/${item.productId}/thumbnail_${cover.image}` : '';
 
         itemResult.push({
           id: item.productId,
           name: product?.name || "",
           productVariationId: item.productVariationId,
-          variationName: variation.size,
+          variationName: variation?.size ?? '',
           quantity: item.quantity,
-          price: item.quantity * variation.price,
+          price: item.quantity * (variation?.price ?? 0),
           picture: coverFilePath,
         });
       }
 
       let user = await User.findById(orderObj.userId);
-      orderObj = {
-        ...orderObj._doc,
+      const orderDetails = {
+        ...orderObj.toObject(),
         items: itemResult,
         user,
       };
+      return orderDetails;
       return orderObj;
     } catch (error: any) {
       return null;
     }
   }
 
-  public async GetUserOrders(userId: string) {
+  public async GetUserOrders(userId: string, currentPage: number) {
+      const limit: number = 5;
     try {
-      let userOrders = await Order.find({ userId: userId });
+      let userOrders = await Order.find({ userId: userId })
+      .populate("items.productId")
+      .populate("items.productVariationId")
+      .sort({ createdAt: -1 })
+      .skip((currentPage - 1) * limit)
+      .limit(5);
+
       if (userOrders) return userOrders;
       return null;
     } catch (error: any) {
@@ -173,19 +178,24 @@ export class OrderService implements IOrderService {
     }
   }
 
+
+  //private methods
   private async CalculateSubTotal(cartItems: any[]): Promise<any> {
     let total: number = 0;
+    console.log(cartItems,"calculate sub total");
     try {
       if (cartItems.length > 0) {
         for (let item of cartItems) {
           let currentStock = await ProductVariation.findById(
             item.productVariationId
           );
+          console.log(currentStock,"current stock")
           if (currentStock) {
-            total += currentStock.retailPrice * item.quantity;
+            total += currentStock.price * item.quantity;
           }
         }
       }
+      console.log(total,"TOTAL")
       return total;
     } catch (error: any) {
       return null;

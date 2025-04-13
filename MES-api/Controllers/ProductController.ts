@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ProductService } from "../Services/ProductService";
+import { StockService } from "../Services/StockService";
 
 export class ProductController{
   private _productService:ProductService ;
@@ -70,7 +71,8 @@ export class ProductController{
   }
 
 }
-const productService=new ProductService();
+const stockService=new StockService();
+const productService=new ProductService(stockService);
 const productController=new ProductController(productService);
 
 export { productController };

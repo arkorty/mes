@@ -1,11 +1,26 @@
-const Joi=require('joi');
-const mongoose=require('mongoose');
-import { boolean, } from "joi/lib";
-import { Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 
+export interface IProductVariation extends Document {
+  product?: string; // ObjectId
+  size: string;
+  color: string;
+  isBaseVariation: boolean;
+  gender: string;
+  weight: number;
+  height: number;
+  width: number;
+  breadth: number;
+  quantity: number;
+  price: number;
+  image: string;
+  imageUrl: string;
+  sku: string;
+  createdOn: Date;
+  modifiedOn?: Date;
+}
 
-const ProductVariationSchema = new mongoose.Schema(
+const ProductVariationSchema = new mongoose.Schema<IProductVariation>(
     {
       product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
       size:{type:String},
@@ -29,7 +44,7 @@ const ProductVariationSchema = new mongoose.Schema(
     },    
   );
 
- export const ProductVariation=mongoose.model('ProductVariation',ProductVariationSchema)
+ export const ProductVariation=mongoose.model<IProductVariation>('ProductVariation',ProductVariationSchema)
 
 
 

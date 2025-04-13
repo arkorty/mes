@@ -94,16 +94,3 @@ export const GenerateThumbnail= async(filePath:string, size:number, thumbnailFil
   }
 }
 
-// generate sku for prod variation
-export const GenerateSKUForProductVariation=async(productName:string,color?:string,size?:string)=>{
-  try{
-    const baseSKU = productName.replace(" ","-").replace(/\s+/g, '-').toUpperCase();
-    const attributes: string[] = [];
-    if(size) attributes.push(`SIZE-${size}`)
-    if(color) attributes.push(`COLOR-${color}`)
-    return `${baseSKU}-${attributes.join('-')}`;
-  }
-  catch(error:any){
-    throw error;
-  }
-}

@@ -1,5 +1,6 @@
 import { Request,Response,NextFunction } from "express";
 import { CartService } from "../Services/CartService";
+import { IProductCartDto } from "../Models/Dto/IProductCartDto";
 
 export class CartController {
     private _cartService: CartService;
@@ -53,6 +54,8 @@ export class CartController {
                 quantity:quantity
             };
             let result = await this._cartService.UpdateProductFromCart(productCartDto);
+
+            console.log(result);
             if(result) res.status(200).json({success:true,message:"Product updated in cart successfully"});
             else res.status(400).json({success:false,message:"Failed to update product in cart"});
         } catch (error: any) {

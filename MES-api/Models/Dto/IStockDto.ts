@@ -1,6 +1,5 @@
-export interface IProductCartDto {
+export interface IStockDto {
     productId:string,
     quantity:number,
-    userId:string,
     productVariationId:string
 }

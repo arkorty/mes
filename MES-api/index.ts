@@ -4,7 +4,9 @@ import * as dotenv from 'dotenv';
 import { DbConnect } from './Config/DbConfig';
 import categoryRouter from "./Routes/CategoryRoute";
 import productRouter from "./Routes/ProductRoute";
-import authRouter from "./Routes/UserRoute";
+import orderRouter from "./Routes/OrderRouter";
+import userRouter from "./Routes/UserRoute";
+import cartRouter from "./Routes/CartRouter";
 
 dotenv.config();
 const port=process.env.PORT || 3000;
@@ -23,9 +25,11 @@ app.use("/uploads",express.static('uploads'));
 
 
 //routes
-app.use('/api/auth', authRouter)
+app.use('/api/user/',userRouter)
 app.use('/api/category/',categoryRouter)
-app.use('/api/products/',productRouter)
+app.use('/api/product/',productRouter)
+app.use('/api/order/',orderRouter)
+app.use('/api/cart/',cartRouter)
 
 
 

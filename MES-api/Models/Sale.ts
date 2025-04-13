@@ -1,8 +1,19 @@
 import { PaymentStatus } from "../Common/Common";
 
-const mongoose=require('mongoose');
+import mongoose, { Document, Schema } from 'mongoose';
 
-const SaleSchema=new mongoose.Schema({
+
+export interface ISale extends Document {
+    userId?: string; // ObjectId
+    productId?: string; // ObjectId
+    productVariationId?: string; // ObjectId
+    price: number;
+    quantity: number;
+    paymentStatus?: string;
+    createdOn: Date;
+}
+
+const SaleSchema=new mongoose.Schema<ISale>({
     userId:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
     productId:{type:mongoose.Schema.Types.ObjectId,ref:'Product'},
     productVariationId:{type:mongoose.Schema.Types.ObjectId,ref:'ProductVariation'},
@@ -15,4 +26,4 @@ const SaleSchema=new mongoose.Schema({
     },
 })
 
-export const Sale= mongoose.model('Sale',SaleSchema);
+export const Sale= mongoose.model<ISale>('Sale',SaleSchema);

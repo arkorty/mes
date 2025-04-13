@@ -1,9 +1,18 @@
-const mongoose=require('mongoose');
-import { Schema } from "mongoose";
+import mongoose, { Document, Schema } from 'mongoose';
 
 
+export interface IProductImage extends Document {
+  product?: string; // ObjectId
+  image?: string;
+  thumbnail?: string;
+  imageUrl: string;
+  thumbnailUrl?: string;
+  isCover: boolean;
+  createdOn: Date;
+  modifiedOn?: Date;
+}
 
-const ProductImageSchema = new mongoose.Schema(
+const ProductImageSchema = new mongoose.Schema<IProductImage>(
     {
       product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
       image:{type:String},
@@ -19,7 +28,7 @@ const ProductImageSchema = new mongoose.Schema(
     },    
   );
 
- export const ProductImage=mongoose.model('ProductImage',ProductImageSchema)
+ export const ProductImage=mongoose.model<IProductImage>('ProductImage',ProductImageSchema)
 
 
 

@@ -4,11 +4,18 @@ import { FormsModule } from '@angular/forms';
 import Notiflix from 'notiflix';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonService } from '../../services/common/common.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-category-details',
   standalone: true,
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule,CommonModule,    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,],
   templateUrl: './category-details.component.html',
   styleUrl: './category-details.component.scss'
 })
@@ -20,6 +27,7 @@ export class CategoryDetailsComponent {
      description:'',
      parentId:null,
      picture:'',
+     imageUrl:``
   };
   files:any={}
   formSubmitted = false;
@@ -27,6 +35,7 @@ export class CategoryDetailsComponent {
 
   constructor(private router:Router,private common:CommonService,
     private activatedRoute:ActivatedRoute){
+      this.GetCategoryDropdown();
       this.activatedRoute.params.subscribe((params) => {
         this.categoryId = params["id"];
         if (this.categoryId != "0") {
@@ -38,7 +47,7 @@ export class CategoryDetailsComponent {
       });
     }
 
-    async GetCategoryDropdown(id:any){
+    async GetCategoryDropdown(){
       Notiflix.Loading.circle()
       try {
         let response = (await this.common.CategoryDropdown()).data
@@ -55,11 +64,11 @@ export class CategoryDetailsComponent {
     async GetCategoryDetails(id:any){
       Notiflix.Loading.circle()
       try {
-     //   let response = (await this.common.GetClassDetails(id)).data
+        let response = (await this.common.GetCategoryDetails(id)).data
         Notiflix.Loading.remove()
-        // if(response){
-        //     this.classObject=response.data;
-        // }
+         if(response){
+             this.categoryObj=response.data;
+         }
       } catch (error:any) {
         Notiflix.Loading.remove()
         Notiflix.Notify.failure(error.response.data.message)
@@ -83,7 +92,7 @@ export class CategoryDetailsComponent {
           formData.append('description', this.categoryObj.description);
           formData.append('picture', this.files['picture']);
           formData.append('parentId', this.categoryObj.parentId);
-
+          if(this.isUpdate) formData.append('_id', this.categoryObj._id);
        
 
           let response = (await this.common.UpsertCategory(formData)).data;
