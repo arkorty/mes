@@ -498,7 +498,7 @@ const handleSignUpSubmit = async (e: FormEvent<HTMLFormElement>) => {
                     </a>
                   </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">Sign In</Button>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Sign In</Button>
                 </form>
 
                 <div className="mt-6">

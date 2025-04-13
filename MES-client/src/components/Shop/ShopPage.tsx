@@ -225,7 +225,7 @@ const isInWishlist = (id: string | number) =>
               <div className="w-[86%] mx-auto flex justify-between">
                 <button
                   className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price }))}
+                  onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price, image: product.image }))}
                 >
                   Add to Cart
                 </button>
