@@ -44,7 +44,7 @@ export class CategoryService implements ICategoryService {
 
     async DeleteCategory(id: string): Promise<boolean> {
        try {
-            await Category.findByIdAndRemove(id);
+            // await Category.findByIdAndRemove(id);
             return true;
         } catch (error) {
             return false;
@@ -66,9 +66,9 @@ export class CategoryService implements ICategoryService {
                                 category.name=categoryObj.name,
                                 category.description=categoryObj.description,
                                 category.parentId= (categoryObj.parentId) ? categoryObj.parentId:null,
-                                category.modifiedOn=Date.now()
+                                category.modifiedOn= new Date()
                                 await category.save()            
-                                if(picture) await UpdateImageInS3(picture,category.image,false)
+                                if(picture && category.image) await UpdateImageInS3(picture,category.image,false)
                                 categoryModel=category
                         }
                     }

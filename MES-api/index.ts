@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import { DbConnect } from './Config/DbConfig';
 import categoryRouter from "./Routes/CategoryRoute";
 import productRouter from "./Routes/ProductRoute";
+import authRouter from "./Routes/UserRoute";
 
 dotenv.config();
 const port=process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use("/uploads",express.static('uploads'));
 
 
 //routes
+app.use('/api/auth', authRouter)
 app.use('/api/category/',categoryRouter)
 app.use('/api/products/',productRouter)
 
