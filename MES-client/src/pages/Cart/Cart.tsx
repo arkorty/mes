@@ -95,7 +95,7 @@ const CartPage: React.FC = () => {
             </div>
             <button
               onClick={() => navigate("/checkout")}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition duration-200 cursor-pointer"
             >
               Go to Checkout
             </button>

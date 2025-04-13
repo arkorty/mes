@@ -42,6 +42,7 @@ import Cart from "./pages/Cart/Cart";
 
 import { ShopProvider } from "./context/ShopContext";
 import WishlistPage from "./pages/Wishlist/WishlistPage";
+import CheckoutPage from "./pages/Checkout/CheckoutPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
@@ -61,6 +62,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
           </Route>
         </Routes>
       </Suspense>
