@@ -17,6 +17,7 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Gears & Equipments");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
 
   

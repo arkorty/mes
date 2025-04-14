@@ -53,17 +53,26 @@ interface Review {
 const enhancedProducts = prdctdetails;
 
 export default function ProductDetail({ productId = '1' }: { productId?: string }) {
-  const product = enhancedProducts.find((p) => p.id === productId) || enhancedProducts[0]
+  const product = enhancedProducts.find((p) => p.id.toString() === productId) || enhancedProducts[0]
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedColor, setSelectedColor] = useState(product.availableColors?.[0]?.value || "#000000")
   const [selectedSize, setSelectedSize] = useState(product.availableSizes?.[0] || "M")
 
   // Calculate average ratings
-  const calculateAverageRating = () => {
-    if (!product.reviews || product.reviews.length === 0) return 0
-    const sum = product.reviews.reduce((acc, review) => acc + review.rating, 0)
-    return (sum / product.reviews.length).toFixed(1)
-  }
+  const calculateAverageRating = (): string => {
+    if (!product.reviews || product.reviews.length === 0) return "0.0";
+  
+    let total = 0;
+  
+    for (const review of product.reviews) {
+      total += review.rating;
+    }
+  
+    const average = total / product.reviews.length;
+    return average.toFixed(1);
+  };
+  
+  
 
   // Calculate rating distribution
   const calculateRatingDistribution = () => {
@@ -483,7 +492,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                       {/* Rating Categories */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        {Object.entries(review.ratings).map(([key, value]) => (
+                        {Object.entries(review.ratings).map(([key, value] : [string, number]) => (
                           <div key={key} className="flex flex-col items-center">
                             <div className="relative w-16 h-16">
                               <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
