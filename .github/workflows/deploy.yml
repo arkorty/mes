@@ -1,0 +1,111 @@
+name: CI/CD for MES (Client, BE-api, Admin)
+
+on:
+  push:
+    branches:
+      - main
+      - production
+
+jobs:
+  pull-from-github:
+    name: Pull from GitHub to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Pull latest code on VPS (Force Switch to Production)
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            set -e
+            echo "🔍 Checking code directory..."
+            if [ ! -d "MountainExpeditionSupply/.git" ]; then
+              echo "❗ No repo found. Cloning fresh..."
+              git clone https://${{ secrets.GH_TOKEN }}@github.com/RADMedia01/MountainExpeditionSupply.git --branch production /MountainExpeditionSupply
+            else
+              echo "✅ Repo exists. Pulling latest changes from production branch..."
+              cd MountainExpeditionSupply/
+              git remote set-url origin https://${{ secrets.GH_TOKEN }}@github.com/RADMedia01/MountainExpeditionSupply.git
+              git fetch origin
+              echo "📍 Current branch: $(git rev-parse --abbrev-ref HEAD)"
+              echo "🔁 Switching to production branch..."
+              git checkout production || git checkout -b production origin/production
+              git reset --hard origin/production
+              git clean -fd
+            fi
+
+  deploy-client:
+    name: Deploy Client
+    needs: pull-from-github
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Client on VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            set -e
+            trap 'echo "❌ Client deployment failed on line $LINENO. Check logs above."' ERR
+            echo "🚀 Deploying Client..."
+            cd MountainExpeditionSupply/MES-client
+            npm install --legacy-peer-deps
+            npm run build
+            pm2 reload mes-client --update-env || pm2 start ecosystem.config.cjs
+
+  deploy-be:
+    name: Deploy BE-api
+    needs: pull-from-github
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Backend API on VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            set -e
+            trap 'echo "❌ BE API deployment failed on line $LINENO. Check logs above."' ERR
+            echo "🚀 Deploying Backend API..."
+            cd MountainExpeditionSupply/MES-api
+            npm install --legacy-peer-deps
+            npm tsc
+            pm2 reload mes-api --update-env || pm2 start index.js --name mes-api --update-env
+
+  deploy-admin:
+    name: Deploy Admin Panel
+    needs: pull-from-github
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Admin Panel on VPS
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_PRIVATE_KEY }}
+          script: |
+            set -e
+            trap 'echo "❌ Admin panel deployment failed on line $LINENO. Check logs above."' ERR
+
+            echo "🚀 Deploying Admin Panel..."
+            cd MountainExpeditionSupply/MES-admin-v2
+
+            echo "📦 Installing dependencies..."
+            npm install --legacy-peer-deps
+
+            npm install --legacy-peer-deps
+            npm run build
+
+            pm2 reload mes-admin --update-env || pm2 start ecosystem.config.js
+
+            echo "✅ Admin panel built!"
