@@ -1,3 +1,5 @@
+'use server';
+
 import api from '@/lib/axios';
 import { API_ROUTES } from 'constants/api.routes';
 
