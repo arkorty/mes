@@ -3,7 +3,7 @@ module.exports = {
       {
         name: "mes-client",
         script: "npm",
-        args: "preview",
+        args: "run preview",
         env: {
           NODE_ENV: "production",
           PORT: 3999 
