@@ -22,6 +22,7 @@ export default tseslint.config(
 
       // ✅ Allow unused variables and state setters (like setSelected*)
       "no-unused-vars": "off",
+      
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
