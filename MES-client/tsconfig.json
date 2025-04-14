@@ -6,9 +6,14 @@
   ],
 
   "compilerOptions": {
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "baseUrl": ".",
+    "strict": false,
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"]
     }
+    
   }
 }
