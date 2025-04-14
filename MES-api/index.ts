@@ -10,7 +10,7 @@ import cartRouter from "./Routes/CartRouter";
 import wishListRouter from "./Routes/WishlistRouter";
 
 dotenv.config();
-const port=process.env.PORT || 3000;
+const port= process.env.PORT || 3000;
 
 //app config
 const app = express()
@@ -26,6 +26,14 @@ app.use("/uploads",express.static('uploads'));
 
 
 //routes
+const deployTime = new Date();
+app.get('/',(req,res)=>{
+    return res.json({
+        success:true,
+        message:"Welcome to MES API",
+        deployTime
+    })
+})
 app.use('/api/user/',userRouter)
 app.use('/api/category/',categoryRouter)
 app.use('/api/product/',productRouter)
