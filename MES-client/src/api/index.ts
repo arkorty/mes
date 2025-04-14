@@ -12,16 +12,6 @@ const api = axios.create({
   }
 });
 
-/*************  ✨ Windsurf Command ⭐  *************/
-/**
- * A wrapper function that catches and handles any errors that occur when making a request to the API.
- * It returns an object with two properties: `data` and `error`.
- * If the request is successful, `data` will contain the response and `error` will be null.
- * If the request fails, `data` will be null and `error` will contain the error message.
- * @param fn - The function to be called to make the request to the API.
- * @returns An object with two properties: `data` and `error`.
- */
-/*******  2f32d53f-7e61-4aa7-a4a1-2b718ae05ec0  *******/
 const handleRequest = async (fn: () => Promise<any>) => {
   try {
     const response = await fn();
