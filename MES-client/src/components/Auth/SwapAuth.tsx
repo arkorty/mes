@@ -66,6 +66,7 @@ export default function SwapAuth() {
       console.log("User Registered:", data);
       if (data?.token) {
         localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userId", data.data.user._id );
       }
   
       toast.success("Account created successfully!");
@@ -88,9 +89,10 @@ export default function SwapAuth() {
       console.error("Sign In Error:", error);
       toast.error(error); 
     } else {
-      //console.log("User Logged In:",data);
+      console.log("User Logged In:",data);
       // Optionally store token or user info here:
        localStorage.setItem('token', data.data.token);
+       localStorage.setItem('userId', data.data.user._id );
   
       toast.success("Welcome back!"); 
       navigate('/');  // Navigate to home page

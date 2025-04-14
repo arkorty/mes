@@ -128,14 +128,17 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const cart = useSelector((state: RootState) => state.cart.items);
 
+  const userId = localStorage.getItem("userId");
+  const productVariationId = " ";
+
   const handleQuantityChange = (id: string | number, quantity: number) => {
     if (quantity >= 1) {
-      dispatch(updateQuantity({ id, quantity }));
+      dispatch(updateQuantity({ id,productVariationId , quantity, userId, }));
     }
   };
 
-  const handleRemove = (id: string | number) => {
-    dispatch(removeFromCart(id));
+  const handleRemove = (id: string ) => {
+    dispatch(removeFromCart(id, userId));
   };
 
   const getTotalPrice = () => {
