@@ -122,13 +122,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { removeFromCart, updateQuantity } from "../../redux/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state: RootState) => state.cart.items);
 
-  const userId = localStorage.getItem("userId");
+  const [user] = useAtom(userAtom);
+
+  const userId: string | null = user?._id ?? ""
   const productVariationId = " ";
 
   const handleQuantityChange = (id: string | number, quantity: number) => {
