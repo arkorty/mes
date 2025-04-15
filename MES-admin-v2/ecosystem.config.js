@@ -3,7 +3,7 @@ module.exports = {
       {
         name: "mes-admin",
         script: "npm",
-        args: "start",
+        args: "start -- --port 3998",
         env: {
           NODE_ENV: "production",
           PORT: 3998 
