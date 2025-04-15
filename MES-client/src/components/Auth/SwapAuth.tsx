@@ -289,14 +289,14 @@ export default function SwapAuth() {
                       />
                       <label
                         htmlFor="remember"
-                        className="text-sm text-gray-600"
+                        className="text-sm text-gray-600 cursor-pointer"
                       >
                         Remember me
                       </label>
                     </div>
                     <a
                       href="#"
-                      className="text-sm text-blue-600 hover:underline"
+                      className="text-sm text-blue-600 hover:underline cursor-pointer"
                     >
                       Forgot password?
                     </a>
@@ -307,29 +307,7 @@ export default function SwapAuth() {
                   </Button>
                 </form>
 
-                <div className="mt-6">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="bg-white px-2 text-gray-500">
-                        Or continue with
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex gap-3">
-                    <Button variant="outline" className="w-full">
-                      <Github className="mr-2 h-4 w-4" />
-                      Github
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <Twitter className="mr-2 h-4 w-4" />
-                      Twitter
-                    </Button>
-                  </div>
-                </div>
+                
               </motion.div>
             </div>
           </motion.div>
@@ -439,7 +417,7 @@ export default function SwapAuth() {
                     <input
                       type="checkbox"
                       id="terms"
-                      className="h-4 w-4 rounded border-gray-300"
+                      className="h-4 w-4 rounded border-gray-300 cursor-pointer"
                     />
                     <label
                       htmlFor="terms"
@@ -461,29 +439,7 @@ export default function SwapAuth() {
                   </Button>
                 </form>
 
-                <div className=" mt-2 md:mt-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="bg-white px-2 text-gray-500">
-                        Or sign up with
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className=" mt-2 md:mt-4 flex flex-col md:flex-row gap-3  md:w-full md:justify-between">
-                    <Button variant="outline" className="w-full md:w-[48%]">
-                      <Github className="mr-2 h-4 w-4" />
-                      Github
-                    </Button>
-                    <Button variant="outline" className="w-full md:w-[48%]">
-                      <Twitter className="mr-2 h-4 w-4" />
-                      Twitter
-                    </Button>
-                  </div>
-                </div>
+                
               </motion.div>
             </div>
           </motion.div>
