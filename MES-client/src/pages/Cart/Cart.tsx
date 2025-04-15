@@ -122,20 +122,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { removeFromCart, updateQuantity } from "../../redux/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state: RootState) => state.cart.items);
 
+  const [user] = useAtom(userAtom);
+
+  const userId: string | null = user?._id ?? ""
+  const productVariationId = " ";
+
   const handleQuantityChange = (id: string | number, quantity: number) => {
     if (quantity >= 1) {
-      dispatch(updateQuantity({ id, quantity }));
+      dispatch(updateQuantity({ id,productVariationId , quantity, userId, }));
     }
   };
 
-  const handleRemove = (id: string | number) => {
-    dispatch(removeFromCart(id));
+  const handleRemove = (id: string ) => {
+    dispatch(removeFromCart(id, userId));
   };
 
   const getTotalPrice = () => {

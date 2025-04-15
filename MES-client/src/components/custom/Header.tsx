@@ -20,6 +20,37 @@ const Header: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [user, setUser] = useState<any>(null);
 
+  const [pinCode, setPinCode] = useState("Loading...");
+const [showPinModal, setShowPinModal] = useState(false);
+const [manualPin, setManualPin] = useState("");
+
+useEffect(() => {
+  const fetchLocation = async () => {
+    try {
+      if (!navigator.geolocation) {
+        console.warn("Geolocation is not supported");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+        // Use Nominatim reverse geocoding API (free)
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+        const data = await response.json();
+        const postalCode = data?.address?.postcode;
+        if (postalCode) setPinCode(postalCode);
+        else setPinCode("Unknown");
+      });
+    } catch (error) {
+      console.error("Error fetching geolocation:", error);
+      setPinCode("Unavailable");
+    }
+  };
+
+  fetchLocation();
+}, []);
+
+
   
 
 
@@ -118,13 +149,31 @@ const Header: React.FC = () => {
         {/* Right Section - Icons & Links */}
         <div className="flex items-center space-x-6 text-sm">
           {/* Delivery Location */}
-          <div className="hidden md:flex items-center space-x-1">
+          {/* <div className="hidden md:flex items-center space-x-1">
             <MapPin className="h-5 w-5" />
             <div>
               <p className="text-xs">Delivery Location</p>
               <p className="font-semibold text-sm">560002 <span className="text-blue-300 cursor-pointer">CHANGE</span></p>
             </div>
+          </div> */}
+
+
+          <div className="hidden md:flex items-center space-x-1">
+            <MapPin className="h-5 w-5" />
+            <div>
+              <p className="text-xs">Delivery Location</p>
+              <p className="font-semibold text-sm">
+                {pinCode}{" "}
+                <span
+                  className="text-blue-300 cursor-pointer"
+                  onClick={() => setShowPinModal(true)}
+                >
+                  CHANGE
+                </span>
+              </p>
+            </div>
           </div>
+
 
           {/* User & Store Icons */}
 
@@ -166,31 +215,76 @@ const Header: React.FC = () => {
           </button>
 
 
-          <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
-            <Heart className="h-5 w-5" />
-            {wishlistCount > 0 && (
-              <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
-                {wishlistCount}
-              </span>
-            )}
-            <span>Wishlist</span>
-          </button>
 
 
-          <button className="flex items-center space-x-1 cursor-pointer" 
-          onClick={() => navigate("/cart")}>
-            
-            <ShoppingCart className="h-5 w-5" />
-            {cartQuantity > 0 && (
-              <span className="re lative -t op-[14px] r ight-[12px]
-              absolute top-[50px] right-[36px]  bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
-                {cartQuantity}
-              </span>
-            )}
-            <span className="hidden md:block ">Cart</span>
-          </button>
+          {isLoggedIn && (
+  <>
+    <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
+      <Heart className="h-5 w-5" />
+      {wishlistCount > 0 && (
+        <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+          {wishlistCount}
+        </span>
+      )}
+      <span>Wishlist</span>
+    </button>
+
+    <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
+      <ShoppingCart className="h-5 w-5" />
+      {cartQuantity > 0 && (
+        <span className="absolute top-[50px] right-[36px] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+          {cartQuantity}
+        </span>
+      )}
+      <span className="hidden md:block">Cart</span>
+    </button>
+  </>
+          )}
+
+
+
+
+
         </div>
       </div>
+
+
+      {showPinModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40">
+          <div className="bg-white rounded-xl p-6 w-80 shadow-lg">
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Change Pincode</h2>
+            <input
+              type="text"
+              placeholder="Enter new PIN"
+              value={manualPin}
+              onChange={(e) => setManualPin(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4 focus:outline-none focus:ring focus:ring-green-400 text-green-800"
+            />
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowPinModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (manualPin.length === 6) {
+                    setPinCode(manualPin);
+                    setShowPinModal(false);
+                  } else {
+                    alert("Please enter a valid 6-digit PIN.");
+                  }
+                }}
+                className="bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-md"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Dropdown Menu */}
       {isMenuOpen && (
@@ -224,6 +318,8 @@ const Header: React.FC = () => {
         </div>
       )}
     </nav>
+
+    
   );
 };
 

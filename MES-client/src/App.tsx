@@ -49,6 +49,7 @@ const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
 const ShopPage = lazy(() => import("./components/Shop/ShopPage"));
 const SwapAuth = lazy(() => import("./components/Auth/SwapAuth"));
 
+
 function App() {
   return (
     <ShopProvider>

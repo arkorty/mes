@@ -1,4 +1,4 @@
 import { atom } from 'jotai'
 
-const countAtom = atom(localStorage.getItem('user') || null)
+export const userAtom = atom(localStorage.getItem('user') || null)
 
