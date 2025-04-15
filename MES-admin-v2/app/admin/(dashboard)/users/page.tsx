@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { userTableColumns } from '@/lib/data/users/user-table-columns';
 import { getUsers } from 'app/api/users';
+import { URL_ROUTES } from 'constants/urls.routes';
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -29,7 +30,7 @@ export default async function ViewUsers(props: {
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
             <Button size="sm" className="h-8 gap-1" asChild>
-              <Link href="/users/add">
+              <Link href={URL_ROUTES.userAdd}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add User

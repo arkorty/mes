@@ -1,64 +1,122 @@
-<div align="center"><strong>Next.js 15 Admin Dashboard Template</strong></div>
-<div align="center">Built with the Next.js App Router</div>
-<br />
-<div align="center">
-<a href="https://next-admin-dash.vercel.app/">Demo</a>
-<span> · </span>
-<a href="https://vercel.com/templates/next.js/admin-dashboard-tailwind-postgres-react-nextjs">Clone & Deploy</a>
-<span>
-</div>
+# Admin Dashboard
+
+A modern, responsive admin dashboard built with Next.js App Router (v15) and Tailwind CSS.
 
 ## Overview
 
-This is a starter template using the following stack:
+This project is a comprehensive admin interface for managing products, orders, users, and categories. It features a clean, intuitive UI powered by Next.js and styled with Tailwind CSS.
 
-- Framework - [Next.js (App Router)](https://nextjs.org)
-- Language - [TypeScript](https://www.typescriptlang.org)
-- Auth - [Auth.js](https://authjs.dev)
-- Database - [Postgres](https://vercel.com/postgres)
-- Deployment - [Vercel](https://vercel.com/docs/concepts/next.js/overview)
-- Styling - [Tailwind CSS](https://tailwindcss.com)
-- Components - [Shadcn UI](https://ui.shadcn.com/)
-- Analytics - [Vercel Analytics](https://vercel.com/analytics)
-- Formatting - [Prettier](https://prettier.io)
+## Tech Stack
 
-This template uses the new Next.js App Router. This includes support for enhanced layouts, colocation of components, tests, and styles, component-level data fetching, and more.
+- **Next.js 15** (App Router)
+- **Tailwind CSS** for styling
+- **TypeScript** for type safety
+- **React** for UI components
+
+## Features
+
+- **Dashboard**: Overview of key metrics and stats
+- **Products Management**: Add, edit, and delete products
+- **Order Processing**: View and manage customer orders
+- **User Management**: Manage user accounts and permissions
+- **Category Management**: Organize products into categories
+- **Responsive Design**: Works on desktop and mobile devices
+- **Loading States**: Visual feedback during navigation and operations
 
 ## Getting Started
 
-During the deployment, Vercel will prompt you to create a new Postgres database. This will add the necessary environment variables to your project.
+### Prerequisites
 
-Inside the Vercel Postgres dashboard, create a table based on the schema defined in this repository.
+- Node.js 18+ (or the version recommended for Next.js 15)
+- npm or yarn or pnpm
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone [repository-url]
+   cd admin-dashboard
+   ```
+
+2. Install dependencies
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. Run the development server
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Environment Variables
+
+Create a `.env.local` file in the root directory and add the following variables:
 
 ```
-CREATE TYPE status AS ENUM ('active', 'inactive', 'archived');
-
-CREATE TABLE products (
-  id SERIAL PRIMARY KEY,
-  image_url TEXT NOT NULL,
-  name TEXT NOT NULL,
-  status status NOT NULL,
-  price NUMERIC(10, 2) NOT NULL,
-  stock INTEGER NOT NULL,
-  available_at TIMESTAMP NOT NULL
-);
+DATABASE_URL=your_database_connection_string
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-Then, uncomment `app/api/seed.ts` and hit `http://localhost:3000/api/seed` to seed the database with products.
+## Deployment
 
-Next, copy the `.env.example` file to `.env` and update the values. Follow the instructions in the `.env.example` file to set up your GitHub OAuth application.
+This project can be deployed using [Vercel](https://vercel.com/), the creators of Next.js:
 
 ```bash
-npm i -g vercel
-vercel link
-vercel env pull
+npm install -g vercel
+vercel
 ```
 
-Finally, run the following commands to start the development server:
+## Usage
 
-```
-pnpm install
-pnpm dev
-```
+### Authentication
 
-You should now be able to access the application at http://localhost:3000.
+Access the admin dashboard by navigating to `/admin/login` and entering your credentials.
+
+### Dashboard
+
+The main dashboard at `/admin` shows key metrics and provides navigation to all sections.
+
+### Managing Products
+
+Add, edit, or remove products through the `/admin/products` section.
+
+### Processing Orders
+
+View and manage customer orders in the `/admin/orders` section.
+
+### User Management
+
+Manage user accounts and permissions in the `/admin/users` section.
+
+## Customization
+
+### Styling
+
+This project uses Tailwind CSS for styling. Modify the `tailwind.config.js` file to customize the theme:
+
+```js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3B82F6',
+        secondary: '#10B981',
+        // Add your custom colors
+      },
+      // Add other theme customizations
+    },
+  },
+  // ...
+};
+```

@@ -1,0 +1,14 @@
+module.exports = {
+    apps: [
+      {
+        name: "mes-client",
+        script: "npm",
+        args: "run preview",
+        env: {
+          NODE_ENV: "production",
+          PORT: 3999 
+        }
+      }
+    ]
+  }
+  
