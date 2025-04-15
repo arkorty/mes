@@ -53,9 +53,50 @@ const WishlistPage: React.FC = () => {
                   className="bg-blue-600 text-white rounded-xl py-2 hover:bg-blue-700 flex items-center justify-center gap-2"
                   onClick={() => handleAddToCart(item)}
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  
                   Add to Cart
                 </button>
+
+
+                  {/* <button
+                                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                                    onClick={async () => {
+                                      
+                                      dispatch(
+                                        addToCart({
+                                          id: product.id,
+                                          name: product.name,
+                                          price: product.price,
+                                          image: product.image || fallbackImage,
+                                        })
+                                      );
+                
+                                      const userId = localStorage.getItem("userId");
+                
+                                      if (!userId) {
+                                        console.warn("User ID not found in localStorage.");
+                                        return;
+                                      }
+                
+                                      // Call backend API to sync with server
+                                      try {
+                                        await addToCartAPI({
+                                          productId: product.id,
+                                          productVariationId: "", 
+                                          quantity: 1,
+                                          userId: userId, 
+                                        });
+                                      } catch (error) {
+                                        console.error("Failed to add to cart on backend:", error);
+                                      }
+                                    }}
+                                  >
+                                    <ShoppingCart className="h-5 w-5" />
+                                  Add to Cart
+                                </button> */}
+
+
+
 
                 <button
                   className="bg-red-100 text-red-500 rounded-xl py-2 hover:bg-red-200"

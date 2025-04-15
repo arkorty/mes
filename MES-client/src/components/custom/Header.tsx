@@ -175,32 +175,7 @@ useEffect(() => {
           </div>
 
 
-          {/* User & Store Icons */}
-
-          {!isLoggedIn ? (
-              <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/auth")}>
-                <User className="h-5 w-5" />
-                <span className="hidden md:block">Sign In</span>
-              </button>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  {/* Optional: Show user image if available */}
-                  {user?.picture ? (
-                    <img
-                      src={user.picture}
-                      alt="User"
-                      className="w-8 h-8 rounded-full border border-white"
-                    />
-                  ) : (
-                    <LogOut className="h-5 w-5" />
-                  )}
-                  <button onClick={handleSignOut} className="hidden md:block text-sm font-medium hover:underline">
-                    Sign Out
-                  </button>
-                </div>
-              )}
-
-
+          
 
 
           <button className="flex items-center space-x-1 cursor-pointer"
@@ -231,7 +206,7 @@ useEffect(() => {
               <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-5 w-5" />
                 {cartQuantity > 0 && (
-                  <span className="absolute top-[50px] right-[36px] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                  <span className="absolute top-[50px] right-[9.3rem] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                     {cartQuantity}
                   </span>
                 )}
@@ -239,6 +214,35 @@ useEffect(() => {
               </button>
             </>
           )}
+
+
+
+          {/* User & Store Icons */}
+
+          {!isLoggedIn ? (
+              <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/auth")}>
+                <User className="h-5 w-5" />
+                <span className="hidden md:block">Sign In</span>
+              </button>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  {/* Optional: Show user image if available */}
+                  {user?.picture ? (
+                    <img
+                      src={user.picture}
+                      alt="User"
+                      className="w-8 h-8 rounded-full border border-white"
+                    />
+                  ) : (
+                    <LogOut className="h-5 w-5" />
+                  )}
+                  <button onClick={handleSignOut} className="hidden md:block text-sm font-medium hover:underline -ml-2">
+                    Sign Out
+                  </button>
+                </div>
+              )}
+
+
 
 
         </div>

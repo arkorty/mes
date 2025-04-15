@@ -22,10 +22,11 @@ import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
+import { addToCart as addToCartAPI } from "../../api/index"
 
 // Define Product Type
 interface Product {
-  id: number | string;
+  id: string;
   name: string;
   price: number;
   image: string;
@@ -250,7 +251,7 @@ const isInWishlist = (id: string | number) =>
               </Link>
 
               <div className="w-[86%] mx-auto flex justify-between">
-                <button
+                {/* <button
                   className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
                   onClick={() =>
                     dispatch(
@@ -262,7 +263,42 @@ const isInWishlist = (id: string | number) =>
                       })
                     )
                   }
-                >
+                  
+                > */}
+
+                  <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={async () => {
+                      
+                      dispatch(
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image || fallbackImage,
+                        })
+                      );
+
+                      const userId = localStorage.getItem("userId");
+
+                      if (!userId) {
+                        console.warn("User ID not found in localStorage.");
+                        return;
+                      }
+
+                      // Call backend API to sync with server
+                      try {
+                        await addToCartAPI({
+                          productId: product.id,
+                          productVariationId: product.id, 
+                          quantity: 1,
+                          userId: userId, 
+                        });
+                      } catch (error) {
+                        console.error("Failed to add to cart on backend:", error);
+                      }
+                    }}
+                  >
                   Add to Cart
                 </button>
 

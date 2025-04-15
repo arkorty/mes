@@ -12,7 +12,7 @@ import { addToCart } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios"
-
+import { addToCart as addToCartAPI } from "../../api/index"
 
 
 
@@ -319,8 +319,41 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700"
-            onClick={() => dispatch(addToCart({ id: productpp.id, name: productpp.name, price: productpp.price, image: productpp.image }))}>ADD TO CART</Button>
+          <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={async () => {
+                      
+                      dispatch(
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image || '/src/assets/Shop/product.png',
+                        })
+                      );
+
+                      const userId = localStorage.getItem("userId");
+
+                      if (!userId) {
+                        console.warn("User ID not found in localStorage.");
+                        return;
+                      }
+
+                      // Call backend API to sync with server
+                      try {
+                        await addToCartAPI({
+                          productId: product.id,
+                          productVariationId: product.id, 
+                          quantity: 1,
+                          userId: userId, 
+                        });
+                      } catch (error) {
+                        console.error("Failed to add to cart on backend:", error);
+                      }
+                    }}
+                  >
+                  Add to Cart
+                </button>
 
           {/* <Button
             className={`flex-1 ${isInCart(product.id.toString()) ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}`}
