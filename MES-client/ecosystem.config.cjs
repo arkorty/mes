@@ -6,7 +6,7 @@ module.exports = {
       args: "preview --port 3999",
       env: {
         NODE_ENV: "production",
-        PORT: 3999
+        PORT: 4175
       }
     }
   ]
