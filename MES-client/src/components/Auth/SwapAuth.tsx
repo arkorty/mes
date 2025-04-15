@@ -1,14 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  ArrowRight,
-  Mail,
-  Lock,
-  User,
-  Github,
-  Twitter,
-  ChevronLeft,
-} from "lucide-react";
+import {  ArrowRight,  Mail,  Lock,  User,  ChevronLeft,} from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";

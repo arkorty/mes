@@ -209,40 +209,36 @@ useEffect(() => {
             <span className="hidden md:block">My Store</span>
           </button>
 
-          <button className="hidden md:flex items-center space-x-1 cursor-pointer">
+          {/* <button className="hidden md:flex items-center space-x-1 cursor-pointer">
             <HelpCircle className="h-5 w-5 " />
             <span>Support</span>
-          </button>
-
+          </button> */}
 
 
 
           {isLoggedIn && (
-  <>
-    <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
-      <Heart className="h-5 w-5" />
-      {wishlistCount > 0 && (
-        <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
-          {wishlistCount}
-        </span>
-      )}
-      <span>Wishlist</span>
-    </button>
+            <>
+              <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
+                <Heart className="h-5 w-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                    {wishlistCount}
+                  </span>
+                )}
+                <span>Wishlist</span>
+              </button>
 
-    <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
-      <ShoppingCart className="h-5 w-5" />
-      {cartQuantity > 0 && (
-        <span className="absolute top-[50px] right-[36px] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
-          {cartQuantity}
-        </span>
-      )}
-      <span className="hidden md:block">Cart</span>
-    </button>
-  </>
+              <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
+                <ShoppingCart className="h-5 w-5" />
+                {cartQuantity > 0 && (
+                  <span className="absolute top-[50px] right-[36px] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                    {cartQuantity}
+                  </span>
+                )}
+                <span className="hidden md:block">Cart</span>
+              </button>
+            </>
           )}
-
-
-
 
 
         </div>
