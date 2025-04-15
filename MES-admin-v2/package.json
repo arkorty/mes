@@ -1,9 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --port 5173 --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start --port 5173"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.5",

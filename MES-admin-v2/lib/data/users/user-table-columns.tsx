@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { deleteUser } from 'app/api/users';
+import { URL_ROUTES } from 'constants/urls.routes';
 import { MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { Column } from 'types/data-table.types';
@@ -48,7 +49,7 @@ export const userTableColumns: Column<any>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={`/users/${user._id}`}>Edit</Link>
+            <Link href={URL_ROUTES.userEdit(user._id)}>Edit</Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={async () => await deleteUser(user._id)}>
             Delete
