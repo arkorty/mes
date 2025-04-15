@@ -1,5 +1,6 @@
 'use client';
 
+import { URL_ROUTES } from 'constants/urls.routes';
 import { Eye } from 'lucide-react';
 import Link from 'next/link';
 import { Column } from 'types/data-table.types';
@@ -34,7 +35,7 @@ export const orderTableColumns: Column<any>[] = [
     label: 'Actions',
     accessor: 'id',
     render: (item: any) => (
-      <Link href={`/orders/${item._id}`}>
+      <Link href={URL_ROUTES.orderView(item._id)}>
         <Eye className="w-4 h-4" />
         <span className="sr-only">Edit</span>
       </Link>

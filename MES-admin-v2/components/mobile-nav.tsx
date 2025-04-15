@@ -8,6 +8,7 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet';
 import { APP_NAME } from 'constants/strings';
+import { URL_ROUTES } from 'constants/urls.routes';
 import {
   ChartColumnStacked,
   Package,
@@ -34,28 +35,28 @@ const MobileNav = () => {
           </SheetHeader>
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="/orders"
+              href={URL_ROUTES.orders}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
             >
               <ShoppingCart className="h-5 w-5" />
               Orders
             </Link>
             <Link
-              href="/products"
+              href={URL_ROUTES.products}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
             >
               <Package className="h-5 w-5" />
               Products
             </Link>
             <Link
-              href="/users"
+              href={URL_ROUTES.users}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
             >
               <Users2 className="h-5 w-5" />
               Users
             </Link>
             <Link
-              href="/categories"
+              href={URL_ROUTES.categories}
               className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
             >
               <ChartColumnStacked className="h-5 w-5" />

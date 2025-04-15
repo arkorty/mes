@@ -2,6 +2,7 @@ import CategoryTree from '@/components/category-tree';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getCategories } from 'app/api/categories';
+import { URL_ROUTES } from 'constants/urls.routes';
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -17,7 +18,7 @@ export default async function ViewCategories() {
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
             <Button size="sm" className="h-8 gap-1" asChild>
-              <Link href="/categories/add">
+              <Link href={URL_ROUTES.categoryAdd}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add Category
