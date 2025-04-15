@@ -16,8 +16,9 @@ export default function Error({
 
   return (
     <main className="p-4 md:p-6">
-      <div className="mb-8 space-y-4">
-        <h1>Error Page</h1>
+      <div className="mb-8 space-y-8">
+        <h1 className='text-3xl'>Error Page</h1>
+        <p>Something went wrong</p>
       </div>
     </main>
   );

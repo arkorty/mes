@@ -7,6 +7,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { deleteCategory } from 'app/api/categories';
+import { URL_ROUTES } from 'constants/urls.routes';
 import { Pencil, Trash } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -47,7 +48,7 @@ export default function CategoryTree({ categories }: { categories: any[] }) {
                 </div>
               </div>
               <div className="flex gap-3 mr-3">
-                <Link href={`/categories/${category._id}`}>
+                <Link href={URL_ROUTES.categoryEdit(category._id)}>
                   <Pencil className="h-4 w-4" />
                   <span className="sr-only">Edit {category.name}</span>
                 </Link>

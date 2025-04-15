@@ -1,9 +1,8 @@
 import MobileNav from '@/components/mobile-nav';
 import DesktopNav from '@/components/desktop-nav';
 import DashboardBreadcrumb from '@/components/dashboard-breadcrumb';
-import { ReactNode } from 'react';
-import Providers from 'app/(dashboard)/providers';
-import { SearchInput } from '@/components/search';
+import { ReactNode, Suspense } from 'react';
+import Providers from 'app/providers';
 import { User } from '@/components/user';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -18,6 +17,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             {/* <SearchInput /> */}
             <User />
           </header>
+
           <main className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-4 bg-muted/40">
             {children}
           </main>

@@ -11,6 +11,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { Column } from 'types/data-table.types';
 import Link from 'next/link';
 import { deleteProduct } from 'app/api/products';
+import { URL_ROUTES } from 'constants/urls.routes';
 
 export const productTableColumns: Column<any>[] = [
   {
@@ -57,7 +58,7 @@ export const productTableColumns: Column<any>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={`/products/${item.id}`}>Edit</Link>
+            <Link href={URL_ROUTES.productEdit(item.id)}>Edit</Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={async () => await deleteProduct(item.id)}>
             Delete
