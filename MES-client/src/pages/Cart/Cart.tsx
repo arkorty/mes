@@ -135,7 +135,7 @@ const CartPage: React.FC = () => {
   const[cartItems, setCartItems] = useState<any[]>([]);
 
   //const userId: string | null = user?._id ?? ""
-  const userId = localStorage.getItem("userId");
+  const userId  = user?._id ?? ""; // Replace with your user ID logic
   const productVariationId = "67fcb39c3e6a4466499ed6f2";
 
   useEffect(() => {
@@ -158,8 +158,8 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const handleRemove = (id: string ) => {
-    dispatch(removeFromCart(id, userId));
+  const handleRemove = (id: any ) => {
+    dispatch(removeFromCart({id, userId}));
   };
 
   const getTotalPrice = () => {

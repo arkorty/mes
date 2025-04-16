@@ -181,14 +181,14 @@ const cartSlice = createSlice({
       }
       state.totalQuantity += 1;
     },
-    removeFromCart: (state, action: PayloadAction<string | number>) => {
+    removeFromCart: (state, action: PayloadAction<any>) => {
       const itemIndex = state.items.findIndex((item) => item.id === action.payload);
       if (itemIndex !== -1) {
         state.totalQuantity -= state.items[itemIndex].quantity;
         state.items.splice(itemIndex, 1);
       }
     },
-    updateQuantity: (state, action: PayloadAction<{ id: string | number; quantity: number }>) => {
+    updateQuantity: (state, action: PayloadAction<{ id: any; quantity: any ,productVariationId: any, userId: any }>) => {
       const item = state.items.find((item) => item.id === action.payload.id);
       if (item && action.payload.quantity >= 1) {
         state.totalQuantity += action.payload.quantity - item.quantity;
