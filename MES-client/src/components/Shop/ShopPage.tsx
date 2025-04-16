@@ -26,7 +26,7 @@ import { addToCart as addToCartAPI } from "../../api/index"
 
 // Define Product Type
 interface Product {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   image: string;
@@ -238,8 +238,8 @@ const isInWishlist = (id: string | number) =>
         <h1 className="text-2xl font-bold mb-4">Men's Gears</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="border-1 border-[#E9E9E9] rounded-lg shadow-lg pb-2 ">
-              <Link className=" flex-col flex items-center text-balance" to={`/product/${product.id}`}>
+            <div key={product._id} className="border-1 border-[#E9E9E9] rounded-lg shadow-lg pb-2 ">
+              <Link className=" flex-col flex items-center text-balance" to={`/product/${product._id}`}>
                 <img
                   src={product.image || fallbackImage}
                   alt={product.name}
@@ -272,7 +272,7 @@ const isInWishlist = (id: string | number) =>
                       
                       dispatch(
                         addToCart({
-                          id: product.id,
+                          id: product._id,
                           name: product.name,
                           price: product.price,
                           image: product.image || fallbackImage,
@@ -289,8 +289,8 @@ const isInWishlist = (id: string | number) =>
                       // Call backend API to sync with server
                       try {
                         await addToCartAPI({
-                          productId: product.id,
-                          productVariationId: product.id, 
+                          productId: product._id,
+                          productVariationId: product._id, 
                           quantity: 1,
                           userId: userId, 
                         });
@@ -305,12 +305,12 @@ const isInWishlist = (id: string | number) =>
                 <button
                   className="cursor-pointer mt-3"
                   onClick={() => {
-                    if (isInWishlist(product.id)) {
-                      dispatch(removeFromWishlist(product.id));
+                    if (isInWishlist(product._id)) {
+                      dispatch(removeFromWishlist(product._id));
                     } else {
                       dispatch(
                         addToWishlist({
-                          id: product.id,
+                          id: product._id,
                           name: product.name,
                           price: product.price,
                           image: product.image || fallbackImage,
@@ -321,7 +321,7 @@ const isInWishlist = (id: string | number) =>
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isInWishlist(product.id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
+                      isInWishlist(product._id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
                     }`}
                   />
                 </button>

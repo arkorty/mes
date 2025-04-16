@@ -135,7 +135,7 @@ const CartPage: React.FC = () => {
   const[cartItems, setCartItems] = useState<any[]>([]);
 
   //const userId: string | null = user?._id ?? ""
-  const userId  = user?._id ?? ""; // Replace with your user ID logic
+  const userId  = user?._id ?? ""; 
   const productVariationId = "67fcb39c3e6a4466499ed6f2";
 
   useEffect(() => {

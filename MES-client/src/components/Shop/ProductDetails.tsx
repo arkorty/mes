@@ -325,10 +325,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                       
                       dispatch(
                         addToCart({
-                          id: product?.id,
-                          name: product?.name,
-                          price: product?.price,
-                          image: product?.image || '/src/assets/Shop/product.png',
+                          id: product._id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image || '/src/assets/Shop/product.png',
                         })
                       );
 
@@ -342,8 +342,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                       // Call backend API to sync with server
                       try {
                         await addToCartAPI({
-                          productId: product?.id,
-                          productVariationId: product?.id, 
+                          productId: product._id,
+                          productVariationId: product._id, 
                           quantity: 1,
                           userId: userId, 
                         });
