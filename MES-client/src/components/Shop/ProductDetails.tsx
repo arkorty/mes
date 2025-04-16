@@ -162,8 +162,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             className="relative bg-gray-100 aspect-auto overflow-hidden"
           >
             <img
-              src={selectedImage === 0 ? product.image : productpp.additionalImages[selectedImage - 1]}
-              alt={productpp.name}
+              src={selectedImage === 0 ? product?.image : productpp?.additionalImages[selectedImage - 1]}
+              alt={productpp?.name}
               className="object-contain w-full h-full transition-all duration-300 hover:scale-105"
             />
           </motion.div>
@@ -247,37 +247,37 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
         <div className="space-y-6">
           {/* Brand and Title */}
           <div>
-            <h2 className="text-lg font-bold uppercase">{product.brand}</h2>
-            <h1 className="text-xl font-medium mt-1">{productpp.name}</h1>
+            <h2 className="text-lg font-bold uppercase">{product?.brand}</h2>
+            <h1 className="text-xl font-medium mt-1">{productpp?.name}</h1>
           </div>
           <div>
-            <div className="text-base font-normal text-gray-800 ">{product.shortDescription}</div>
-            <div  className="text-base font-normal text-gray-800 ">{product.description}</div>
+            <div className="text-base font-normal text-gray-800 ">{product?.shortDescription}</div>
+            <div  className="text-base font-normal text-gray-800 ">{product?.description}</div>
           </div>
 
           {/* Rating */}
           <div className="flex items-center gap-1">
             <div className="flex">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(5)]?.map((_, i) => (
                 <Star
                   key={i}
                   className={cn(
                     "h-4 w-4",
-                    i < Math.floor(productpp.rating) ? "fill-green-600 text-green-600" : "fill-gray-300 text-gray-300",
+                    i < Math.floor(productpp?.rating) ? "fill-green-600 text-green-600" : "fill-gray-300 text-gray-300",
                   )}
                 />
               ))}
             </div>
-            <span className="text-sm ml-1">{productpp.rating}/5</span>
+            <span className="text-sm ml-1">{productpp?.rating}/5</span>
           </div>
 
           {/* Price */}
           <div className="flex items-center gap-3">
-            <span className="text-xl font-bold">${product.price}</span>
-            {productpp.originalPrice && (
+            <span className="text-xl font-bold">${product?.price}</span>
+            {productpp?.originalPrice && (
               <>
-                <span className="text-gray-500 line-through">${productpp.originalPrice}</span>
-                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{productpp.discount}% OFF</span>
+                <span className="text-gray-500 line-through">${productpp?.originalPrice}</span>
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{productpp?.discount}% OFF</span>
               </>
             )}
           </div>
@@ -289,10 +289,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
               {productpp.availableColors?.map((color) => (
                 <button
                   key={color.value}
-                  onClick={() => setSelectedColor(color.value)}
-                  className={cn("w-8 h-8 rounded-sm border", selectedColor === color.value ? "ring-2 ring-black" : "")}
-                  style={{ backgroundColor: color.value }}
-                  aria-label={`Select ${color.name} color`}
+                  onClick={() => setSelectedColor(color?.value)}
+                  className={cn("w-8 h-8 rounded-sm border", selectedColor === color?.value ? "ring-2 ring-black" : "")}
+                  style={{ backgroundColor: color?.value }}
+                  aria-label={`Select ${color?.name} color`}
                 />
               ))}
             </div>
@@ -325,10 +325,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                       
                       dispatch(
                         addToCart({
-                          id: product.id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || '/src/assets/Shop/product.png',
+                          id: product?.id,
+                          name: product?.name,
+                          price: product?.price,
+                          image: product?.image || '/src/assets/Shop/product.png',
                         })
                       );
 
@@ -342,8 +342,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                       // Call backend API to sync with server
                       try {
                         await addToCartAPI({
-                          productId: product.id,
-                          productVariationId: product.id, 
+                          productId: product?.id,
+                          productVariationId: product?.id, 
                           quantity: 1,
                           userId: userId, 
                         });
@@ -375,24 +375,24 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
 
             <Button
-            variant={isInWishlist(productpp.id) ? "default" : "outline"}
+            variant={isInWishlist(productpp?.id) ? "default" : "outline"}
             className="flex-1"
             onClick={() => {
-              if (isInWishlist(productpp.id)) {
-                dispatch(removeFromWishlist(productpp.id));
+              if (isInWishlist(productpp?.id)) {
+                dispatch(removeFromWishlist(productpp?.id));
               } else {
                 dispatch(
                   addToWishlist({
-                    id: productpp.id,
-                    name: productpp.name,
-                    price: productpp.price,
-                    image: productpp.image,
+                    id: productpp?.id,
+                    name: productpp?.name,
+                    price: productpp?.price,
+                    image: productpp?.image,
                   })
                 );
               }
             }}
           >
-            {isInWishlist(productpp.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
+            {isInWishlist(productpp?.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
           </Button>
           
           </div>
@@ -498,12 +498,12 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                   <div className="flex flex-col items-center">
                     <h3 className="text-3xl font-bold">{calculateAverageRating()}</h3>
                     <div className="flex my-2">
-                      {[...Array(5)].map((_, i) => (
+                      {[...Array(5)]?.map((_, i) => (
                         <Star
                           key={i}
                           className={cn(
                             "h-4 w-4",
-                            i < Math.floor(productpp.rating) ? "fill-black text-black" : "fill-gray-200 text-gray-200",
+                            i < Math.floor(productpp?.rating) ? "fill-black text-black" : "fill-gray-200 text-gray-200",
                           )}
                         />
                       ))}
@@ -549,7 +549,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                             key={i}
                             className={cn(
                               "h-4 w-4",
-                              i < review.rating ? "fill-black text-black" : "fill-gray-200 text-gray-200",
+                              i < review?.rating ? "fill-black text-black" : "fill-gray-200 text-gray-200",
                             )}
                           />
                         ))}
@@ -557,7 +557,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                       {/* Rating Categories */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        {Object.entries(review.ratings).map(([key, value] : [string, number]) => (
+                        {Object.entries(review?.ratings).map(([key, value] : [string, number]) => (
                           <div key={key} className="flex flex-col items-center">
                             <div className="relative w-16 h-16">
                               <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
@@ -573,7 +573,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                               </div>
                             </div>
                             <span className="text-xs text-gray-500 mt-2 capitalize">
-                              {key.replace(/([A-Z])/g, " $1").toLowerCase()}
+                              {key.replace(/([A-Z])/g, " $1")?.toLowerCase()}
                             </span>
                           </div>
                         ))}
@@ -581,16 +581,16 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                       {/* Reviewer Info */}
                       <div>
-                        <h4 className="font-medium">{review.userName}</h4>
+                        <h4 className="font-medium">{review?.userName}</h4>
                         <div className="flex flex-wrap gap-x-4 gap-y-2 mt-1 text-sm">
-                          {review.verified && (
+                          {review?.verified && (
                             <div className="flex items-center gap-1">
                               <span className="bg-black rounded-full w-3 h-3"></span>
                               <span>Verified Purchase</span>
                             </div>
                           )}
-                          <span className="text-gray-500">{review.date}</span>
-                          <span className="text-gray-500">{review.location}</span>
+                          <span className="text-gray-500">{review?.date}</span>
+                          <span className="text-gray-500">{review?.location}</span>
                         </div>
                       </div>
                     </div>

@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev --port 5173 --turbopack",
+    "dev": "next dev --port 5174 --turbopack",
     "build": "next build",
     "start": "next start --port 3998"
   },
