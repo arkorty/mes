@@ -48,10 +48,42 @@ export class ProductService implements IProductService {
         query.categoryId = category; // Assuming categoryId is the field in Product model
       }
 
-      const totalProducts = await Product.countDocuments(query);
-      const products = await Product.find(query)
-        .skip((currentPage - 1) * limit)
-        .limit(limit);
+      const aggregationPipeline: any[] = [
+        { $match: query },
+        {
+          $lookup: {
+            from: "productvariations", // lowercase collection name
+            let: { productId: "$_id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$product", "$$productId"] },
+                      { $eq: ["$isBaseVariation", true] }
+                    ]
+                  }
+                }
+              },
+              { $limit: 1 }
+            ],
+            as: "baseVariation"
+          }
+        },
+        {
+          $addFields: {
+            baseVariationId: { $arrayElemAt: ["$baseVariation._id", 0] }
+          }
+        },
+        { $project: { baseVariation: 0 } },
+        { $skip: (currentPage - 1) * limit },
+        { $limit: limit }
+      ];
+  
+      const [products, totalProducts] = await Promise.all([
+        Product.aggregate(aggregationPipeline),
+        Product.countDocuments(query)
+      ]);
 
       return {
         total: totalProducts,

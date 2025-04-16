@@ -44,6 +44,8 @@ const ProductVariationSchema = new mongoose.Schema<IProductVariation>(
     },    
   );
 
+  ProductVariationSchema.index({ product: 1, isBaseVariation: 1 });
+
  export const ProductVariation=mongoose.model<IProductVariation>('ProductVariation',ProductVariationSchema)
 
 
