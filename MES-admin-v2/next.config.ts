@@ -1,4 +1,5 @@
 export default {
+  assetPrefix: '/admin',
   images: {
     remotePatterns: [
       {

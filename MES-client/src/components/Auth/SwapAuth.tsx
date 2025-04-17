@@ -1,41 +1,42 @@
-import { useState } from "react"
-import { motion } from "framer-motion"
-import { ArrowRight, Mail, Lock, User, Github, Twitter, ChevronLeft } from "lucide-react"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Label } from "../ui/label"
-import { useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { motion } from "framer-motion";
+import {  ArrowRight,  Mail,  Lock,  User,  ChevronLeft,} from "lucide-react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { useNavigate } from "react-router-dom";
 //import axios from "axios"
-import { FormEvent } from "react"
-import { registerUser, loginUser } from '../../api/index';
-import { toast } from 'react-toastify';
-
+import { FormEvent } from "react";
+import { registerUser, loginUser } from "../../api/index";
+import { toast } from "react-toastify";
+import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
 
 export default function SwapAuth() {
-  const [isSignUp, setIsSignUp] = useState(false)
+  const [, setUser] = useAtom(userAtom)
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const toggleForm = () => {
-    setIsSignUp(!isSignUp)
-  }
+    setIsSignUp((prev) => !prev);
+  };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [signUpData, setSignUpData] = useState({
-    name: '',
-    email: '',
-    mobile: '',
-    password: '',
+    name: "",
+    email: "",
+    mobile: "",
+    password: "",
     role: 1,
-    address: '',
-    picture: ''
+    address: "",
+    picture: "",
   });
   // SignIn State
   const [signInData, setSignInData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
-  
   const handleSignUpSubmit = async (
     e: FormEvent<HTMLFormElement>,
     signUpData: {
@@ -49,55 +50,57 @@ export default function SwapAuth() {
     }
   ) => {
     e.preventDefault();
-  
 
-  
     const { data, error } = await registerUser({
       ...signUpData,
       role: signUpData.role || 1,
       address: signUpData.address || "",
-      picture: signUpData.picture || ""
+      picture: signUpData.picture || "",
     });
-  
+
     if (error) {
       console.error("Sign Up Error:", error);
       toast.error(error);
-    } else {
-      console.log("User Registered:", data);
-      if (data?.token) {
-        localStorage.setItem("token", data.data.token);
-      }
-  
-      toast.success("Account created successfully!");
-      navigate('/'); // Navigate to home page
+      return;
     }
+    
+    console.log("User Registered:", data);
+
+    localStorage.setItem("user", data.data.user);
+    setUser(data.data.user)
+    if (data?.token) {
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("userId", data.data.user._id);
+    }
+
+    toast.success("Account created successfully!");
+    navigate("/");
   };
- 
 
   // Handle SignIn Submit
-    const handleSignInSubmit = async (
-    e: FormEvent<HTMLFormElement>, 
+  const handleSignInSubmit = async (
+    e: FormEvent<HTMLFormElement>,
     signInData: { email: string; password: string }
   ) => {
     e.preventDefault();
-    
-  
+
     const { data, error } = await loginUser(signInData);
-  
+
     if (error) {
-      console.error("Sign In Error:", error);
-      toast.error(error); 
-    } else {
-      //console.log("User Logged In:",data);
+      toast.error(error);
+      return;
+    } 
+      console.log("User Logged In:", data);
       // Optionally store token or user info here:
-       localStorage.setItem('token', data.data.token);
-  
-      toast.success("Welcome back!"); 
-      navigate('/');  // Navigate to home page
-    }
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("userId", data.data.user._id);
+
+      localStorage.setItem("user", data.data.user);
+      setUser(data.data.user)
+      toast.success("Welcome back!");
+      navigate("/"); // Navigate to home page
+
   };
-
-
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
@@ -120,7 +123,9 @@ export default function SwapAuth() {
                 initial={{ opacity: 1 }}
                 animate={{ opacity: isSignUp ? 0 : 1 }}
                 transition={{ duration: 0.3 }}
-                className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${isSignUp ? "pointer-events-none" : ""}`}
+                className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${
+                  isSignUp ? "pointer-events-none" : ""
+                }`}
               >
                 <button
                   onClick={() => navigate(-1)}
@@ -130,7 +135,10 @@ export default function SwapAuth() {
                 </button>
 
                 <h2 className="mb-6 text-3xl font-bold">Welcome Back!</h2>
-                <p className="mb-8">Sign in to access your account and continue your journey with us</p>
+                <p className="mb-8">
+                  Sign in to access your account and continue your journey with
+                  us
+                </p>
                 <Button
                   variant="outline"
                   className="border-white text-blue-800 white hover:bg-white hover:text-blue-600 cursor-pointer"
@@ -149,7 +157,9 @@ export default function SwapAuth() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isSignUp ? 1 : 0 }}
                 transition={{ duration: 0.3 }}
-                className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${isSignUp ? "" : "pointer-events-none"}`}
+                className={`absolute inset-0 flex flex-col items-center justify-center p-8 ${
+                  isSignUp ? "" : "pointer-events-none"
+                }`}
               >
                 <button
                   onClick={() => navigate(-1)}
@@ -159,7 +169,9 @@ export default function SwapAuth() {
                 </button>
 
                 <h2 className="mb-6 text-3xl font-bold">Hello, Friend!</h2>
-                <p className="mb-8">Already have an account? Sign in to continue your experience</p>
+                <p className="mb-8">
+                  Already have an account? Sign in to continue your experience
+                </p>
                 <Button
                   variant="outline"
                   className="border-white text-blue-800 hover:bg-white hover:text-blue-600 cursor-pointer"
@@ -209,15 +221,34 @@ export default function SwapAuth() {
                   </Button>
                 </div>
 
-                <h2 className="mb-6 text-3xl font-bold text-gray-900">Sign In</h2>
-                <p className="mb-8 text-gray-600">Please sign in to your account</p>
+                <h2 className="mb-6 text-3xl font-bold text-gray-900">
+                  Sign In
+                </h2>
+                <p className="mb-8 text-gray-600">
+                  Please sign in to your account
+                </p>
 
-                <form onSubmit={(e) => handleSignInSubmit(e, signInData)} className="space-y-4">
+                <form
+                  onSubmit={(e) => handleSignInSubmit(e, signInData)}
+                  className="space-y-4"
+                >
                   <div className="space-y-2 ">
                     <Label htmlFor="email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-2 h-5 w-5 text-gray-400" />
-                      <Input id="email" type="email" placeholder="Enter your email" className="pl-10" value={signInData.email} onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}  />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        className="pl-10"
+                        value={signInData.email}
+                        onChange={(e) =>
+                          setSignInData({
+                            ...signInData,
+                            email: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
 
@@ -225,46 +256,50 @@ export default function SwapAuth() {
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-2 h-5 w-5 text-gray-400" />
-                      <Input id="password" type="password" placeholder="Enter your password" className="pl-10" value={signInData.password} onChange={(e) => setSignInData({ ...signInData, password: e.target.value })} />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        className="pl-10"
+                        value={signInData.password}
+                        onChange={(e) =>
+                          setSignInData({
+                            ...signInData,
+                            password: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="remember" className="h-4 w-4 rounded border-gray-300" />
-                      <label htmlFor="remember" className="text-sm text-gray-600">
+                      <input
+                        type="checkbox"
+                        id="remember"
+                        className="h-4 w-4 rounded border-gray-300"
+                      />
+                      <label
+                        htmlFor="remember"
+                        className="text-sm text-gray-600 cursor-pointer"
+                      >
                         Remember me
                       </label>
                     </div>
-                    <a href="#" className="text-sm text-blue-600 hover:underline">
+                    <a
+                      href="#"
+                      className="text-sm text-blue-600 hover:underline cursor-pointer"
+                    >
                       Forgot password?
                     </a>
                   </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Sign In</Button>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                    Sign In
+                  </Button>
                 </form>
 
-                <div className="mt-6">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="bg-white px-2 text-gray-500">Or continue with</span>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex gap-3">
-                    <Button variant="outline" className="w-full">
-                      <Github className="mr-2 h-4 w-4" />
-                      Github
-                    </Button>
-                    <Button variant="outline" className="w-full">
-                      <Twitter className="mr-2 h-4 w-4" />
-                      Twitter
-                    </Button>
-                  </div>
-                </div>
+                
               </motion.div>
             </div>
           </motion.div>
@@ -302,15 +337,31 @@ export default function SwapAuth() {
                   </Button>
                 </div>
 
-                <h2 className=" mb-4  text-xl md:text-3xl font-bold text-gray-900">Create Account</h2>
-                <p className=" mb-6  text-gray-600">Sign up to get started with our platform</p>
+                <h2 className=" mb-4  text-xl md:text-3xl font-bold text-gray-900">
+                  Create Account
+                </h2>
+                <p className=" mb-6  text-gray-600">
+                  Sign up to get started with our platform
+                </p>
 
-                <form onSubmit={(e) => handleSignUpSubmit(e, signUpData)} className=" space-y-2 md:space-y-4 text-sm md:text-base">
+                <form
+                  onSubmit={(e) => handleSignUpSubmit(e, signUpData)}
+                  className=" space-y-2 md:space-y-4 text-sm md:text-base"
+                >
                   <div className=" space-y-1 md:space-y-2">
                     <Label htmlFor="name">Full Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="name" type="text" placeholder="Enter your name" className="pl-10" value={signUpData.name} onChange={(e) => setSignUpData({ ...signUpData, name: e.target.value })} />
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Enter your name"
+                        className="pl-10"
+                        value={signUpData.name}
+                        onChange={(e) =>
+                          setSignUpData({ ...signUpData, name: e.target.value })
+                        }
+                      />
                     </div>
                   </div>
 
@@ -318,7 +369,19 @@ export default function SwapAuth() {
                     <Label htmlFor="signup-email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="signup-email" type="email" placeholder="Enter your email" className="pl-10" value={signUpData.email} onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })} />
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        className="pl-10"
+                        value={signUpData.email}
+                        onChange={(e) =>
+                          setSignUpData({
+                            ...signUpData,
+                            email: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
 
@@ -326,13 +389,32 @@ export default function SwapAuth() {
                     <Label htmlFor="signup-password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <Input id="signup-password" type="password" placeholder="Create a password" className="pl-10" value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} />
+                      <Input
+                        id="signup-password"
+                        type="password"
+                        placeholder="Create a password"
+                        className="pl-10"
+                        value={signUpData.password}
+                        onChange={(e) =>
+                          setSignUpData({
+                            ...signUpData,
+                            password: e.target.value,
+                          })
+                        }
+                      />
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-2">
-                    <input type="checkbox" id="terms" className="h-4 w-4 rounded border-gray-300" />
-                    <label htmlFor="terms" className="text-sm text-gray-600 mt-2 md:mt-0">
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      className="h-4 w-4 rounded border-gray-300 cursor-pointer"
+                    />
+                    <label
+                      htmlFor="terms"
+                      className="text-sm text-gray-600 mt-2 md:mt-0"
+                    >
                       I agree to the{" "}
                       <a href="#" className="text-blue-600 hover:underline">
                         Terms
@@ -344,37 +426,17 @@ export default function SwapAuth() {
                     </label>
                   </div>
 
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">Create Account</Button>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer">
+                    Create Account
+                  </Button>
                 </form>
 
-                <div className=" mt-2 md:mt-4">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="bg-white px-2 text-gray-500">Or sign up with</span>
-                    </div>
-                  </div>
-
-                  <div className=" mt-2 md:mt-4 flex flex-col md:flex-row gap-3  md:w-full md:justify-between">
-                    <Button variant="outline" className="w-full md:w-[48%]">
-                      <Github className="mr-2 h-4 w-4" />
-                      Github
-                    </Button>
-                    <Button variant="outline" className="w-full md:w-[48%]">
-                      <Twitter className="mr-2 h-4 w-4" />
-                      Twitter
-                    </Button>
-                  </div>
-                </div>
+                
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
     </div>
-  )
+  );
 }
-
-

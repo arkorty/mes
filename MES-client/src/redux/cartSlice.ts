@@ -181,14 +181,14 @@ const cartSlice = createSlice({
       }
       state.totalQuantity += 1;
     },
-    removeFromCart: (state, action: PayloadAction<string | number>) => {
+    removeFromCart: (state, action: PayloadAction<any>) => {
       const itemIndex = state.items.findIndex((item) => item.id === action.payload);
       if (itemIndex !== -1) {
         state.totalQuantity -= state.items[itemIndex].quantity;
         state.items.splice(itemIndex, 1);
       }
     },
-    updateQuantity: (state, action: PayloadAction<{ id: string | number; quantity: number }>) => {
+    updateQuantity: (state, action: PayloadAction<{ id: any; quantity: any ,productVariationId: any, userId: any }>) => {
       const item = state.items.find((item) => item.id === action.payload.id);
       if (item && action.payload.quantity >= 1) {
         state.totalQuantity += action.payload.quantity - item.quantity;
@@ -210,25 +210,25 @@ export default cartSlice.reducer;
 
 
 
+
 // import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import {
-//   getCartDetails as apiGetCartDetails,
-//   addToCart as apiAddToCart,
-//   removeFromCart as apiRemoveFromCart,
-//   updateCart as apiUpdateCart,
+//   getCartDetails as getCartDetailsAPI,
+//   addToCart as addToCartAPI,
+//   removeFromCart as removeFromCartAPI,
+//   updateCart as updateCartAPI,
 // } from "../api/index";
 
-// // ✅ Cart Item type
+// // ✅ Define the type for cart items
 // interface CartItem {
 //   id: string | number;
 //   name: string;
 //   price: number;
 //   quantity: number;
 //   image?: string;
-//   productVariationId: string;
 // }
 
-// // ✅ Cart State
+// // ✅ Define the Cart State type
 // interface CartState {
 //   items: CartItem[];
 //   totalQuantity: number;
@@ -236,6 +236,7 @@ export default cartSlice.reducer;
 //   error: string | null;
 // }
 
+// // ✅ Initial state
 // const initialState: CartState = {
 //   items: [],
 //   totalQuantity: 0,
@@ -243,153 +244,131 @@ export default cartSlice.reducer;
 //   error: null,
 // };
 
-// // ✅ Fetch Cart
-// export const fetchCart = createAsyncThunk("cart/fetchCart", async (userId: string, thunkAPI) => {
-//   const res = await apiGetCartDetails(userId);
-//   if (res.error) {
-//     // If there's an error, return the error message
-//     const errorMessage = res.error?.message || "Something went wrong";
-//     return thunkAPI.rejectWithValue(errorMessage);
+// export const fetchCart = createAsyncThunk(
+//   "cart/fetchCart",
+//   async (userId: string, thunkAPI) => {
+//     const res = await getCartDetailsAPI(userId);
+//     return res.data; // Should return { items: CartItem[], totalQuantity: number }
 //   }
+// );
 
-//   // If no error, return the data (successful response)
-//   return res.data;
-// });
-
-// // ✅ Add to Cart
 // export const addToCart = createAsyncThunk(
-//   "cart/addToCart",
+//   "cart/addItemToCart",
 //   async (
 //     {
-//       userId,
 //       productId,
 //       productVariationId,
 //       quantity,
+//       userId,
 //     }: {
-//       userId: string;
 //       productId: string;
 //       productVariationId: string;
 //       quantity: number;
+//       userId: string;
 //     },
 //     thunkAPI
 //   ) => {
-//     const res = await apiAddToCart({ userId, productId, productVariationId, quantity });
-
-//     // Check for an error
-//     if (res.error) {
-//       // If there's an error, return the error message
-//       const errorMessage = res.error?.message || "Something went wrong";
-//       return thunkAPI.rejectWithValue(errorMessage);
-//     }
-
-//     // If no error, return the data (successful response)
-//     return res.data;
+//     const res = await addToCartAPI({ productId, productVariationId, quantity, userId });
+//     return res.data; // Should return the added CartItem
 //   }
 // );
 
-// // ✅ Remove from Cart
 // export const removeFromCart = createAsyncThunk(
-//   "cart/removeFromCart",
-//   async ({ userId, productId }: { userId: string; productId: string }, thunkAPI) => {
-//     const res = await apiRemoveFromCart({ userId, productId });
-//     if (res.error) {
-//       // If there's an error, return the error message
-//       const errorMessage = res.error?.message || "Something went wrong";
-//       return thunkAPI.rejectWithValue(errorMessage);
-//     }
-
-//     // If no error, return the data (successful response)
-//     return res.data;
-//   }
-// );
-
-// // ✅ Update Cart
-// export const updateCart = createAsyncThunk(
-//   "cart/updateCart",
+//   "cart/removeItemFromCart",
 //   async (
 //     {
-//       userId,
 //       productId,
-//       productVariationId,
-//       quantity,
+//       userId,
 //     }: {
-//       userId: string;
 //       productId: string;
-//       productVariationId: string;
-//       quantity: number;
+//       userId: string;
 //     },
 //     thunkAPI
 //   ) => {
-//     const res = await apiUpdateCart({ userId, productId, productVariationId, quantity });
-//     if (res.error) {
-//       // If there's an error, return the error message
-//       const errorMessage = res.error?.message || "Something went wrong";
-//       return thunkAPI.rejectWithValue(errorMessage);
-//     }
-
-//     // If no error, return the data (successful response)
-//     return res.data;
+//     await removeFromCartAPI({ productId, userId });
+//     return productId;
 //   }
 // );
 
-// // 🧠 Helper to calculate totalQuantity
-// const calculateTotalQuantity = (items: CartItem[]) =>
-//   items.reduce((total, item) => total + item.quantity, 0);
+// export const updateQuantity = createAsyncThunk(
+//   "cart/updateItemQuantity",
+//   async (
+//     {
+//       productId,
+//       productVariationId,
+//       quantity,
+//       userId,
+//     }: {
+//       productId: string;
+//       productVariationId: string;
+//       quantity: number;
+//       userId: string;
+//     },
+//     thunkAPI
+//   ) => {
+//     await updateCartAPI({ productId, productVariationId, quantity, userId });
+//     return { id: productId, quantity };
+//   }
+// );
 
 // const cartSlice = createSlice({
 //   name: "cart",
 //   initialState,
-//   reducers: {},
+//   reducers: {
+//     // Optional local actions
+//     clearCart(state) {
+//       state.items = [];
+//       state.totalQuantity = 0;
+//     },
+//   },
 //   extraReducers: (builder) => {
 //     builder
-//       // ✅ Fetch
+//       // Fetch Cart
 //       .addCase(fetchCart.pending, (state) => {
 //         state.loading = true;
+//         state.error = null;
 //       })
 //       .addCase(fetchCart.fulfilled, (state, action) => {
+//         state.items = action.payload.items;
+//         state.totalQuantity = action.payload.totalQuantity;
 //         state.loading = false;
-//         state.items = action.payload;
-//         state.totalQuantity = calculateTotalQuantity(state.items);
 //       })
 //       .addCase(fetchCart.rejected, (state, action) => {
 //         state.loading = false;
-//         state.error = action.payload as string;
+//         state.error = action.error.message || "Failed to fetch cart";
 //       })
 
-//       // ✅ Add
+//       // Add to Cart
 //       .addCase(addToCart.fulfilled, (state, action) => {
-//         const newItem = action.payload;
-//         const existing = state.items.find(
-//           (i) => i.id === newItem.id && i.productVariationId === newItem.productVariationId
-//         );
-
-//         if (existing) {
-//           existing.quantity += newItem.quantity;
+//         const existingItem = state.items.find((item) => item.id === action.payload.id);
+//         if (existingItem) {
+//           existingItem.quantity += action.payload.quantity;
 //         } else {
-//           state.items.push(newItem);
+//           state.items.push(action.payload);
 //         }
-
-//         state.totalQuantity = calculateTotalQuantity(state.items);
+//         state.totalQuantity += action.payload.quantity;
 //       })
 
-//       // ✅ Remove
+//       // Remove from Cart
 //       .addCase(removeFromCart.fulfilled, (state, action) => {
-//         const productId = action.payload;
-//         state.items = state.items.filter((item) => item.id !== productId);
-//         state.totalQuantity = calculateTotalQuantity(state.items);
+//         const index = state.items.findIndex((item) => item.id === action.payload);
+//         if (index !== -1) {
+//           state.totalQuantity -= state.items[index].quantity;
+//           state.items.splice(index, 1);
+//         }
 //       })
 
-//       // ✅ Update
-//       .addCase(updateCart.fulfilled, (state, action) => {
-//         const updated = action.payload;
-//         const item = state.items.find(
-//           (i) => i.id === updated.id && i.productVariationId === updated.productVariationId
-//         );
-//         if (item) item.quantity = updated.quantity;
-
-//         state.totalQuantity = calculateTotalQuantity(state.items);
+//       // Update Cart Quantity
+//       .addCase(updateQuantity.fulfilled, (state, action) => {
+//         const item = state.items.find((item) => item.id === action.payload.id);
+//         if (item) {
+//           state.totalQuantity += action.payload.quantity - item.quantity;
+//           item.quantity = action.payload.quantity;
+//         }
 //       });
 //   },
 // });
+
+// export const { clearCart } = cartSlice.actions;
 
 // export default cartSlice.reducer;

@@ -19,6 +19,16 @@ export const Register = async(req: Request, res: Response, next: NextFunction): 
   try {
     const { name, email, mobile, password, role = 1, address, picture } = req.body;
 
+    if(!email){
+      res.status(400).json({success:false,message:"Please provide email"});
+    }
+
+    const user = await User.findOne({ email, role: 1 });
+
+    if(user && user.email==email){
+      res.status(400).json({success:false,message:"Email already exists"});
+    }
+
   // Hash the password before savingnodeo
   const hashedPassword = await bcrypt.hash(password, 10);
 

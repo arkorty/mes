@@ -1,17 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Star, MapPin, Truck } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion"
 
 import { cn } from "../../lib/util"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 import prdctdetails from "../../lib/product.json"
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
-
+import axios from "axios"
+import { addToCart as addToCartAPI } from "../../api/index"
 
 
 
@@ -25,6 +26,7 @@ interface Product {
   image: string
   additionalImages: string[]
   description: string
+  shortDescription: string
   category: string
   rating: number
   color?: string
@@ -53,22 +55,48 @@ interface Review {
 const enhancedProducts = prdctdetails;
 
 export default function ProductDetail({ productId = '1' }: { productId?: string }) {
-  const product = enhancedProducts.find((p) => p.id.toString() === productId) || enhancedProducts[0]
+
+  const { id } = useParams(); 
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [similarProducts, setSimilarProducts] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/product/${id}`)
+      .then((res) => {
+        const mainProduct = res.data?.data?._doc;
+        const similar = res.data?.data?.similarProducts || [];
+        setProduct(mainProduct);
+        setSimilarProducts(similar);
+        setLoading(false);
+        console.log(res.data.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching product:", err);
+        setLoading(false);
+      });
+  }, [id]);
+
+
+
+
+  const productpp = enhancedProducts.find((p) => p.id.toString() === productId) || enhancedProducts[0]
   const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedColor, setSelectedColor] = useState(product.availableColors?.[0]?.value || "#000000")
-  const [selectedSize, setSelectedSize] = useState(product.availableSizes?.[0] || "M")
+  const [selectedColor, setSelectedColor] = useState(productpp.availableColors?.[0]?.value || "#000000")
+  const [selectedSize, setSelectedSize] = useState(productpp.availableSizes?.[0] || "M")
 
   // Calculate average ratings
   const calculateAverageRating = (): string => {
-    if (!product.reviews || product.reviews.length === 0) return "0.0";
+    if (!productpp.reviews || productpp.reviews.length === 0) return "0.0";
   
     let total = 0;
   
-    for (const review of product.reviews) {
+    for (const review of productpp.reviews) {
       total += review.rating;
     }
   
-    const average = total / product.reviews.length;
+    const average = total / productpp.reviews.length;
     return average.toFixed(1);
   };
   
@@ -76,24 +104,24 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
   // Calculate rating distribution
   const calculateRatingDistribution = () => {
-    if (!product.reviews || product.reviews.length === 0) return [0, 0, 0, 0, 0]
+    if (!productpp.reviews || productpp.reviews.length === 0) return [0, 0, 0, 0, 0]
     const distribution = [0, 0, 0, 0, 0]
-    product.reviews.forEach((review) => {
+    productpp.reviews.forEach((review) => {
       distribution[5 - review.rating]++
     })
     return distribution
   }
 
   const ratingDistribution = calculateRatingDistribution()
-  const totalReviews = product.reviews?.length || 0
+  const totalReviews = productpp.reviews?.length || 0
 
   // Handle image navigation
   const nextImage = () => {
-    setSelectedImage((prev) => (prev === product.additionalImages.length ? 0 : prev + 1))
+    setSelectedImage((prev) => (prev === productpp.additionalImages.length ? 0 : prev + 1))
   }
 
   const prevImage = () => {
-    setSelectedImage((prev) => (prev === 0 ? product.additionalImages.length : prev - 1))
+    setSelectedImage((prev) => (prev === 0 ? productpp.additionalImages.length : prev - 1))
   }
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -134,8 +162,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             className="relative bg-gray-100 aspect-auto overflow-hidden"
           >
             <img
-              src={selectedImage === 0 ? product.image : product.additionalImages[selectedImage - 1]}
-              alt={product.name}
+              src={selectedImage === 0 ? product?.image : productpp?.additionalImages[selectedImage - 1]}
+              alt={productpp?.name}
               className="object-contain w-full h-full transition-all duration-300 hover:scale-105"
             />
           </motion.div>
@@ -169,15 +197,15 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                 )}
               >
                 <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={`${product.name} thumbnail 1`}
+                  src={productpp.image || "/placeholder.svg"}
+                  alt={`${productpp.name} thumbnail 1`}
                   width={80}
                   height={80}
                   className="object-cover w-full h-full"
                 />
               </button>
 
-              {product.additionalImages.map((img, index) => (
+              {productpp.additionalImages.map((img, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index + 1)}
@@ -188,7 +216,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                 >
                   <img
                     src={img || "/placeholder.svg"}
-                    alt={`${product.name} thumbnail ${index + 2}`}
+                    alt={`${productpp.name} thumbnail ${index + 2}`}
                     width={80}
                     height={80}
                     className="object-cover w-full h-full"
@@ -219,33 +247,37 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
         <div className="space-y-6">
           {/* Brand and Title */}
           <div>
-            <h2 className="text-lg font-bold uppercase">CRIPLE</h2>
-            <h1 className="text-xl font-medium mt-1">{product.name}</h1>
+            <h2 className="text-lg font-bold uppercase">{product?.brand}</h2>
+            <h1 className="text-xl font-medium mt-1">{productpp?.name}</h1>
+          </div>
+          <div>
+            <div className="text-base font-normal text-gray-800 ">{product?.shortDescription}</div>
+            <div  className="text-base font-normal text-gray-800 ">{product?.description}</div>
           </div>
 
           {/* Rating */}
           <div className="flex items-center gap-1">
             <div className="flex">
-              {[...Array(5)].map((_, i) => (
+              {[...Array(5)]?.map((_, i) => (
                 <Star
                   key={i}
                   className={cn(
                     "h-4 w-4",
-                    i < Math.floor(product.rating) ? "fill-black text-black" : "fill-gray-200 text-gray-200",
+                    i < Math.floor(productpp?.rating) ? "fill-green-600 text-green-600" : "fill-gray-300 text-gray-300",
                   )}
                 />
               ))}
             </div>
-            <span className="text-sm ml-1">{product.rating}/5</span>
+            <span className="text-sm ml-1">{productpp?.rating}/5</span>
           </div>
 
           {/* Price */}
           <div className="flex items-center gap-3">
-            <span className="text-xl font-bold">${product.price}</span>
-            {product.originalPrice && (
+            <span className="text-xl font-bold">${product?.price}</span>
+            {productpp?.originalPrice && (
               <>
-                <span className="text-gray-500 line-through">${product.originalPrice}</span>
-                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{product.discount}% OFF</span>
+                <span className="text-gray-500 line-through">${productpp?.originalPrice}</span>
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">{productpp?.discount}% OFF</span>
               </>
             )}
           </div>
@@ -254,13 +286,13 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           <div>
             <h3 className="text-sm uppercase font-medium mb-2">COLOR OPTIONS</h3>
             <div className="flex gap-2">
-              {product.availableColors?.map((color) => (
+              {productpp.availableColors?.map((color) => (
                 <button
                   key={color.value}
-                  onClick={() => setSelectedColor(color.value)}
-                  className={cn("w-8 h-8 rounded-sm border", selectedColor === color.value ? "ring-2 ring-black" : "")}
-                  style={{ backgroundColor: color.value }}
-                  aria-label={`Select ${color.name} color`}
+                  onClick={() => setSelectedColor(color?.value)}
+                  className={cn("w-8 h-8 rounded-sm border", selectedColor === color?.value ? "ring-2 ring-black" : "")}
+                  style={{ backgroundColor: color?.value }}
+                  aria-label={`Select ${color?.name} color`}
                 />
               ))}
             </div>
@@ -270,7 +302,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           <div>
             <h3 className="text-sm uppercase font-medium mb-2">SELECT SIZE</h3>
             <div className="flex gap-2">
-              {product.availableSizes?.map((size) => (
+              {productpp.availableSizes?.map((size) => (
                 <button
                   key={size}
                   onClick={() => setSelectedSize(size)}
@@ -287,8 +319,41 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-4">
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700"
-            onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price, image: product.image }))}>ADD TO CART</Button>
+          <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={async () => {
+                      
+                      dispatch(
+                        addToCart({
+                          id: product._id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image || '/src/assets/Shop/product.png',
+                        })
+                      );
+
+                      const userId = localStorage.getItem("userId");
+
+                      if (!userId) {
+                        console.warn("User ID not found in localStorage.");
+                        return;
+                      }
+
+                      // Call backend API to sync with server
+                      try {
+                        await addToCartAPI({
+                          productId: product._id,
+                          productVariationId: product._id, 
+                          quantity: 1,
+                          userId: userId, 
+                        });
+                      } catch (error) {
+                        console.error("Failed to add to cart on backend:", error);
+                      }
+                    }}
+                  >
+                  Add to Cart
+                </button>
 
           {/* <Button
             className={`flex-1 ${isInCart(product.id.toString()) ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}`}
@@ -310,24 +375,24 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
 
             <Button
-            variant={isInWishlist(product.id) ? "default" : "outline"}
+            variant={isInWishlist(productpp?.id) ? "default" : "outline"}
             className="flex-1"
             onClick={() => {
-              if (isInWishlist(product.id)) {
-                dispatch(removeFromWishlist(product.id));
+              if (isInWishlist(productpp?.id)) {
+                dispatch(removeFromWishlist(productpp?.id));
               } else {
                 dispatch(
                   addToWishlist({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
+                    id: productpp?.id,
+                    name: productpp?.name,
+                    price: productpp?.price,
+                    image: productpp?.image,
                   })
                 );
               }
             }}
           >
-            {isInWishlist(product.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
+            {isInWishlist(productpp?.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
           </Button>
           
           </div>
@@ -433,12 +498,12 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                   <div className="flex flex-col items-center">
                     <h3 className="text-3xl font-bold">{calculateAverageRating()}</h3>
                     <div className="flex my-2">
-                      {[...Array(5)].map((_, i) => (
+                      {[...Array(5)]?.map((_, i) => (
                         <Star
                           key={i}
                           className={cn(
                             "h-4 w-4",
-                            i < Math.floor(product.rating) ? "fill-black text-black" : "fill-gray-200 text-gray-200",
+                            i < Math.floor(productpp?.rating) ? "fill-black text-black" : "fill-gray-200 text-gray-200",
                           )}
                         />
                       ))}
@@ -475,7 +540,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                 {/* Reviews List */}
                 <div className="col-span-1 md:col-span-2 divide-y">
-                  {product.reviews?.map((review) => (
+                  {productpp.reviews?.map((review) => (
                     <div key={review.id} className="p-6">
                       {/* Rating Stars */}
                       <div className="flex mb-4">
@@ -484,7 +549,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                             key={i}
                             className={cn(
                               "h-4 w-4",
-                              i < review.rating ? "fill-black text-black" : "fill-gray-200 text-gray-200",
+                              i < review?.rating ? "fill-black text-black" : "fill-gray-200 text-gray-200",
                             )}
                           />
                         ))}
@@ -492,7 +557,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                       {/* Rating Categories */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        {Object.entries(review.ratings).map(([key, value] : [string, number]) => (
+                        {Object.entries(review?.ratings).map(([key, value] : [string, number]) => (
                           <div key={key} className="flex flex-col items-center">
                             <div className="relative w-16 h-16">
                               <div className="absolute inset-0 rounded-full border-4 border-gray-200"></div>
@@ -508,7 +573,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                               </div>
                             </div>
                             <span className="text-xs text-gray-500 mt-2 capitalize">
-                              {key.replace(/([A-Z])/g, " $1").toLowerCase()}
+                              {key.replace(/([A-Z])/g, " $1")?.toLowerCase()}
                             </span>
                           </div>
                         ))}
@@ -516,16 +581,16 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
                       {/* Reviewer Info */}
                       <div>
-                        <h4 className="font-medium">{review.userName}</h4>
+                        <h4 className="font-medium">{review?.userName}</h4>
                         <div className="flex flex-wrap gap-x-4 gap-y-2 mt-1 text-sm">
-                          {review.verified && (
+                          {review?.verified && (
                             <div className="flex items-center gap-1">
                               <span className="bg-black rounded-full w-3 h-3"></span>
                               <span>Verified Purchase</span>
                             </div>
                           )}
-                          <span className="text-gray-500">{review.date}</span>
-                          <span className="text-gray-500">{review.location}</span>
+                          <span className="text-gray-500">{review?.date}</span>
+                          <span className="text-gray-500">{review?.location}</span>
                         </div>
                       </div>
                     </div>

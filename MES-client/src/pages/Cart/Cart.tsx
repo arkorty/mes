@@ -117,25 +117,50 @@
 
 
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
 import { removeFromCart, updateQuantity } from "../../redux/cartSlice";
 import { useNavigate } from "react-router-dom";
+import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
+import axios from "axios";
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state: RootState) => state.cart.items);
 
+  const [user] = useAtom(userAtom);
+  const[cartItems, setCartItems] = useState<any[]>([]);
+
+  //const userId: string | null = user?._id ?? ""
+  //const userId  = user?._id ?? ""; 
+  const userId = localStorage.getItem("userId");
+  const productVariationId = "67ffe5c60b33712cb435cb94";
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
+      .then(res => {
+        if (res.data.success) {
+          setCartItems(res.data.data);
+          
+          console.log(res.data.data);
+        }
+      })
+      .catch(err => console.error(err));
+  }, [userId]);
+
+  
+
   const handleQuantityChange = (id: string | number, quantity: number) => {
     if (quantity >= 1) {
-      dispatch(updateQuantity({ id, quantity }));
+      dispatch(updateQuantity({ id,productVariationId , quantity, userId, }));
     }
   };
 
-  const handleRemove = (id: string | number) => {
-    dispatch(removeFromCart(id));
+  const handleRemove = (id: any ) => {
+    dispatch(removeFromCart({id, userId}));
   };
 
   const getTotalPrice = () => {

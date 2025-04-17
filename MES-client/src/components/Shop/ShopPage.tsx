@@ -14,20 +14,24 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import productsData from "../../lib/product.json";
+
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
+import axios from "axios";
+import fallbackImage from '/src/assets/Shop/product.png';
+import { addToCart as addToCartAPI } from "../../api/index"
 
 // Define Product Type
 interface Product {
-  id: number | string;
+  _id: string;
   name: string;
   price: number;
   image: string;
   description: string;
+  shortDescription: string;
   category: string;
   rating: number;
 }
@@ -41,10 +45,27 @@ const ShopPage: React.FC = () => {
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
 
+  // useEffect(() => {
+  //   setProducts(productsData);
+  //   setFilteredProducts(productsData);
+  // }, []);
+
+
+
   useEffect(() => {
-    setProducts(productsData);
-    setFilteredProducts(productsData);
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`)
+      .then(res => {
+        if (res.data.success) {
+          setProducts(res.data.data);
+          setFilteredProducts(res.data.data);
+          console.log(res.data.data);
+        }
+      })
+      .catch(err => console.error(err));
   }, []);
+
+
+
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
@@ -212,43 +233,87 @@ const isInWishlist = (id: string | number) =>
         </div>
 
       {/* Product Listing Section */}
+      
       <div className="w-full md:w-[80%]">
         <h1 className="text-2xl font-bold mb-4">Men's Gears</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="border-1 border-[#E9E9E9] rounded-lg shadow-lg pb-2">
-              <Link to={`/product/${product.id}`}>
-                <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-md" />
+            <div key={product._id} className="border-1 border-[#E9E9E9] rounded-lg shadow-lg pb-2 ">
+              <Link className=" flex-col flex items-center text-balance" to={`/product/${product._id}`}>
+                <img
+                  src={product.image || fallbackImage}
+                  alt={product.name}
+                  className="w-full h-48 object-cover rounded-md"
+                />
                 <h2 className="text-lg px-2 font-semibold mt-2">{product.name}</h2>
+                {/* <p className="text-gray-800 px-2">{product.shortDescription}</p> */}
                 <p className="text-gray-600 px-2">${product.price}</p>
               </Link>
+
               <div className="w-[86%] mx-auto flex justify-between">
-                <button
+                {/* <button
                   className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() => dispatch(addToCart({ id: product.id, name: product.name, price: product.price, image: product.image }))}
-                >
+                  onClick={() =>
+                    dispatch(
+                      addToCart({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image || fallbackImage,
+                      })
+                    )
+                  }
+                  
+                > */}
+
+                  <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={async () => {
+                      
+                      dispatch(
+                        addToCart({
+                          id: product._id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image || fallbackImage,
+                        })
+                      );
+
+                      const userId = localStorage.getItem("userId");
+
+                      if (!userId) {
+                        console.warn("User ID not found in localStorage.");
+                        return;
+                      }
+
+                      // Call backend API to sync with server
+                      try {
+                        await addToCartAPI({
+                          productId: product._id,
+                          productVariationId: product._id, 
+                          quantity: 1,
+                          userId: userId, 
+                        });
+                      } catch (error) {
+                        console.error("Failed to add to cart on backend:", error);
+                      }
+                    }}
+                  >
                   Add to Cart
                 </button>
-
-                {/* <button className=" cursor-pointer "
-                
-                >
-                  <Heart />
-                </button> */}
-
 
                 <button
                   className="cursor-pointer mt-3"
                   onClick={() => {
-                    if (isInWishlist(product.id)) {
-                      dispatch(removeFromWishlist(product.id));
+                    if (isInWishlist(product._id)) {
+                      dispatch(removeFromWishlist(product._id));
                     } else {
                       dispatch(
                         addToWishlist({
-                          id: product.id,
+                          id: product._id,
                           name: product.name,
                           price: product.price,
-                          image: product.image,
+                          image: product.image || fallbackImage,
                         })
                       );
                     }
@@ -256,17 +321,16 @@ const isInWishlist = (id: string | number) =>
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isInWishlist(product.id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
+                      isInWishlist(product._id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
                     }`}
                   />
                 </button>
-
-
               </div>
             </div>
           ))}
         </div>
       </div>
+
     </div>
   );
 };
