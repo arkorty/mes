@@ -178,7 +178,7 @@ useEffect(() => {
       {/* Main Navbar */}
       <div className="flex items-center justify-between px-2 md:px-4 -ml-1  md:-ml-2 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
-        <div className="flex items-center md:space-x-4 w-[96%] lg:w-[34%] xl:w-[23%] ">
+        <div className="flex items-center md:space-x-4 w -[96%] lg:w-[34%] xl:w-[23%] ">
           
           <Link to="/">
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className=" h-14 lg:h-20 mb-4" />
