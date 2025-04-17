@@ -74,7 +74,7 @@ export default function SwapAuth() {
     }
 
     toast.success("Account created successfully!");
-    navigate("/");
+    navigate(-1);
   };
 
   // Handle SignIn Submit
@@ -98,7 +98,7 @@ export default function SwapAuth() {
       localStorage.setItem("user", data.data.user);
       setUser(data.data.user)
       toast.success("Welcome back!");
-      navigate("/"); // Navigate to home page
+      navigate(-1); 
 
   };
 
