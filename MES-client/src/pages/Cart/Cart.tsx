@@ -135,11 +135,12 @@ const CartPage: React.FC = () => {
   const[cartItems, setCartItems] = useState<any[]>([]);
 
   //const userId: string | null = user?._id ?? ""
-  const userId  = user?._id ?? ""; 
-  const productVariationId = "67fcb39c3e6a4466499ed6f2";
+  //const userId  = user?._id ?? ""; 
+  const userId = localStorage.getItem("userId");
+  const productVariationId = "67ffe5c60b33712cb435cb94";
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/cart/${userId}`)
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
       .then(res => {
         if (res.data.success) {
           setCartItems(res.data.data);
@@ -148,7 +149,7 @@ const CartPage: React.FC = () => {
         }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [userId]);
 
   
 

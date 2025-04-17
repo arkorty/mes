@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { getUserDetails } from "../../api";
+import axios from "axios";
 
 // Define types for menu items
 type MenuItems = {
@@ -16,8 +17,13 @@ type MenuItems = {
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("Gears & Equipments");
+
+  const [categories, setCategories] = useState([]);
+const [categoriesFetched, setCategoriesFetched] = useState(false);
+
+
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  
   const [user, setUser] = useState<any>(null);
 
   const [pinCode, setPinCode] = useState("Loading...");
@@ -51,14 +57,65 @@ useEffect(() => {
 }, []);
 
 
+// useEffect(() => {
+//   if (isMenuOpen ) {
+//     axios
+//       .get(`${import.meta.env.VITE_API_BASE_URL}/api/category/dropdown`)
+//       .then((res) => {
+//         setCategories(res.data.data); 
+//         console.log(res.data.data);
+//         //setCategoriesFetched(true);
+//       })
+//       .catch((err) => console.error(err));
+//   }
+// }, [isMenuOpen]);
+
+
+const [menuItems, setMenuItems] = useState<Record<string, string[]>>({});
+
+useEffect(() => {
+  if (isMenuOpen) {
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/category/dropdown`)
+      .then((res) => {
+        const data = res.data.data;
+        setCategories(data);
+
+       
+        const menu: Record<string, string[]> = {};
+
+        
+        const parents = data.filter((cat: any) => cat.parentId === null);
+
+        parents.forEach((parent: any) => {
+          
+          const subCats = data
+            .filter((cat: any) => cat.parentId === parent._id)
+            .map((cat: any) => `${cat.name} →`);
+          
+          menu[parent.name] = subCats;
+        });
+
+        setMenuItems(menu);
+      
+
+      const firstKey = Object.keys(menu)[0];
+      if (firstKey) {
+        setActiveTab(firstKey);
+      }
+    })
+
+      .catch((err) => console.error(err));
+  }
+}, [isMenuOpen]);
   
 
 
-  const menuItems: MenuItems = {
-    "Gears & Equipments": ["Winter Sports →", "Camping →", "Hiking →"],
-    Apparel: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
-    Shoes: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
-  };
+  // const menuItems: MenuItems = { 
+  //   "Gears & Equipments": ["Winter Sports →", "Camping →", "Hiking →"],
+  //   Apparel: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
+  //   Shoes: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
+  // };
 
   const navigate = useNavigate();
   const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
@@ -287,7 +344,7 @@ useEffect(() => {
 
 
       {/* Dropdown Menu */}
-      {isMenuOpen && (
+      {/* {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
           
           <span className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -316,7 +373,56 @@ useEffect(() => {
             ))}
           </div>
         </div>
+      )} */}
+
+
+
+
+      {isMenuOpen && (
+        <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
+          
+          {/* Close Button */}
+          <span
+            className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <X className="h-6 w-6 text-green-900" />
+          </span>
+
+          {/* Tab Buttons */}
+          <div className="flex space-x-6 border-b">
+            {Object.keys(menuItems).map((tab) => (
+              <button
+                key={tab}
+                className={`pb-2 font-semibold ${
+                  activeTab === tab
+                    ? "border-b-2 border-green-900 text-green-900"
+                    : "text-gray-600"
+                }`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          {/* Subcategory list */}
+          <div className="mt-4 space-y-2">
+            {menuItems[activeTab]?.map((item, index) => (
+              <p
+                key={index}
+                className="text-lg cursor-pointer hover:underline flex items-center gap-1"
+              >
+                {item}
+              </p>
+            ))}
+          </div>
+        </div>
       )}
+
+
+
+
     </nav>
 
     
