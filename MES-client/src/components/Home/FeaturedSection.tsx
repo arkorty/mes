@@ -78,7 +78,6 @@
 
 
 
-
 import axios from "axios";
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react";
@@ -103,22 +102,17 @@ const staggerContainer = {
   },
 }
 
-// export default function FeaturedSection({ categories }: { categories: any[] }) {
-
-
-export default function FeaturedSection(){
-
-  const [categories, setCategories] = useState([]);
+export default function FeaturedSection() {
+  const [featured, setFeatured] = useState([]);
 
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/category/dropdown`)
-      .then((res) => setCategories(res.data.data))
+      .then((res) => setFeatured((res.data.data)?.slice(0, 4) || []))
       .catch((err) => console.error(err))
   }, []);
 
-
-  const featured = categories.slice(0, 4)
+  if (featured.length === 0) return null;
 
   return (
     <motion.section
@@ -133,57 +127,27 @@ export default function FeaturedSection(){
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Left large card */}
-
         {featured[0] && (
-          // <Link to={`/shop?category=${encodeURIComponent(featured[0].name)}/${featured[0]._id}`}>
-        <motion.div
-          className="md:col-span-2 relative overflow-hidden rounded-md h-64 md:h-[32rem]"
-          variants={fadeIn} 
-        >
-          <img
-            src={featured[0].imageUrl || "/placeholder.svg"}
-            alt={featured[0].name}
-            className="w-full h-full object-cover"
-          />
-
-          <div className="absolute inset-0 bg-black/30 flex flex-col justify-end m-4 p-4">
-            <h3 className="text-white text-xl font-bold uppercase">{featured[0].name}</h3>
-            <Link
-              to={`/shop?category=${encodeURIComponent(featured[0].name)}/${featured[0]._id}`}
-              className="bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-md mt-2 inline-block w-max"
-            >
-              LEARN MORE
-            </Link>
-          </div>
-        </motion.div>
-        //</Link>
-)}
-
-        {/* Right column with next 3 cards */}
-        {/* <div className="md:col-span-1 grid grid-cols-1 gap-4  flex-col justify-between h-full md:h-[30rem]">
-          {featured.slice(1).map((cat, index) => (
-
-            // <Link to={{`/shop?category=${[0].name}/${featured[0]._id}`}}>
-            <motion.div
-              key={cat._id}
-              className="relative overflow-hidden rounded-lg h-56 md:h-[8rem]"
-              variants={fadeIn}
-            >
-              <img
-                src={cat.imageUrl || "/placeholder.svg"}
-                alt={cat.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30 flex flex-col justify-center p-4">
-                <h3 className="text-white text-sm font-bold uppercase">{cat.name}</h3>
-                <p className="text-white/70 text-xs">Explore our collection</p>
-              </div>
-            </motion.div>
-            //</Link>
-
-          ))}
-        </div> */}
+          <motion.div
+            className="md:col-span-2 relative overflow-hidden rounded-md h-64 md:h-[32rem]"
+            variants={fadeIn}
+          >
+            <img
+              src={featured[0].imageUrl || "/placeholder.svg"}
+              alt={featured[0].name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/30 flex flex-col justify-end m-4 p-4">
+              <h3 className="text-white text-xl font-bold uppercase">{featured[0].name}</h3>
+              <Link
+                to={`/shop?category=${encodeURIComponent(featured[0].name)}/${featured[0]._id}`}
+                className="bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-md mt-2 inline-block w-max"
+              >
+                LEARN MORE
+              </Link>
+            </div>
+          </motion.div>
+        )}
 
         <div className="md:col-span-1 grid grid-cols-1 gap-4 h-full md:h-[30rem]">
           {featured.slice(1).map((cat) => (
@@ -208,7 +172,6 @@ export default function FeaturedSection(){
             </Link>
           ))}
         </div>
-
       </div>
     </motion.section>
   )
