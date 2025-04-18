@@ -159,9 +159,11 @@ useEffect(() => {
   // Handle Sign Out
   const handleSignOut = () => {
     localStorage.removeItem("token");
-    localStorage.clear() 
+    localStorage.clear();
+
     setIsLoggedIn(false); // Set login state to false
-    setUser(null); // Clear user data
+    setUser(null);
+    
     navigate("/auth"); // Redirect to the login page
   };
 

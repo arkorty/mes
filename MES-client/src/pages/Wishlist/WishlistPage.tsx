@@ -4,10 +4,13 @@ import { RootState } from "../../redux/store";
 import { removeFromWishlist } from "../../redux/wishlistSlice";
 import { HeartOff, ShoppingCart } from "lucide-react";
 import { addToCart } from "../../redux/cartSlice";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const WishlistPage: React.FC = () => {
   const dispatch = useDispatch();
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
+
+  useScrollToTop();
 
   const handleRemove = (id: number | string) => {
     dispatch(removeFromWishlist(id));

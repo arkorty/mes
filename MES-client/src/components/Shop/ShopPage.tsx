@@ -23,6 +23,7 @@ import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
 import { addToCart as addToCartAPI } from "../../api/index"
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 // Define Product Type
 interface Product {
@@ -32,6 +33,7 @@ interface Product {
   image: string;
   description: string;
   shortDescription: string;
+  baseVariationId: string;
   category: string;
   rating: number;
 }
@@ -50,6 +52,8 @@ const ShopPage: React.FC = () => {
   //   setFilteredProducts(productsData);
   // }, []);
 
+  useScrollToTop();
+
 
 
   useEffect(() => {
@@ -64,6 +68,13 @@ const ShopPage: React.FC = () => {
       .catch(err => console.error(err));
   }, []);
 
+
+
+  const userId = localStorage.getItem("userId");
+    const productVariationId = "67ffe5c60b33712cb435cb94";
+  
+    
+  
 
 
 
@@ -290,7 +301,7 @@ const isInWishlist = (id: string | number) =>
                       try {
                         await addToCartAPI({
                           productId: product._id,
-                          productVariationId: product._id, 
+                          productVariationId: product.baseVariationId, 
                           quantity: 1,
                           userId: userId, 
                         });

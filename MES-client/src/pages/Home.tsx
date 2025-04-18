@@ -6,18 +6,12 @@ import Contactus from "../components/Home/Contactus";
 import FeaturedSection from "../components/Home/FeaturedSection";
 import Hero from "../components/Home/Hero";
 import axios from "axios";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 
 export default function Home() {
 
-  // const [categories, setCategories] = useState([])
-
-  // useEffect(() => {
-  //   axios
-  //     .get(`${import.meta.env.VITE_API_BASE_URL}/api/category/dropdown`)
-  //     .then((res) => setCategories(res.data.data))
-  //     .catch((err) => console.error(err))
-  // }, [])
+  useScrollToTop();
 
   return (
     <div>

@@ -125,6 +125,7 @@ import { useNavigate } from "react-router-dom";
 import { useAtom } from "jotai";
 import { userAtom } from "@/atoms/userAtom";
 import axios from "axios";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -150,6 +151,8 @@ const CartPage: React.FC = () => {
       })
       .catch(err => console.error(err));
   }, [userId]);
+
+  useScrollToTop();
 
   
 
