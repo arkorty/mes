@@ -1,9 +1,12 @@
-import ProductForm from '@/components/product-form';
+import ProductForm from '@/components/product-formv2';
+import { getCategories } from 'app/api/categories';
 
-const AddProduct = () => {
+const AddProduct = async () => {
+  const { data } = await getCategories();
+  const categories = data.data;
   return (
     <>
-      <ProductForm />
+      <ProductForm categories={categories} />
     </>
   );
 };

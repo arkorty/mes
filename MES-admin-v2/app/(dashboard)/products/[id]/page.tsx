@@ -1,4 +1,5 @@
-import ProductForm from '@/components/product-form';
+import ProductForm from '@/components/product-formv2';
+import { getCategories } from 'app/api/categories';
 import { getProductById } from 'app/api/products';
 
 const ProductDetails = async ({
@@ -10,10 +11,16 @@ const ProductDetails = async ({
   const { data } = await getProductById(id);
   const product = data._doc;
   const variations = data.variations;
+  const response = await getCategories();
+  const categories = response.data.data;
 
   return (
     <>
-      <ProductForm initialProduct={product} initialVariations={variations} />
+      <ProductForm
+        initialProduct={product}
+        initialVariations={variations}
+        categories={categories}
+      />
     </>
   );
 };

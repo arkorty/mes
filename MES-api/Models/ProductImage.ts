@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IProductImage extends Document {
   product?: string; // ObjectId
+  productVariation?: string; // ObjectId
   image?: string;
   thumbnail?: string;
   imageUrl: string;
@@ -15,6 +16,7 @@ export interface IProductImage extends Document {
 const ProductImageSchema = new mongoose.Schema<IProductImage>(
     {
       product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+      productVariation: { type: Schema.Types.ObjectId, ref: 'ProductVariation' },
       image:{type:String},
       thumbnail:{type:String},
       imageUrl:{type:String,required:true},
