@@ -176,18 +176,18 @@ useEffect(() => {
       </div>
 
       {/* Main Navbar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#164734]">
+      <div className="flex items-center justify-between px-2 md:px-4 -ml-1  md:-ml-2 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center md:space-x-4 w-[96%] lg:w-[34%] xl:w-[23%] ">
           
           <Link to="/">
-          <img src="/footerlogo.png" alt="Mountain Expedition Supply" className="h-16 mb-4" />
+          <img src="/footerlogo.png" alt="Mountain Expedition Supply" className=" h-14 lg:h-20 mb-4" />
           </Link>
           
           
           <div className="flex items-center space-x-2">
             <button className="cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 md:h-6 w-5 md:w-6" />
             </button>
             <span className="font-semibold uppercase hidden md:block">All Gears</span>
           </div>
