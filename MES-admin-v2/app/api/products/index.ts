@@ -49,7 +49,7 @@ export const deleteProduct = async (id: any) => {
 
 export const addUpdateProduct = async (formData: FormData) => {
   try {
-    const { data } = await api.post(API_ROUTES.addUpdateProduct, formData);
+    const { data } = await api.put(API_ROUTES.addUpdateProduct, formData);
     return data;
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));

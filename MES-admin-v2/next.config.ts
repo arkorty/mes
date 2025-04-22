@@ -18,5 +18,10 @@ export default {
         search: ''
       }
     ]
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb'
+    }
   }
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { Label } from '@/components/label';
+import { Label } from '@/components/ui/label';
 import {
   Card,
   CardContent,

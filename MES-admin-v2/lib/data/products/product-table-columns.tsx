@@ -21,6 +21,12 @@ export const productTableColumns: Column<any>[] = [
     render: (item: any) => <span className="font-medium">{item.name}</span>
   },
   {
+    label: 'Brand',
+    accessor: 'brand',
+    className: 'hidden sm:table-cell',
+    render: (item: any) => item.brand
+  },
+  {
     label: 'SKU',
     accessor: 'sku',
     className: 'hidden sm:table-cell',
@@ -30,13 +36,7 @@ export const productTableColumns: Column<any>[] = [
     label: 'Price',
     accessor: 'price',
     className: 'sm:table-cell',
-    render: (item: any) => `$${item.price}`
-  },
-  {
-    label: 'Stock',
-    accessor: 'stock',
-    className: 'hidden sm:table-cell',
-    render: (item: any) => item.stock
+    render: (item: any) => item.price
   },
   {
     label: 'Created At',
@@ -58,9 +58,9 @@ export const productTableColumns: Column<any>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={URL_ROUTES.productEdit(item.id)}>Edit</Link>
+            <Link href={URL_ROUTES.productEdit(item._id)}>Edit</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={async () => await deleteProduct(item.id)}>
+          <DropdownMenuItem onClick={async () => await deleteProduct(item._id)}>
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
