@@ -1,14 +1,14 @@
 export const URL_ROUTES = {
-  login: '/admin/login',
-  orders: '/admin/orders',
-  orderView: (id: string) => `/admin/orders/${id}`,
-  products: '/admin/products',
-  productAdd: '/admin/products/add',
-  productEdit: (id: string) => `/admin/products/${id}`,
-  categories: '/admin/categories',
-  categoryAdd: '/admin/categories/add',
-  categoryEdit: (id: string) => `/admin/categories/${id}`,
-  users: '/admin/users',
-  userAdd: '/admin/users/add',
-  userEdit: (id: string) => `/admin/users/${id}`
+  login: '/login',
+  orders: '/orders',
+  orderView: (id: string) => `/orders/${id}`,
+  products: '/products',
+  productAdd: '/products/add',
+  productEdit: (id: string) => `/products/${id}`,
+  categories: '/categories',
+  categoryAdd: '/categories/add',
+  categoryEdit: (id: string) => `/categories/${id}`,
+  users: '/users',
+  userAdd: '/users/add',
+  userEdit: (id: string) => `/users/${id}`
 };

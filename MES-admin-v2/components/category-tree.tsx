@@ -65,19 +65,21 @@ export default function CategoryTree({ categories }: { categories: any[] }) {
             {category.subCategories?.map((sub: any) => (
               <AccordionItem key={sub._id} value={sub._id}>
                 <AccordionTrigger>
-                  <div className="flex items-center gap-4">
-                    <Image
-                      src={sub.imageUrl}
-                      alt={sub.name}
-                      width={50}
-                      height={50}
-                      className="rounded object-cover"
-                    />
-                    <div className="text-left">
-                      <h3 className="font-medium text-base">{sub.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {sub.description}
-                      </p>
+                  <div className="w-full flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src={sub.imageUrl}
+                        alt={sub.name}
+                        width={50}
+                        height={50}
+                        className="rounded object-cover"
+                      />
+                      <div className="text-left">
+                        <h3 className="font-medium text-base">{sub.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {sub.description}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex gap-3 mr-3">
                       <div>

@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/button';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
+import { addUpdateCategory } from 'app/api/categories';
+import { revalidatePath } from 'next/cache';
 
 const CategoryForm = ({
   initialCategory,
@@ -31,7 +33,6 @@ const CategoryForm = ({
   const [parentId, setParentId] = useState(initialCategory?.parentId || '');
   const [name, setName] = useState(initialCategory?.name || '');
   const [image, setImage] = useState<File | null>(null);
-  const [slug, setSlug] = useState(initialCategory?.slug || '');
   const [description, setDescription] = useState(
     initialCategory?.description || ''
   );
@@ -42,19 +43,28 @@ const CategoryForm = ({
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const formData = {
-      parentId,
-      name,
-      slug,
-      description,
-      status
-    };
+    const formData = new FormData();
+    if (initialCategory?._id) formData.append('_id', initialCategory._id);
+    if (parentId) formData.append('parentId', parentId);
+    formData.append('name', name);
+    formData.append('description', description);
 
-    console.log('Form Submitted:', formData);
-    // you can call your server action or API from here
+    if (image instanceof File) {
+      formData.append('picture', image);
+    }
+
+    try {
+      const response = await addUpdateCategory(formData);
+
+      if (response.success) {
+        alert('Category added/updated successfully!');
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -101,20 +111,6 @@ const CategoryForm = ({
                 value={name}
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                   setName(e.target.value)
-                }
-                required
-              />
-            </div>
-
-            {/* Slug */}
-            <div className="flex flex-col space-y-2">
-              <Label>Slug:</Label>
-              <Input
-                type="text"
-                placeholder="Auto-generated slug"
-                value={slug}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSlug(e.target.value)
                 }
                 required
               />
