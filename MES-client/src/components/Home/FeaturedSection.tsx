@@ -137,7 +137,7 @@ export default function FeaturedSection() {
               alt={featured[0].name}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-black/30 flex flex-col justify-end m-4 p-4">
+            <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-4">
               <h3 className="text-white text-xl font-bold uppercase">{featured[0].name}</h3>
               <Link
                 to={`/shop?category=${encodeURIComponent(featured[0].name)}/${featured[0]._id}`}

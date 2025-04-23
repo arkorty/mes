@@ -5,7 +5,6 @@ import Apparel from "../components/Home/Apparel";
 import Contactus from "../components/Home/Contactus";
 import FeaturedSection from "../components/Home/FeaturedSection";
 import Hero from "../components/Home/Hero";
-import axios from "axios";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
 

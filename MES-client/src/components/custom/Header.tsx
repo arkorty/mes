@@ -57,6 +57,8 @@ useEffect(() => {
 }, []);
 
 
+
+
 // useEffect(() => {
 //   if (isMenuOpen ) {
 //     axios
@@ -167,6 +169,26 @@ useEffect(() => {
     navigate("/auth"); // Redirect to the login page
   };
 
+  
+
+  const [cartCount, setCartCount] = useState(0);
+  const userId = localStorage.getItem("userId");
+  //const isLoggedInUser = !!userId;
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
+      .then(res => {
+        if (res.data.success) {
+          setCartCount(res.data.data.length);
+        }
+      })
+      .catch(err => console.error(err));
+  }, [userId, isLoggedIn]);
+
+
+
 
 
   return (
@@ -267,7 +289,8 @@ useEffect(() => {
                 <ShoppingCart className="h-5 w-5" />
                 {cartQuantity > 0 && (
                   <span className="absolute top-[50px] right-[9.3rem] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
-                    {cartQuantity}
+                    {/* {cartQuantity} */}
+                    {cartCount}
                   </span>
                 )}
                 <span className="hidden md:block">Cart</span>
