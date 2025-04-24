@@ -27,7 +27,7 @@ interface Product {
   additionalImages: string[]
   description: string
   shortDescription: string
-  productVariationId: string
+  productVariationId: string | "123456789"
   category: string
   rating: number
   color?: string
@@ -136,8 +136,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
-  const isInWishlist = (id: string | number) =>
-    wishlistItems.some((item) => item.id === id);
+  const isInWishlist = (id: string, productVariationId: string ) =>
+    wishlistItems.some((item) => item.id === id && item.productVariationId === productVariationId);
 
   const navigate = useNavigate();
 
@@ -397,26 +397,28 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           </Button> */}
 
 
-            <Button
-            variant={isInWishlist(productpp?.id) ? "default" : "outline"}
-            className="flex-1"
-            onClick={() => {
-              if (isInWishlist(productpp?.id)) {
-                dispatch(removeFromWishlist(productpp?.id));
-              } else {
-                dispatch(
-                  addToWishlist({
-                    id: productpp?.id,
-                    name: productpp?.name,
-                    price: productpp?.price,
-                    image: productpp?.image,
-                  })
-                );
-              }
-            }}
-          >
-            {isInWishlist(productpp?.id) ? "WISHLISTED" : "ADD TO WISHLIST"}
-          </Button>
+<Button
+  variant={isInWishlist(product?.id, product?.productVariationId) ? "default" : "outline"}
+  className="flex-1"
+  onClick={() => {
+    if (isInWishlist(product?.id, product?.productVariationId)) {
+      dispatch(removeFromWishlist({ id: product?.id, productVariationId: product?.productVariationId }));
+    } else {
+      dispatch(
+        addToWishlist({
+          id: product?.id,
+          name: product?.name,
+          price: product?.price,
+          image: product?.image,
+          productVariationId: product?.productVariationId,
+        })
+      );
+    }
+  }}
+>
+  {isInWishlist(product?.id, product?.productVariationId) ? "WISHLISTED" : "ADD TO WISHLIST"}
+</Button>
+
           
           </div>
 

@@ -88,6 +88,46 @@ const ShopPage: React.FC = () => {
   };
 
 
+  const handleAddToWishlist = async (
+    productId: string,
+    baseVariationId: string,
+    name: string,
+    price: number,
+    image: string | undefined,
+    quantity: number,
+    userId: string
+  ) => {
+     
+    try {
+      
+              
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/wishlist/add/${userId}`,
+        {
+          productId,
+          productVariationId: baseVariationId,
+          userId,
+          
+        }
+      );
+
+      dispatch(
+        addToWishlist({
+          id: productId,
+          productVariationId:baseVariationId,
+          name,
+          price,
+          image,
+        })
+      );
+  
+    } catch (error) {
+      console.error("Failed to add to wishlist:", error);
+      
+    }
+  };
+
+
 
   const userId = localStorage.getItem("userId");
     
@@ -114,8 +154,12 @@ const ShopPage: React.FC = () => {
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
-const isInWishlist = (id: string | number) =>
-  wishlistItems.some((item) => item.id === id);
+const isInWishlist = (id: string, productVariationId: string): boolean => {
+  return wishlistItems.some(
+    (item) => item.id === id && item.productVariationId === productVariationId
+  );
+};
+
 
 
   
@@ -295,24 +339,38 @@ const isInWishlist = (id: string | number) =>
 
                 <button
                   className="cursor-pointer mt-3"
-                  onClick={() => {
-                    if (isInWishlist(product._id)) {
-                      dispatch(removeFromWishlist(product._id));
-                    } else {
-                      dispatch(
-                        addToWishlist({
-                          id: product._id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || fallbackImage,
-                        })
-                      );
-                    }
-                  }}
+                  // onClick={() => {
+                  //   if (isInWishlist(product._id)) {
+                  //     dispatch(removeFromWishlist(product._id));
+                  //   } else {
+                  //     dispatch(
+                  //       addToWishlist({
+                  //         id: product._id,
+                  //         productVariationId: product.baseVariationId,
+                  //         name: product.name,
+                  //         price: product.price,
+                  //         image: product.image || fallbackImage,
+                  //       })
+                  //     );
+                  //   }
+                  // }}
+                  onClick={() =>
+                    handleAddToWishlist(
+                      product._id,
+                      product.baseVariationId,
+                      product.name,
+                      product.price,
+                      product.image,
+                      1,
+                      userId
+                    )
+                  }
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isInWishlist(product._id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
+                      isInWishlist(product._id, product.baseVariationId)
+                        ? "text-pink-500 fill-pink-500"
+                        : "text-gray-400"
                     }`}
                   />
                 </button>
