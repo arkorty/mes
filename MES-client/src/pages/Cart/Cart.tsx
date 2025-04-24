@@ -120,7 +120,8 @@ const CartPage: React.FC = () => {
           <div className="grid gap-6">
             {cartItems.map((product) => (
               <div
-                key={product.id}
+                //key={product.id}
+                key={`${product.id}-${product.productVariationId}`}
                 className="flex flex-col sm:flex-row justify-between items-center p-4 border rounded-xl shadow-sm bg-white"
               >
                 <div className="flex items-center gap-4 w-full sm:w-auto">
