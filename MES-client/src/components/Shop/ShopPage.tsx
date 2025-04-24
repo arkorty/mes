@@ -16,7 +16,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart, setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
@@ -33,7 +33,7 @@ interface Product {
   image: string;
   description: string;
   shortDescription: string;
-  baseVariationId: string;
+  productVariationId: string;
   category: string;
   rating: number;
 }
@@ -54,24 +54,63 @@ const ShopPage: React.FC = () => {
 
   useScrollToTop();
 
-
+ const dispatch = useDispatch()
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`)
       .then(res => {
         if (res.data.success) {
+          dispatch(setCartItemsFromBackend(res.data.data));
           setProducts(res.data.data);
           setFilteredProducts(res.data.data);
           console.log(res.data.data);
         }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [dispatch]);
+
+  const handleAddToCart = async (
+    productId: string,
+    productVariationId: string,
+    name: string,
+    price: number,
+    image: string | undefined,
+    quantity: number,
+    userId: string
+  ) => {
+    //const dispatch = useDispatch();
+  
+    try {
+              
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+        {
+          productId,
+          productVariationId,
+          quantity,
+        }
+      );
+
+      dispatch(
+        addToCart({
+          id: productId,
+          productVariationId,
+          name,
+          price,
+          image,
+        })
+      );
+  
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      
+    }
+  };
 
 
 
   const userId = localStorage.getItem("userId");
-    const productVariationId = "67ffe5c60b33712cb435cb94";
+    //const productVariationId = "67ffe5c60b33712cb435cb94";
   
     
   
@@ -105,7 +144,7 @@ const isInWishlist = (id: string | number) =>
   wishlistItems.some((item) => item.id === id);
 
 
-  const dispatch = useDispatch();
+  
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
@@ -279,36 +318,17 @@ const isInWishlist = (id: string | number) =>
 
                   <button
                     className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                    onClick={async () => {
-                      
-                      dispatch(
-                        addToCart({
-                          id: product._id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || fallbackImage,
-                        })
-                      );
-
-                      const userId = localStorage.getItem("userId");
-
-                      if (!userId) {
-                        console.warn("User ID not found in localStorage.");
-                        return;
-                      }
-
-                      // Call backend API to sync with server
-                      try {
-                        await addToCartAPI({
-                          productId: product._id,
-                          productVariationId: product.baseVariationId, 
-                          quantity: 1,
-                          userId: userId, 
-                        });
-                      } catch (error) {
-                        console.error("Failed to add to cart on backend:", error);
-                      }
-                    }}
+                    onClick={() =>
+                      handleAddToCart(
+                        product._id,
+                        product.productVariationId,
+                        product.name,
+                        product.price,
+                        product.image,
+                        1,
+                        userId
+                      )
+                    }
                   >
                   Add to Cart
                 </button>

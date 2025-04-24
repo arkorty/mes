@@ -4,11 +4,12 @@ import {
   LogOut
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { getUserDetails } from "../../api";
 import axios from "axios";
 import { log } from "console";
+import { setCartItemsFromBackend } from "@/redux/cartSlice";
 
 // Define types for menu items
 type MenuItems = {
@@ -175,6 +176,7 @@ useEffect(() => {
   const [cartCount, setCartCount] = useState(0);
   const userId = localStorage.getItem("userId");
   //const isLoggedInUser = !!userId;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -182,14 +184,15 @@ useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
       .then(res => {
         if (res.data.success) {
-          setCartCount(res.data.data.length);
+          dispatch(setCartItemsFromBackend(res.data.data)) 
+          setCartCount(res.data.itemCount);
           console.log("cart api ");
           
-          console.log(cartCount)
+          console.log(res.data)
         }
       })
       .catch(err => console.error(err));
-  }, [userId, isLoggedIn, cartCount]);
+  }, [userId, isLoggedIn, cartCount, dispatch]);
 
 
 
@@ -291,12 +294,12 @@ useEffect(() => {
 
               <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-5 w-5" />
-                {/* {cartQuantity > 0 && ( */}
+                {cartQuantity > 0 && (
                   <span className="absolute top-[50px] right-[9.3rem] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                     {/* {cartQuantity} */}
-                    {cartCount}
+                    {cartQuantity}
                   </span>
-                {/* )} */}
+                )}
                 <span className="hidden md:block">Cart</span>
               </button>
             </>
