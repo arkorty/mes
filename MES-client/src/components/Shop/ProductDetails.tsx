@@ -27,6 +27,7 @@ interface Product {
   additionalImages: string[]
   description: string
   shortDescription: string
+  productVariationId: string
   category: string
   rating: number
   color?: string
@@ -60,6 +61,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState(true);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     axios
@@ -115,7 +117,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const ratingDistribution = calculateRatingDistribution()
   const totalReviews = productpp.reviews?.length || 0
 
-  // Handle image navigation
   const nextImage = () => {
     setSelectedImage((prev) => (prev === productpp.additionalImages.length ? 0 : prev + 1))
   }
@@ -141,6 +142,47 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
+
+  const handleAddToCart = async (
+      productId: string,
+      productVariationId: string,
+      name: string,
+      price: number,
+      image: string | undefined,
+      quantity: number,
+      userId: string
+    ) => {
+       
+      try {
+        
+                
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+          {
+            productId,
+            productVariationId,
+            quantity,
+            
+          }
+        );
+  
+        dispatch(
+          addToCart({
+            id: productId,
+            productVariationId,
+            name,
+            price,
+            image,
+          })
+        );
+    
+      } catch (error) {
+        console.error("Failed to add to cart:", error);
+        
+      }
+    };
+
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -321,36 +363,17 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           <div className="flex gap-2 pt-4">
           <button
                     className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                    onClick={async () => {
-                      
-                      dispatch(
-                        addToCart({
-                          id: product._id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || '/src/assets/Shop/product.png',
-                        })
-                      );
-
-                      const userId = localStorage.getItem("userId");
-
-                      if (!userId) {
-                        console.warn("User ID not found in localStorage.");
-                        return;
-                      }
-
-                      // Call backend API to sync with server
-                      try {
-                        await addToCartAPI({
-                          productId: product._id,
-                          productVariationId: product._id, 
-                          quantity: 1,
-                          userId: userId, 
-                        });
-                      } catch (error) {
-                        console.error("Failed to add to cart on backend:", error);
-                      }
-                    }}
+                    onClick={() =>
+                      handleAddToCart(
+                        product._id,
+                        product.productVariationId,
+                        product.name,
+                        product.price,
+                        product.image,
+                        1,
+                        userId
+                      )
+                    }
                   >
                   Add to Cart
                 </button>

@@ -1,20 +1,5 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart, setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
@@ -22,10 +7,9 @@ import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
-import { addToCart as addToCartAPI } from "../../api/index"
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 
-// Define Product Type
+
 interface Product {
   _id: string;
   name: string;
@@ -33,7 +17,7 @@ interface Product {
   image: string;
   description: string;
   shortDescription: string;
-  productVariationId: string;
+  baseVariationId: string;
   category: string;
   rating: number;
 }
@@ -46,11 +30,6 @@ const ShopPage: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<string>("");
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
-
-  // useEffect(() => {
-  //   setProducts(productsData);
-  //   setFilteredProducts(productsData);
-  // }, []);
 
   useScrollToTop();
 
@@ -78,9 +57,9 @@ const ShopPage: React.FC = () => {
     quantity: number,
     userId: string
   ) => {
-    //const dispatch = useDispatch();
-  
+     
     try {
+      
               
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
@@ -88,6 +67,7 @@ const ShopPage: React.FC = () => {
           productId,
           productVariationId,
           quantity,
+          
         }
       );
 
@@ -110,13 +90,7 @@ const ShopPage: React.FC = () => {
 
 
   const userId = localStorage.getItem("userId");
-    //const productVariationId = "67ffe5c60b33712cb435cb94";
-  
     
-  
-
-
-
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setFilteredProducts(
@@ -301,27 +275,13 @@ const isInWishlist = (id: string | number) =>
               </Link>
 
               <div className="w-[86%] mx-auto flex justify-between">
-                {/* <button
-                  className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() =>
-                    dispatch(
-                      addToCart({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image || fallbackImage,
-                      })
-                    )
-                  }
-                  
-                > */}
-
+                
                   <button
                     className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
                     onClick={() =>
                       handleAddToCart(
                         product._id,
-                        product.productVariationId,
+                        product.baseVariationId,
                         product.name,
                         product.price,
                         product.image,
