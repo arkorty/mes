@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { getUserDetails } from "../../api";
 import axios from "axios";
+import { log } from "console";
 
 // Define types for menu items
 type MenuItems = {
@@ -182,10 +183,13 @@ useEffect(() => {
       .then(res => {
         if (res.data.success) {
           setCartCount(res.data.data.length);
+          console.log("cart api ");
+          
+          console.log(cartCount)
         }
       })
       .catch(err => console.error(err));
-  }, [userId, isLoggedIn]);
+  }, [userId, isLoggedIn, cartCount]);
 
 
 
@@ -287,12 +291,12 @@ useEffect(() => {
 
               <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-5 w-5" />
-                {cartQuantity > 0 && (
+                {/* {cartQuantity > 0 && ( */}
                   <span className="absolute top-[50px] right-[9.3rem] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                     {/* {cartQuantity} */}
                     {cartCount}
                   </span>
-                )}
+                {/* )} */}
                 <span className="hidden md:block">Cart</span>
               </button>
             </>
