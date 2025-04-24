@@ -299,14 +299,14 @@ useEffect(() => {
 
           {isLoggedIn && (
             <>
-              <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
+              <button className="relative flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
                 <Heart className="h-5 w-5" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                     {wishlistCount}
                   </span>
                 )}
-                <span>Wishlist</span>
+                <span className="hidden md:block">Wishlist</span>
               </button>
 
               <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>

@@ -6,7 +6,7 @@ const Shoppage = () => {
   return (
     <div className=" mb-12">
 
-<div className="relative w-full -mt-4 mb-6">
+<div className="relative w-ful -mt-4 mb-6">
         <img
           src={prdtbg}
           alt="Men's Gear Banner"

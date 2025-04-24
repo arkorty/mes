@@ -116,7 +116,7 @@ export default function FeaturedSection() {
 
   return (
     <motion.section
-      className="container min-h-screen mx-auto px-4 py-6"
+      className="w-[98%] lg:w-[94%] mx-auto px-4 py-6"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}

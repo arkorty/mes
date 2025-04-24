@@ -3,22 +3,22 @@ import homeImg from "../../assets/homeImg.png";
 
 const Hero = () => {
   return (
-    <div className="container min-h-screen mx-auto  w-full  ">
-         <div className="flex flex-col   mx-auto  ">
+    <div className="  mx-auto w-full ">
+         <div className="flex flex-col mx-auto  ">
           {/* Image Container */}
-          <div className=" lg:w-[98%] mx-auto ">
-            <div className="w-full  h- [400px] mb-8 relative">
+          <div className=" mx-auto ">
+            <div className="w-screen  h- [400px] mb-6 relative">
               <img
                 src={homeImg}
                 alt="Mountain expedition"
-                className="w-full h-full object-cover"
+                className="w-full bg-cover h-full object-cover"
               />
               <div className="absolute top-[30%] left-[10%]">
-                <p className="text-sm uppercase tracking-wider text-[#FFFFFF] mb-2 text-center">
+                <p className="text-xs md:text-sm lg:text-xl xl:text-2xl 2xl:text-5xl uppercase tracking-wider text-[#FFFFFF] mb-2 lg:mb-4 text-center">
                   YOUR BEST VACATION DECISION
                 </p>
 
-                <h1 className="text-2xl md:text-2xl font-bold text-center text-[#FFFFFF]">
+                <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-5xl 2xl:text-9xl font-bold text-center text-[#FFFFFF]">
                   Welcome to Mountain <br /> Expedition Supply
                 </h1>
               </div>
@@ -26,14 +26,14 @@ const Hero = () => {
           </div>
 
           {/* Content Container */}
-          <div className="max-w-3xl mx-auto text-center px-4">
-            <div className="space-y-6">
-              <h2 className="text-xl font-medium">
+          <div className="w-[90%] md:w-[86%] lg:w-[75%] xl:w-[76%] mx-auto text-center px-4">
+            <div className="space-y-4">
+              <h2 className="text-xl xl:text-3xl 2xl:text-5xl font-medium">
                 Meticulously curated outdoor apparel & gear for purchase or rent
                 for the whole family!
               </h2>
 
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm lg:text-lg 2xl:text-3xl">
                 Mountain Expedition Supply is your next basecamp for everything
                 you need to Ski, Camp and Explore! We've got topline skis,
                 snowboards, boots, hiking shoes, sleeping bags, apparel and
