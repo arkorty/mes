@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import homeImg from "../../assets/homeImg.png"
 import { Link } from "react-router-dom"
 
+
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -22,6 +23,7 @@ const staggerContainer = {
 }
 
 export default function Apparel() {
+  
   return (
     <motion.section
       className="w-[96%] py-10 mx-auto px-4 "
@@ -36,7 +38,10 @@ export default function Apparel() {
       </h2>
 
       <button className=" px-2 py-1 md:px-6 md:py-2 text-white bg-[#003EA5] rounded-3xl flex items-center justify-center md:text-sm text-xs">
-        Learn more
+        <Link to={'/shop'}>
+          Learn more
+        </Link>
+        
       </button>
       </div>
 
