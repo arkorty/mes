@@ -106,7 +106,7 @@ export const updateCart = async ({
   userId: string;
 }) =>
   handleRequest(() =>
-    api.put(`/cart/update/${userId}`, {
+    api.post(`/cart/update/${userId}`, {
       productId,
       productVariationId,
       quantity

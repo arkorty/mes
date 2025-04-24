@@ -138,7 +138,7 @@ const CartPage: React.FC = () => {
   //const userId: string | null = user?._id ?? ""
   //const userId  = user?._id ?? ""; 
   const userId = localStorage.getItem("userId");
-  const productVariationId = "67ffe5c60b33712cb435cb94";
+  
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
@@ -154,13 +154,55 @@ const CartPage: React.FC = () => {
 
   useScrollToTop();
 
-  
 
-  const handleQuantityChange = (id: string | number, quantity: number) => {
+  const handleQuantityChange = (
+    productId: string | number,
+    productVariationId: string,
+    quantity: number,
+    userId: string
+  ) => {
     if (quantity >= 1) {
-      dispatch(updateQuantity({ id,productVariationId , quantity, userId, }));
+      dispatch(updateQuantity({ id: productId, productVariationId, quantity, userId }));
+  
+      axios
+        .post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
+          productId,
+          productVariationId,
+          quantity
+        })
+        .then(() => {
+          // Update cartItems manually so the UI reflects changes without reload
+          setCartItems(prev =>
+            prev.map(item =>
+              item.id === productId && item.productVariationId === productVariationId
+                ? { ...item, quantity }
+                : item
+            )
+          );
+        })
+        .catch(err => console.error(err));
     }
   };
+
+  
+
+  // const handleQuantityChange = (productId: string | number, productVariationId: string, quantity: number, userId:string) => {
+  //   if (quantity >= 1) {
+  //     dispatch(updateQuantity({ id:productId,productVariationId , quantity, userId, }));
+  //     axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
+  //       productId,
+  //       productVariationId,
+  //       quantity
+       
+  //     })
+  //     // (cartItems.id , cartItems.productVariationId , cartItems.quantity)
+  //   }
+  // };
+
+
+
+
+
 
   const handleRemove = (id: any ) => {
     dispatch(removeFromCart({id, userId}));
@@ -212,7 +254,7 @@ const CartPage: React.FC = () => {
                 <div className="flex items-center gap-4 mt-4 sm:mt-0">
                   <button
                     onClick={() =>
-                      handleQuantityChange(product.id, product.quantity - 1)
+                      handleQuantityChange(product.id, product.productVariationId, product.quantity - 1, userId)
                     }
                     className="px-2 py-1 bg-gray-200 rounded text-lg"
                   >
@@ -223,7 +265,7 @@ const CartPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() =>
-                      handleQuantityChange(product.id, product.quantity + 1)
+                      handleQuantityChange(product.id, product.productVariationId, product.quantity + 1, userId)
                     }
                     className="px-2 py-1 bg-gray-200 rounded text-lg"
                   >
