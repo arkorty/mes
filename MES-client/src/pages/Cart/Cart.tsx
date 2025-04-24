@@ -167,7 +167,7 @@ const CartPage: React.FC = () => {
   };
 
   const getTotalPrice = () => {
-    return cart.reduce(
+    return cartItems.reduce(
       (total, product) => total + product.price * product.quantity,
       0
     );
@@ -177,10 +177,10 @@ const CartPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6">My Cart</h2>
 
-      {cart.length > 0 ? (
+      {cartItems.length > 0 ? (
         <>
           <div className="grid gap-6">
-            {cart.map((product) => (
+            {cartItems.map((product) => (
               <div
                 key={product.id}
                 className="flex flex-col sm:flex-row justify-between items-center p-4 border rounded-xl shadow-sm bg-white"
