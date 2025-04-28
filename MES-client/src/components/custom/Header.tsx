@@ -196,21 +196,21 @@ useEffect(() => {
   }, [userId, isLoggedIn, cartCount, dispatch]);
 
 
-  useEffect(() => {
-    if (!isLoggedIn) return;
+  // useEffect(() => {
+  //   if (!isLoggedIn) return;
 
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
-      .then(res => {
-        if (res.data.success) {
-          dispatch(setWishlistItemsFromBackend(res.data.data)) 
-          // setCartCount(res.data.itemCount);
-          console.log("wishlist api ");
+  //   axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
+  //     .then(res => {
+  //       if (res.data.success) {
+  //         dispatch(setWishlistItemsFromBackend(res.data.data)) 
+  //         // setCartCount(res.data.itemCount);
+  //         console.log("wishlist api ");
           
-          console.log(res.data.data)
-        }
-      })
-      .catch(err => console.error(err));
-  }, [userId, isLoggedIn, dispatch]);
+  //         console.log(res.data.data)
+  //       }
+  //     })
+  //     .catch(err => console.error(err));
+  // }, [userId, isLoggedIn, dispatch]);
 
 
 

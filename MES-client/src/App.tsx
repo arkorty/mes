@@ -43,6 +43,7 @@ import Cart from "./pages/Cart/Cart";
 //import { ShopProvider } from "./context/ShopContext";
 import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
+import { Toaster } from 'react-hot-toast';
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
@@ -55,6 +56,7 @@ function App() {
     
     <Router>
       <Suspense fallback={<Loading />}>
+      <Toaster />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
