@@ -4,7 +4,7 @@ import { Button } from "../../components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion"
 
 import { cn } from "../../lib/util"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 import prdctdetails from "../../lib/product.json"
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios"
 import { addToCart as addToCartAPI } from "../../api/index"
+import toast from "react-hot-toast"
 
 
 
@@ -62,6 +63,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState(true);
   const userId = localStorage.getItem("userId");
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
 
   useEffect(() => {
     axios
@@ -101,6 +103,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
     const average = total / productpp.reviews.length;
     return average.toFixed(1);
   };
+  
+
   
   
 
@@ -152,6 +156,11 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
       quantity: number,
       userId: string
     ) => {
+
+      if (!userId) {
+        toast.error("You must be logged in to add to the cart!");
+        setShowAuthModal(true);
+      }else{
        
       try {
         
@@ -180,12 +189,41 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
         console.error("Failed to add to cart:", error);
         
       }
+    }
     };
 
 
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {showAuthModal && (
+        // <Modal>
+        <div className="fixed inset-0 bg-gray-500 bg - opacity-90 flex justify-center items-center z-90">
+          <div className="modal-content p-8 w-[90%] lg:w-[56%] bg-white rounded-lg shadow-lg">
+            <p className="text-xl font-bold mb-4 text-emerald-900">Please Log In</p>
+            <p className="text-gray-800 mb-4">
+              You need to be logged in to add items to your cart or wishlist.
+            </p>
+            <div className="flex justify-between gap-4">
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
+              >
+                Close
+              </button>
+              <Link to="/auth"
+               onClick={() => setShowAuthModal(false)}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center">
+                Login
+              </Link>
+            </div>
+          </div>
+        </div> 
+
+        //</Modal>
+      )}
+
+
       {/* Back button */}
       <button
       onClick={() => navigate(-1)}
@@ -205,7 +243,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           >
             <img
               src={selectedImage === 0 ? product?.image : productpp?.additionalImages[selectedImage - 1]}
-              alt={productpp?.name}
+              alt={product?.name}
               className="object-contain w-full h-full transition-all duration-300 hover:scale-105"
             />
           </motion.div>
@@ -290,7 +328,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           {/* Brand and Title */}
           <div>
             <h2 className="text-lg font-bold uppercase">{product?.brand}</h2>
-            <h1 className="text-xl font-medium mt-1">{productpp?.name}</h1>
+            <h1 className="text-xl font-medium mt-1">{product?.name}</h1>
           </div>
           <div>
             <div className="text-base font-normal text-gray-800 ">{product?.shortDescription}</div>
@@ -360,9 +398,9 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-4 justify-between items-center ">
           <button
-                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    className=" bg-blue-600 flex-1 text-white py-2 rounded-lg hover:bg-blue-700 hover:cursor-pointer"
                     onClick={() =>
                       handleAddToCart(
                         product._id,
@@ -399,8 +437,14 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
 <Button
   variant={isInWishlist(product?.id, product?.productVariationId) ? "default" : "outline"}
-  className="flex-1"
+  className="flex-1 hover:cursor-pointer"
   onClick={() => {
+    if (!userId) {
+      toast.error("You must be logged in to add to the wishlist!");
+      setShowAuthModal(true);
+    } else{
+
+
     if (isInWishlist(product?.id, product?.productVariationId)) {
       dispatch(removeFromWishlist({ id: product?.id, productVariationId: product?.productVariationId }));
     } else {
@@ -414,6 +458,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
         })
       );
     }
+  }
   }}
 >
   {isInWishlist(product?.id, product?.productVariationId) ? "WISHLISTED" : "ADD TO WISHLIST"}
