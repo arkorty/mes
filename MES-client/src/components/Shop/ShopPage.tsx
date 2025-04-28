@@ -30,6 +30,7 @@ const ShopPage: React.FC = () => {
   const [selectedGender, setSelectedGender] = useState<string>("");
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
+  const [showModal, setShowModal] = useState<boolean>(true);
 
   useScrollToTop();
 
@@ -162,10 +163,37 @@ const isInWishlist = (id: string, productVariationId: string): boolean => {
 
 
 
+const handleModalClose = (gender: string) => {
+  setSelectedGender(gender);
+  setShowModal(false);  // Close modal after a selection
+};
+
+// Modal Component
+const Modal = () => (
+  <div className="fixed inset-0 bg-gray-600 bg - opacity-96 flex justify-center items-center z-90">
+    <div className="bg-white p-8 rounded-lg w-[90%] lg:w-[60%] text-center">
+      <h2 className="text-2xl font-bold text-green-900 mb-4">Select Gear Type/ Category</h2>
+      <button className="w-full py-2 bg-green-600 text-white rounded mb-2" onClick={() => handleModalClose("Men")}>
+        Men's Gear
+      </button>
+      <button className="w-full py-2 bg-emerald-600 text-white rounded" onClick={() => handleModalClose("Women")}>
+        Women's Gear
+      </button>
+      <button className="w-full py-2 bg-gray-600 text-white rounded mt-2" onClick={() => handleModalClose("Other")}>
+        All
+      </button>
+    </div>
+  </div>
+);
+
+
+
   
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
+
+{showModal && <Modal />}
            
        {/* Filter Section */}
       <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">
