@@ -11,6 +11,7 @@ import axios from "axios";
 import { log } from "console";
 import { setCartItemsFromBackend } from "@/redux/cartSlice";
 import { setWishlistItemsFromBackend } from "@/redux/wishlistSlice";
+import toast from "react-hot-toast";
 
 // Define types for menu items
 type MenuItems = {
@@ -162,14 +163,29 @@ useEffect(() => {
   
 
   // Handle Sign Out
-  const handleSignOut = () => {
-    localStorage.removeItem("token");
-    localStorage.clear();
+  // const handleSignOut = () => {
+  //   localStorage.removeItem("token");
+  //   localStorage.clear();
 
-    setIsLoggedIn(false); // Set login state to false
-    setUser(null);
+  //   setIsLoggedIn(false); // Set login state to false
+  //   setUser(null);
     
-    navigate("/auth"); // Redirect to the login page
+  //   navigate("/auth"); // Redirect to the login page
+  // };
+
+  const handleSignOut = () => {
+    // Clear user from Jotai
+    setUser(null);
+
+    // Remove user details from localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("user");
+
+    // Show a toast
+    toast.success("Logged out successfully!");
+
+    navigate("/auth"); 
   };
 
   
