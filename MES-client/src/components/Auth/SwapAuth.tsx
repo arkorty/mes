@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 //import axios from "axios"
 import { FormEvent } from "react";
 import { registerUser, loginUser } from "../../api/index";
-import { toast } from "react-toastify";
+//import { toast } from "react-toastify";
 import { useAtom } from "jotai";
 import { userAtom } from "@/atoms/userAtom";
+import toast from "react-hot-toast";
 
 export default function SwapAuth() {
   const [, setUser] = useAtom(userAtom)
@@ -37,70 +38,162 @@ export default function SwapAuth() {
     password: "",
   });
 
+  // const handleSignUpSubmit = async (
+  //   e: FormEvent<HTMLFormElement>,
+  //   signUpData: {
+  //     name: string;
+  //     email: string;
+  //     mobile: string;
+  //     password: string;
+  //     role?: number;
+  //     address?: string;
+  //     picture?: string;
+  //   }
+  // ) => {
+  //   e.preventDefault();
+
+    
+
+  //   const { data, error } = await registerUser({
+  //     ...signUpData,
+  //     role: signUpData.role || 1,
+  //     address: signUpData.address || "",
+  //     picture: signUpData.picture || "",
+  //   });
+
+  //   if (error) {
+  //     console.error("Sign Up Error:", error);
+  //     toast.error(error);
+  //     return;
+  //   }
+    
+  //   console.log("User Registered:", data);
+
+  //   localStorage.setItem("user", data.data.user);
+  //   setUser(data.data.user)
+  //   if (data?.token) {
+  //     localStorage.setItem("token", data.data.token);
+  //     localStorage.setItem("userId", data.data.user._id);
+  //   }
+
+  //   toast.success("Account created successfully!");
+  //   navigate(-1);
+  // };
+
+  // Handle SignIn Submit
+  
   const handleSignUpSubmit = async (
     e: FormEvent<HTMLFormElement>,
     signUpData: {
-      name: string;
-      email: string;
-      mobile: string;
-      password: string;
-      role?: number;
-      address?: string;
-      picture?: string;
-    }
+          name: string;
+          email: string;
+          mobile: string;
+          password: string;
+          role?: number;
+          address?: string;
+          picture?: string;
+        }
   ) => {
     e.preventDefault();
 
-    const { data, error } = await registerUser({
-      ...signUpData,
-      role: signUpData.role || 1,
-      address: signUpData.address || "",
-      picture: signUpData.picture || "",
-    });
+    const { name, email, password } = signUpData;
+  if (!name || !email || !password) {
+    toast.error("Please fill in all required fields!");
+    return;
+  }
 
-    if (error) {
-      console.error("Sign Up Error:", error);
-      toast.error(error);
-      return;
+    try {
+      const { data, error } = await registerUser({
+        ...signUpData,
+        role: signUpData.role || 1,
+        address: signUpData.address || "",
+        picture: signUpData.picture || "",
+      });
+
+      if (error) {
+        toast.error(`Sign Up Failed: ${error}`);
+        return;
+      }
+
+      if (data?.data?.user && data?.data?.token) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userId", data.data.user._id);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        setUser(data.data.user);
+
+        toast.success("Account created successfully! 🎉");
+        navigate(-1);
+      } else {
+        toast.error("Unexpected error during signup. Please try again.");
+      }
+    } catch (err) {
+      console.error("Sign Up Exception:", err);
+      toast.error("Something went wrong during Sign Up!");
     }
-    
-    console.log("User Registered:", data);
-
-    localStorage.setItem("user", data.data.user);
-    setUser(data.data.user)
-    if (data?.token) {
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("userId", data.data.user._id);
-    }
-
-    toast.success("Account created successfully!");
-    navigate(-1);
   };
 
-  // Handle SignIn Submit
+
+  // const handleSignInSubmit = async (
+  //   e: FormEvent<HTMLFormElement>,
+  //   signInData: { email: string; password: string }
+  // ) => {
+  //   e.preventDefault();
+
+  //   const { data, error } = await loginUser(signInData);
+
+  //   if (error) {
+  //     toast.error(error);
+  //     return;
+  //   } 
+  //     console.log("User Logged In:", data);
+  //     // Optionally store token or user info here:
+  //     localStorage.setItem("token", data.data.token);
+  //     localStorage.setItem("userId", data.data.user._id);
+
+  //     localStorage.setItem("user", data.data.user);
+  //     setUser(data.data.user)
+  //     toast.success("Welcome back!");
+  //     navigate(-1); 
+
+  // };
+
+
   const handleSignInSubmit = async (
-    e: FormEvent<HTMLFormElement>,
-    signInData: { email: string; password: string }
+    e: FormEvent<HTMLFormElement>, signInData: { email: string; password: string } 
   ) => {
     e.preventDefault();
 
-    const { data, error } = await loginUser(signInData);
+    const { email, password } = signInData;
+  if ( !email || !password) {
+    toast.error("Please fill in all required fields!");
+    return;
+  }
 
-    if (error) {
-      toast.error(error);
-      return;
-    } 
-      console.log("User Logged In:", data);
-      // Optionally store token or user info here:
-      localStorage.setItem("token", data.data.token);
-      localStorage.setItem("userId", data.data.user._id);
+    try {
+      const { data, error } = await loginUser(signInData);
 
-      localStorage.setItem("user", data.data.user);
-      setUser(data.data.user)
-      toast.success("Welcome back!");
-      navigate(-1); 
+      if (error) {
+        toast.error(`Login Failed: ${error}`);
+        return;
+      }
 
+      if (data?.data?.user && data?.data?.token) {
+        localStorage.setItem("token", data.data.token);
+        localStorage.setItem("userId", data.data.user._id);
+        localStorage.setItem("user", JSON.stringify(data.data.user));
+        setUser(data.data.user);
+
+        toast.success(`Welcome back, ${data.data.user.name || "User"}! 👋`);
+        navigate(-1);
+      } else {
+        toast.error("Unexpected error during login. Please try again.");
+      }
+    } catch (err) {
+      console.error("Sign In Exception:", err);
+      toast.error("Something went wrong during Login!");
+    }
   };
+
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-50 p-4">
