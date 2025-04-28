@@ -91,7 +91,7 @@ export const removeFromCart = async ({
   userId: string;
 }) =>
   handleRequest(() =>
-    api.delete(`/cart/remove/${productId}/${userId}`)
+    api.get(`/cart/remove/${productId}/${userId}`)
   );
 
 export const updateCart = async ({
@@ -106,7 +106,7 @@ export const updateCart = async ({
   userId: string;
 }) =>
   handleRequest(() =>
-    api.put(`/cart/update/${userId}`, {
+    api.post(`/cart/update/${userId}`, {
       productId,
       productVariationId,
       quantity

@@ -39,7 +39,7 @@ export default function Layout() {
     <div>
       {!hideLayout && <Header />}
       <main className="overflow-auto">
-        <div className="py-4">
+        <div className="py- 4">
           <Outlet />
         </div>
       </main>

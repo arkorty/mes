@@ -4,10 +4,13 @@ import {
   LogOut
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { getUserDetails } from "../../api";
 import axios from "axios";
+import { log } from "console";
+import { setCartItemsFromBackend } from "@/redux/cartSlice";
+import { setWishlistItemsFromBackend } from "@/redux/wishlistSlice";
 
 // Define types for menu items
 type MenuItems = {
@@ -55,6 +58,8 @@ useEffect(() => {
 
   fetchLocation();
 }, []);
+
+
 
 
 // useEffect(() => {
@@ -158,11 +163,55 @@ useEffect(() => {
 
   // Handle Sign Out
   const handleSignOut = () => {
-    localStorage.removeItem("token"); // Remove the token from localStorage
+    localStorage.removeItem("token");
+    localStorage.clear();
+
     setIsLoggedIn(false); // Set login state to false
-    setUser(null); // Clear user data
+    setUser(null);
+    
     navigate("/auth"); // Redirect to the login page
   };
+
+  
+
+  const [cartCount, setCartCount] = useState(0);
+  const userId = localStorage.getItem("userId");
+  //const isLoggedInUser = !!userId;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
+      .then(res => {
+        if (res.data.success) {
+          dispatch(setCartItemsFromBackend(res.data.data)) 
+          setCartCount(res.data.itemCount);
+          console.log("cart api ");
+          
+          console.log(res.data)
+        }
+      })
+      .catch(err => console.error(err));
+  }, [userId, isLoggedIn, cartCount, dispatch]);
+
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
+      .then(res => {
+        if (res.data.success) {
+          dispatch(setWishlistItemsFromBackend(res.data.data)) 
+          // setCartCount(res.data.itemCount);
+          console.log("wishlist api ");
+          
+          console.log(res.data.data)
+        }
+      })
+      .catch(err => console.error(err));
+  }, [userId, isLoggedIn, dispatch]);
+
 
 
 
@@ -178,7 +227,7 @@ useEffect(() => {
       {/* Main Navbar */}
       <div className="flex items-center justify-between px-2 md:px-4 -ml-1  md:-ml-2 py-2 bg-[#164734]">
         {/* Left Section - Logo & Menu */}
-        <div className="flex items-center md:space-x-4 w-[96%] lg:w-[34%] xl:w-[23%] ">
+        <div className="flex items-center md:space-x-4 w -[96%] lg:w-[34%] xl:w-[23%] ">
           
           <Link to="/">
           <img src="/footerlogo.png" alt="Mountain Expedition Supply" className=" h-14 lg:h-20 mb-4" />
@@ -250,20 +299,21 @@ useEffect(() => {
 
           {isLoggedIn && (
             <>
-              <button className="relative hidden md:flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
+              <button className="relative flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/wishlist")}>
                 <Heart className="h-5 w-5" />
                 {wishlistCount > 0 && (
                   <span className="absolute -top-4 left-3 bg-pink-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
                     {wishlistCount}
                   </span>
                 )}
-                <span>Wishlist</span>
+                <span className="hidden md:block">Wishlist</span>
               </button>
 
               <button className="flex items-center space-x-1 cursor-pointer" onClick={() => navigate("/cart")}>
                 <ShoppingCart className="h-5 w-5" />
                 {cartQuantity > 0 && (
                   <span className="absolute top-[50px] right-[9.3rem] bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                    {/* {cartQuantity} */}
                     {cartQuantity}
                   </span>
                 )}

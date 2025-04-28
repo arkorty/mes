@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import homeImg from "../../assets/homeImg.png"
 import { Link } from "react-router-dom"
 
+
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -22,21 +23,25 @@ const staggerContainer = {
 }
 
 export default function Apparel() {
+  
   return (
     <motion.section
-      className="container min-h-screen w-[96%] md:w-[90%] py-12 mx-auto px-4 "
+      className="w-[96%] py-10 mx-auto px-4 "
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={staggerContainer}
     >
         <div className="flex w-full mb-6 justify-between">
-      <h2 className=" w-[60%] md:w-[80%] text-sm md:text-xl  font-semibold " >
+      <h2 className=" w-[56%] md:w-[80%] text-base md:text-xl lg:text-3xl  font-semibold " >
         For All The Apparels Your Vacation Wants
       </h2>
 
       <button className=" px-2 py-1 md:px-6 md:py-2 text-white bg-[#003EA5] rounded-3xl flex items-center justify-center md:text-sm text-xs">
-        Learn more
+        <Link to={'/shop'}>
+          Learn more
+        </Link>
+        
       </button>
       </div>
 

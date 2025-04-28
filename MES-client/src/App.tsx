@@ -40,7 +40,7 @@ import Layout from "./components/custom/Layout";
 import Loading from "./components/custom/Loading";
 import Cart from "./pages/Cart/Cart";
 
-import { ShopProvider } from "./context/ShopContext";
+//import { ShopProvider } from "./context/ShopContext";
 import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 
@@ -52,7 +52,7 @@ const SwapAuth = lazy(() => import("./components/Auth/SwapAuth"));
 
 function App() {
   return (
-    <ShopProvider>
+    
     <Router>
       <Suspense fallback={<Loading />}>
         <Routes>
@@ -68,7 +68,7 @@ function App() {
         </Routes>
       </Suspense>
     </Router>
-    </ShopProvider>
+    
   );
 }
 

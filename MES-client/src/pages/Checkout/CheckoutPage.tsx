@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 // import { loadStripe } from "@stripe/stripe-js";
 //import axios from "axios";
 
@@ -14,6 +15,8 @@ const CheckoutPage: React.FC = () => {
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  useScrollToTop();
 
 //   const handleCheckout = async () => {
 //     if (paymentMethod === "stripe") {

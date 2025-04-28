@@ -1,27 +1,73 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../redux/store";
-import { removeFromWishlist } from "../../redux/wishlistSlice";
-import { HeartOff, ShoppingCart } from "lucide-react";
+import { removeFromWishlist, setWishlistItemsFromBackend } from "../../redux/wishlistSlice";
+import { HeartOff } from "lucide-react";
 import { addToCart } from "../../redux/cartSlice";
+import { useScrollToTop } from "@/hooks/useScrollToTop";
+import axios from "axios";
 
 const WishlistPage: React.FC = () => {
   const dispatch = useDispatch();
   const wishlist = useSelector((state: RootState) => state.wishlist.items);
+  const userId = localStorage.getItem("userId");
 
-  const handleRemove = (id: number | string) => {
-    dispatch(removeFromWishlist(id));
-  };
+  useScrollToTop();
 
-  const handleAddToCart = (item: any) => {
-    dispatch(
-      addToCart({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        image: item.image,
-      })
-    );
+  useEffect(() => {
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
+        .then(res => {
+          if (res.data.success) {
+            dispatch(setWishlistItemsFromBackend(res.data.data)); 
+          }
+        })
+        .catch(err => console.error(err));
+    }, [userId, dispatch]);
+
+    const handleRemove = (productId: string, productVariationId: string ) => {
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/remove/${productId}/${userId}`)
+      dispatch(removeFromWishlist({id: productId,productVariationId}));
+      
+    };
+
+  
+  const handleAddToCart = async (
+    productId: string,
+    productVariationId: string,
+    name: string,
+    price: number,
+    image: string | undefined,
+    quantity: number,
+    userId: string
+  ) => {
+     
+    try {
+      
+              
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+        {
+          productId,
+          productVariationId,
+          quantity,
+          
+        }
+      );
+
+      dispatch(
+        addToCart({
+          id: productId,
+          productVariationId,
+          name,
+          price,
+          image,
+        })
+      );
+  
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      
+    }
   };
 
   return (
@@ -51,7 +97,17 @@ const WishlistPage: React.FC = () => {
               <div className="flex flex-col gap-2 mt-auto">
                 <button
                   className="bg-blue-600 text-white rounded-xl py-2 hover:bg-blue-700 flex items-center justify-center gap-2"
-                  onClick={() => handleAddToCart(item)}
+                  onClick={() =>
+                    handleAddToCart(
+                      item.id,
+                      item.productVariationId,
+                      item.name,
+                      item.price,
+                      item.image,
+                      1,
+                      userId
+                    )
+                  }
                 >
                   
                   Add to Cart
@@ -100,7 +156,7 @@ const WishlistPage: React.FC = () => {
 
                 <button
                   className="bg-red-100 text-red-500 rounded-xl py-2 hover:bg-red-200"
-                  onClick={() => handleRemove(item.id)}
+                  onClick={() => handleRemove(item.id, item.productVariationId)}
                 >
                   Remove from Wishlist
                 </button>

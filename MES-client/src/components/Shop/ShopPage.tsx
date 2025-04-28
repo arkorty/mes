@@ -1,30 +1,15 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart } from "@/redux/cartSlice";
+import { addToCart, setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
-import { addToCart as addToCartAPI } from "../../api/index"
+import { useScrollToTop } from "@/hooks/useScrollToTop";
 
-// Define Product Type
+
 interface Product {
   _id: string;
   name: string;
@@ -32,6 +17,7 @@ interface Product {
   image: string;
   description: string;
   shortDescription: string;
+  baseVariationId: string;
   category: string;
   rating: number;
 }
@@ -45,28 +31,106 @@ const ShopPage: React.FC = () => {
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
 
-  // useEffect(() => {
-  //   setProducts(productsData);
-  //   setFilteredProducts(productsData);
-  // }, []);
+  useScrollToTop();
 
-
+ const dispatch = useDispatch()
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/product`)
       .then(res => {
         if (res.data.success) {
+          dispatch(setCartItemsFromBackend(res.data.data));
           setProducts(res.data.data);
           setFilteredProducts(res.data.data);
           console.log(res.data.data);
         }
       })
       .catch(err => console.error(err));
-  }, []);
+  }, [dispatch]);
+
+  const handleAddToCart = async (
+    productId: string,
+    productVariationId: string,
+    name: string,
+    price: number,
+    image: string | undefined,
+    quantity: number,
+    userId: string
+  ) => {
+     
+    try {
+      
+              
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+        {
+          productId,
+          productVariationId,
+          quantity,
+          
+        }
+      );
+
+      dispatch(
+        addToCart({
+          id: productId,
+          productVariationId,
+          name,
+          price,
+          image,
+        })
+      );
+  
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+      
+    }
+  };
+
+
+  const handleAddToWishlist = async (
+    productId: string,
+    baseVariationId: string,
+    name: string,
+    price: number,
+    image: string | undefined,
+    quantity: number,
+    userId: string
+  ) => {
+     
+    try {
+      
+              
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/wishlist/add/${userId}`,
+        {
+          productId,
+          productVariationId: baseVariationId,
+          userId,
+          
+        }
+      );
+
+      dispatch(
+        addToWishlist({
+          id: productId,
+          productVariationId:baseVariationId,
+          name,
+          price,
+          image,
+        })
+      );
+  
+    } catch (error) {
+      console.error("Failed to add to wishlist:", error);
+      
+    }
+  };
 
 
 
-
+  const userId = localStorage.getItem("userId");
+    
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
     setFilteredProducts(
@@ -90,11 +154,15 @@ const ShopPage: React.FC = () => {
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
-const isInWishlist = (id: string | number) =>
-  wishlistItems.some((item) => item.id === id);
+const isInWishlist = (id: string, productVariationId: string): boolean => {
+  return wishlistItems.some(
+    (item) => item.id === id && item.productVariationId === productVariationId
+  );
+};
 
 
-  const dispatch = useDispatch();
+
+  
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
@@ -251,77 +319,58 @@ const isInWishlist = (id: string | number) =>
               </Link>
 
               <div className="w-[86%] mx-auto flex justify-between">
-                {/* <button
-                  className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() =>
-                    dispatch(
-                      addToCart({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image || fallbackImage,
-                      })
-                    )
-                  }
-                  
-                > */}
-
+                
                   <button
                     className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                    onClick={async () => {
-                      
-                      dispatch(
-                        addToCart({
-                          id: product._id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || fallbackImage,
-                        })
-                      );
-
-                      const userId = localStorage.getItem("userId");
-
-                      if (!userId) {
-                        console.warn("User ID not found in localStorage.");
-                        return;
-                      }
-
-                      // Call backend API to sync with server
-                      try {
-                        await addToCartAPI({
-                          productId: product._id,
-                          productVariationId: product._id, 
-                          quantity: 1,
-                          userId: userId, 
-                        });
-                      } catch (error) {
-                        console.error("Failed to add to cart on backend:", error);
-                      }
-                    }}
+                    onClick={() =>
+                      handleAddToCart(
+                        product._id,
+                        product.baseVariationId,
+                        product.name,
+                        product.price,
+                        product.image,
+                        1,
+                        userId
+                      )
+                    }
                   >
                   Add to Cart
                 </button>
 
                 <button
                   className="cursor-pointer mt-3"
-                  onClick={() => {
-                    if (isInWishlist(product._id)) {
-                      dispatch(removeFromWishlist(product._id));
-                    } else {
-                      dispatch(
-                        addToWishlist({
-                          id: product._id,
-                          name: product.name,
-                          price: product.price,
-                          image: product.image || fallbackImage,
-                        })
-                      );
-                    }
-                  }}
+                  // onClick={() => {
+                  //   if (isInWishlist(product._id)) {
+                  //     dispatch(removeFromWishlist(product._id));
+                  //   } else {
+                  //     dispatch(
+                  //       addToWishlist({
+                  //         id: product._id,
+                  //         productVariationId: product.baseVariationId,
+                  //         name: product.name,
+                  //         price: product.price,
+                  //         image: product.image || fallbackImage,
+                  //       })
+                  //     );
+                  //   }
+                  // }}
+                  onClick={() =>
+                    handleAddToWishlist(
+                      product._id,
+                      product.baseVariationId,
+                      product.name,
+                      product.price,
+                      product.image,
+                      1,
+                      userId
+                    )
+                  }
                 >
                   <Heart
                     className={`w-6 h-6 ${
-                      isInWishlist(product._id) ? "text-pink-500 fill-pink-500" : "text-gray-400"
+                      isInWishlist(product._id, product.baseVariationId)
+                        ? "text-pink-500 fill-pink-500"
+                        : "text-gray-400"
                     }`}
                   />
                 </button>
