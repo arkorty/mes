@@ -8,6 +8,7 @@ import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import toast from "react-hot-toast";
 
 
 interface Product {
@@ -31,6 +32,8 @@ const ShopPage: React.FC = () => {
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
   const [showModal, setShowModal] = useState<boolean>(true);
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
+  
 
   useScrollToTop();
 
@@ -49,6 +52,10 @@ const ShopPage: React.FC = () => {
       .catch(err => console.error(err));
   }, [dispatch]);
 
+  const closeModal = () => {
+    setShowAuthModal(false);
+  };
+
   const handleAddToCart = async (
     productId: string,
     productVariationId: string,
@@ -58,6 +65,12 @@ const ShopPage: React.FC = () => {
     quantity: number,
     userId: string
   ) => {
+
+    if (!userId) {
+      toast.error("You must be logged in to add to the cart!");
+      setShowAuthModal(true);
+    }
+    else{
      
     try {
       
@@ -86,6 +99,7 @@ const ShopPage: React.FC = () => {
       console.error("Failed to add to cart:", error);
       
     }
+  }
   };
 
 
@@ -98,7 +112,10 @@ const ShopPage: React.FC = () => {
     quantity: number,
     userId: string
   ) => {
-     
+    if (!userId) {
+      toast.error("You must be logged in to add to the wishlist!");
+      setShowAuthModal(true);
+    } 
     try {
       
               
@@ -194,6 +211,34 @@ const Modal = () => (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
 
 {showModal && <Modal />}
+
+{showAuthModal && (
+        // <Modal>
+        <div className="fixed inset-0 bg-gray-500 bg - opacity-90 flex justify-center items-center z-90">
+          <div className="modal-content p-8 w-[90%] lg:w-[56%] bg-white rounded-lg shadow-lg">
+            <p className="text-xl font-bold mb-4 text-emerald-900">Please Log In</p>
+            <p className="text-gray-800 mb-4">
+              You need to be logged in to add items to your cart or wishlist.
+            </p>
+            <div className="flex justify-between gap-4">
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
+              >
+                Close
+              </button>
+              <Link to="/auth"
+               onClick={() => setShowAuthModal(false)}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center">
+                Login
+              </Link>
+            </div>
+          </div>
+        </div> 
+
+        //</Modal>
+      )}
+
            
        {/* Filter Section */}
       <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">
