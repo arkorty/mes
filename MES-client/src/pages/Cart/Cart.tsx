@@ -64,40 +64,12 @@ const CartPage: React.FC = () => {
           productVariationId,
           quantity
         })
-        // .then(() => {
-        //   // Update cartItems manually so the UI reflects changes without reload
-        //   setCartItems(prev =>
-        //     prev.map(item =>
-        //       item.id === productId && item.productVariationId === productVariationId
-        //         ? { ...item, quantity }
-        //         : item
-        //     )
-        //   );
-        // })
+        
         .catch(err => console.error(err));
     }
   };
 
   
-
-  // const handleQuantityChange = (productId: string | number, productVariationId: string, quantity: number, userId:string) => {
-  //   if (quantity >= 1) {
-  //     dispatch(updateQuantity({ id:productId,productVariationId , quantity, userId, }));
-  //     axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
-  //       productId,
-  //       productVariationId,
-  //       quantity
-       
-  //     })
-  //     // (cartItems.id , cartItems.productVariationId , cartItems.quantity)
-  //   }
-  // };
-
-
-
-
-
-
   const handleRemove = (productId: string, productVariationId: string ) => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${productId}/${userId}`)
     dispatch(removeFromCart({id: productId,productVariationId}));
@@ -202,13 +174,3 @@ const CartPage: React.FC = () => {
 };
 
 export default CartPage;
-
-
-
-
-
-
-
-
-
-

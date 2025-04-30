@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Star, MapPin, Truck } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion"
-
 import { cn } from "../../lib/util"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { motion } from "framer-motion"
@@ -105,9 +104,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   };
   
 
-  
-  
-
   // Calculate rating distribution
   const calculateRatingDistribution = () => {
     if (!productpp.reviews || productpp.reviews.length === 0) return [0, 0, 0, 0, 0]
@@ -131,12 +127,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
-
   const isInCart = (id: string) => {
     return cartItems.some((item) => item.id === id);
   };
-  
-  
+   
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
@@ -264,8 +258,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             >
               <ChevronRight className="h-5 w-5" />
             </button>
-          {/* </div> */}
-
+          
           {/* Thumbnails */}
           <div className="relative">
             <div className="flex space-x-2 overflow-x-auto py-2 scrollbar-hide">

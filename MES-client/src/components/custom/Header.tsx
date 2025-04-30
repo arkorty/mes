@@ -13,7 +13,6 @@ import { setCartItemsFromBackend } from "@/redux/cartSlice";
 import { setWishlistItemsFromBackend } from "@/redux/wishlistSlice";
 import toast from "react-hot-toast";
 
-// Define types for menu items
 type MenuItems = {
   [key: string]: string[];
 };
@@ -61,22 +60,6 @@ useEffect(() => {
 }, []);
 
 
-
-
-// useEffect(() => {
-//   if (isMenuOpen ) {
-//     axios
-//       .get(`${import.meta.env.VITE_API_BASE_URL}/api/category/dropdown`)
-//       .then((res) => {
-//         setCategories(res.data.data); 
-//         console.log(res.data.data);
-//         //setCategoriesFetched(true);
-//       })
-//       .catch((err) => console.error(err));
-//   }
-// }, [isMenuOpen]);
-
-
 const [menuItems, setMenuItems] = useState<Record<string, string[]>>({});
 
 useEffect(() => {
@@ -115,20 +98,11 @@ useEffect(() => {
   }
 }, [isMenuOpen]);
   
-
-
-  // const menuItems: MenuItems = { 
-  //   "Gears & Equipments": ["Winter Sports →", "Camping →", "Hiking →"],
-  //   Apparel: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
-  //   Shoes: ["Outdoor →", "Ski & Snowboard →", "Hiking →", "Lifestyle →", "Camping →"],
-  // };
-
   const navigate = useNavigate();
   const cartQuantity = useSelector((state: RootState) => state.cart.totalQuantity);
 
   const wishlistCount = useSelector((state: RootState) => state.wishlist.items.length);
 
-  // Effect hook to check if the user is logged in
   useEffect(() => {
     const token = localStorage.getItem("token"); 
   
@@ -162,29 +136,13 @@ useEffect(() => {
   }, []);
   
 
-  // Handle Sign Out
-  // const handleSignOut = () => {
-  //   localStorage.removeItem("token");
-  //   localStorage.clear();
-
-  //   setIsLoggedIn(false); // Set login state to false
-  //   setUser(null);
-    
-  //   navigate("/auth"); // Redirect to the login page
-  // };
-
   const handleSignOut = () => {
-    // Clear user from Jotai
     setUser(null);
 
-    // Remove user details from localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("user");
-
-    // Show a toast
     toast.success("Logged out successfully!");
-
     navigate("/auth"); 
   };
 
@@ -210,25 +168,6 @@ useEffect(() => {
       })
       .catch(err => console.error(err));
   }, [userId, isLoggedIn, cartCount, dispatch]);
-
-
-  // useEffect(() => {
-  //   if (!isLoggedIn) return;
-
-  //   axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
-  //     .then(res => {
-  //       if (res.data.success) {
-  //         dispatch(setWishlistItemsFromBackend(res.data.data)) 
-  //         // setCartCount(res.data.itemCount);
-  //         console.log("wishlist api ");
-          
-  //         console.log(res.data.data)
-  //       }
-  //     })
-  //     .catch(err => console.error(err));
-  // }, [userId, isLoggedIn, dispatch]);
-
-
 
 
   return (
@@ -271,15 +210,6 @@ useEffect(() => {
         {/* Right Section - Icons & Links */}
         <div className="flex items-center space-x-6 text-sm">
           {/* Delivery Location */}
-          {/* <div className="hidden md:flex items-center space-x-1">
-            <MapPin className="h-5 w-5" />
-            <div>
-              <p className="text-xs">Delivery Location</p>
-              <p className="font-semibold text-sm">560002 <span className="text-blue-300 cursor-pointer">CHANGE</span></p>
-            </div>
-          </div> */}
-
-
           <div className="hidden md:flex items-center space-x-1">
             <MapPin className="h-5 w-5" />
             <div>
@@ -295,10 +225,6 @@ useEffect(() => {
               </p>
             </div>
           </div>
-
-
-          
-
 
           <button className="flex items-center space-x-1 cursor-pointer"
           onClick={() => navigate("/shop")}>
@@ -441,9 +367,6 @@ useEffect(() => {
         </div>
       )} */}
 
-
-
-
       {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
           
@@ -485,9 +408,6 @@ useEffect(() => {
           </div>
         </div>
       )}
-
-
-
 
     </nav>
 

@@ -205,15 +205,13 @@ const Modal = () => (
 
 
 
-  
-
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
 
 {showModal && <Modal />}
 
 {showAuthModal && (
-        // <Modal>
+        
         <div className="fixed inset-0 bg-gray-500 bg - opacity-90 flex justify-center items-center z-90">
           <div className="modal-content p-8 w-[90%] lg:w-[56%] bg-white rounded-lg shadow-lg">
             <p className="text-xl font-bold mb-4 text-emerald-900">Please Log In</p>
@@ -236,7 +234,6 @@ const Modal = () => (
           </div>
         </div> 
 
-        //</Modal>
       )}
 
            
@@ -244,9 +241,7 @@ const Modal = () => (
       <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">
          <h2 className="text-xl font-semibold mb-4">Filters</h2>
         
-         {/* Price Range */}
-        
-
+         {/* Price Range */}       
           <div>
           <h3 className="font-medium mb-2">Price</h3>
           <div className="relative w-full flex items-center">

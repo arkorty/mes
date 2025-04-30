@@ -5,10 +5,8 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios"
 import { FormEvent } from "react";
 import { registerUser, loginUser } from "../../api/index";
-//import { toast } from "react-toastify";
 import { useAtom } from "jotai";
 import { userAtom } from "@/atoms/userAtom";
 import toast from "react-hot-toast";
@@ -38,50 +36,7 @@ export default function SwapAuth() {
     password: "",
   });
 
-  // const handleSignUpSubmit = async (
-  //   e: FormEvent<HTMLFormElement>,
-  //   signUpData: {
-  //     name: string;
-  //     email: string;
-  //     mobile: string;
-  //     password: string;
-  //     role?: number;
-  //     address?: string;
-  //     picture?: string;
-  //   }
-  // ) => {
-  //   e.preventDefault();
-
-    
-
-  //   const { data, error } = await registerUser({
-  //     ...signUpData,
-  //     role: signUpData.role || 1,
-  //     address: signUpData.address || "",
-  //     picture: signUpData.picture || "",
-  //   });
-
-  //   if (error) {
-  //     console.error("Sign Up Error:", error);
-  //     toast.error(error);
-  //     return;
-  //   }
-    
-  //   console.log("User Registered:", data);
-
-  //   localStorage.setItem("user", data.data.user);
-  //   setUser(data.data.user)
-  //   if (data?.token) {
-  //     localStorage.setItem("token", data.data.token);
-  //     localStorage.setItem("userId", data.data.user._id);
-  //   }
-
-  //   toast.success("Account created successfully!");
-  //   navigate(-1);
-  // };
-
-  // Handle SignIn Submit
-  
+   
   const handleSignUpSubmit = async (
     e: FormEvent<HTMLFormElement>,
     signUpData: {
@@ -131,31 +86,6 @@ export default function SwapAuth() {
       toast.error("Something went wrong during Sign Up!");
     }
   };
-
-
-  // const handleSignInSubmit = async (
-  //   e: FormEvent<HTMLFormElement>,
-  //   signInData: { email: string; password: string }
-  // ) => {
-  //   e.preventDefault();
-
-  //   const { data, error } = await loginUser(signInData);
-
-  //   if (error) {
-  //     toast.error(error);
-  //     return;
-  //   } 
-  //     console.log("User Logged In:", data);
-  //     // Optionally store token or user info here:
-  //     localStorage.setItem("token", data.data.token);
-  //     localStorage.setItem("userId", data.data.user._id);
-
-  //     localStorage.setItem("user", data.data.user);
-  //     setUser(data.data.user)
-  //     toast.success("Welcome back!");
-  //     navigate(-1); 
-
-  // };
 
 
   const handleSignInSubmit = async (
@@ -240,7 +170,6 @@ export default function SwapAuth() {
                   Create Account <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
-                {/* Decorative elements */}
                 <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
                 <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
                 <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
@@ -273,7 +202,7 @@ export default function SwapAuth() {
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
-                {/* Decorative elements */}
+                
                 <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
                 <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
                 <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
