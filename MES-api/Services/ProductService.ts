@@ -60,29 +60,29 @@ export class ProductService implements IProductService {
                   $expr: {
                     $and: [
                       { $eq: ["$product", "$$productId"] },
-                      { $eq: ["$isBaseVariation", true] }
-                    ]
-                  }
-                }
+                      { $eq: ["$isBaseVariation", true] },
+                    ],
+                  },
+                },
               },
-              { $limit: 1 }
+              { $limit: 1 },
             ],
-            as: "baseVariation"
-          }
+            as: "baseVariation",
+          },
         },
         {
           $addFields: {
-            baseVariationId: { $arrayElemAt: ["$baseVariation._id", 0] }
-          }
+            baseVariationId: { $arrayElemAt: ["$baseVariation._id", 0] },
+          },
         },
         { $project: { baseVariation: 0 } },
         { $skip: (currentPage - 1) * limit },
-        { $limit: limit }
+        { $limit: limit },
       ];
-  
+
       const [products, totalProducts] = await Promise.all([
         Product.aggregate(aggregationPipeline),
-        Product.countDocuments(query)
+        Product.countDocuments(query),
       ]);
 
       return {
@@ -210,23 +210,26 @@ export class ProductService implements IProductService {
       const files = productFiles ?? {};
       let coverImage = files.coverImage ? files.coverImage[0] : null;
       let otherImages = files.otherImages || null;
-      let { variations } = productObj;
+      let variations = JSON.parse(productObj.variations);
+      let variationImages = files.variationImages ?? null;
       let parentProductCategoryId;
 
       //defining categoryDepth of product
       let categoryDepth: number = 0;
-      if (productObj.categoryId) {
+      if (productObj.categoryId && productObj.categoryId !== "") {
         categoryDepth = 1;
         parentProductCategoryId = productObj.categoryId;
-      }
-      if (productObj.subCategoryId) {
+      } else delete productObj.categoryId;
+
+      if (productObj.subCategoryId && productObj.subCategoryId !== "") {
         categoryDepth = 2;
         parentProductCategoryId = productObj.subCategoryId;
-      }
-      if (productObj.subSubCategoryId) {
+      } else delete productObj.subCategoryId;
+
+      if (productObj.subSubCategoryId && productObj.subSubCategoryId !== "") {
         categoryDepth = 3;
         parentProductCategoryId = productObj.subSubCategoryId;
-      }
+      } else delete productObj.subSubCategoryId;
 
       if (productObj._id) {
         productId = productObj._id;
@@ -271,16 +274,15 @@ export class ProductService implements IProductService {
           slug: productObj.slug,
           brand: productObj.brand,
           sku: productObj.sku,
-          categoryId: productObj.categoryId,
-          subCategoryId: productObj.subCategoryId,
-          subSubCategoryId: productObj.subSubCategoryId,
+          categoryId: productObj.categoryId ?? null,
+          subCategoryId: productObj.subCategoryId ?? null,
+          subSubCategoryId: productObj.subSubCategoryId ?? null,
           description: productObj.description,
           price: productObj.price,
           shortDescription: productObj.shortDescription,
           salePrice: productObj.salePrice,
           parentProductCategoryId: parentProductCategoryId,
           productCategoryDepth: categoryDepth,
-          modifiedOn: new Date(),
         });
         productId = prodModel._id;
         product = prodModel;
@@ -289,6 +291,9 @@ export class ProductService implements IProductService {
         if (variations) {
           for (let index = 0; index < variations.length; index++) {
             let productItem = variations[index];
+            let imageFile = variationImages.find(
+              (_, idx) => idx === productItem.imageIndex
+            );
             //generate sku for element
             let generatedSku = await this.GenerateSKUForProductVariation(
               productObj.name,
@@ -300,7 +305,23 @@ export class ProductService implements IProductService {
               product: productId,
               sku: generatedSku,
             };
+
             let addVariation = await ProductVariation.create(productItem);
+
+            if (imageFile) {
+              const { image, thumbnail, imageUrl, thumbnailUrl } =
+                await UploadProductFileToS3(productId, imageFile, false);
+
+              await ProductImage.create({
+                product: productId,
+                productVariation: addVariation._id,
+                image,
+                thumbnail,
+                imageUrl,
+                thumbnailUrl,
+                isCover: false,
+              });
+            }
             //add prod variation stock
             const model: IStockDto = {
               productId: productId,
@@ -372,7 +393,6 @@ export class ProductService implements IProductService {
           }
         }
       }
-
       return product;
     } catch (error) {
       throw error;

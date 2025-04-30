@@ -12,7 +12,8 @@ import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios"
 import { addToCart as addToCartAPI } from "../../api/index"
-import toast from "react-hot-toast"
+import { useAtomValue } from "jotai"
+import { userAtom } from "@/atoms/userAtom"
 
 
 
@@ -58,11 +59,11 @@ const enhancedProducts = prdctdetails;
 export default function ProductDetail({ productId = '1' }: { productId?: string }) {
 
   const { id } = useParams(); 
+  const userData = useAtomValue(userAtom);
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState(true);
-  const userId = localStorage.getItem("userId");
-  const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
+  const userId = userData?._id || ""; 
 
   useEffect(() => {
     axios

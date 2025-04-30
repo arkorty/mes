@@ -17,6 +17,7 @@ const handleRequest = async (fn: () => Promise<any>) => {
     const response = await fn();
     return { data: response.data, error: null };
   } catch (error: any) {
+    console.log(error)
     return {
       data: null,
       error: error.response?.data?.message || error.message || "Unknown error"

@@ -18,8 +18,8 @@ interface IStockService {
 export class StockService implements IStockService {
     public async AddSingleStock(stock: IStockDto): Promise<boolean> {
         try {
-            const model:IStockDto = stock;
-            const stockModel = new StockMaster(model);
+            const stockModel = new StockMaster(stock);
+            await stockModel.save()
             return true;
         }
         catch(err:any){

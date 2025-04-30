@@ -17,6 +17,7 @@ export const getCategories = async () => {
 export const addUpdateCategory = async (formData: FormData) => {
   try {
     const { data } = await api.post(API_ROUTES.addUpdateCategory, formData);
+    if (data.success) revalidatePath('/categories');
     return data;
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));
