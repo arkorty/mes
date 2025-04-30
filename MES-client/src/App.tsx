@@ -4,7 +4,6 @@ import "./App.css";
 import Layout from "./components/custom/Layout";
 import Loading from "./components/custom/Loading";
 import Cart from "./pages/Cart/Cart";
-
 import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Toaster } from 'react-hot-toast';

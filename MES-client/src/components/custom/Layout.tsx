@@ -4,7 +4,7 @@ import Footer from './Footer';
 
 export default function Layout() {
   const location = useLocation();
-  const hideLayout = location.pathname === "/auth"; // Hide header & footer on /auth
+  const hideLayout = location.pathname === "/auth"; 
 
   return (
     <div>

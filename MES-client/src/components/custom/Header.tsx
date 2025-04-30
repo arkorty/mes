@@ -102,7 +102,6 @@ const Header: React.FC = () => {
     (state: RootState) => state.wishlist.items.length
   );
 
-  // Effect hook to check if the user is logged in
   useEffect(() => {
     const token = user?.token;
 
@@ -124,10 +123,8 @@ const Header: React.FC = () => {
   }, [setUser, user?.token]);
 
   const handleSignOut = () => {
-    // Clear user from Jotai
     setUser(null);
 
-    // Remove user details from localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
     localStorage.removeItem("user");

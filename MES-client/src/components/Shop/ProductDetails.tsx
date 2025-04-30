@@ -2,9 +2,8 @@ import { useEffect, useState } from "react"
 import { ChevronLeft, ChevronRight, Star, MapPin, Truck } from "lucide-react"
 import { Button } from "../../components/ui/button"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion"
-
 import { cn } from "../../lib/util"
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 import prdctdetails from "../../lib/product.json"
 import { useDispatch, useSelector } from "react-redux";
@@ -13,46 +12,10 @@ import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios"
 import { addToCart as addToCartAPI } from "../../api/index"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/atoms/userAtom"
-
-
-
-// Enhanced product type with additional images
-interface Product {
-  id: string 
-  name: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  image: string
-  additionalImages: string[]
-  description: string
-  shortDescription: string
-  productVariationId: string | "123456789"
-  category: string
-  rating: number
-  color?: string
-  availableColors?: { name: string; value: string }[]
-  availableSizes?: string[]
-  reviews?: Review[]
-}
-
-interface Review {
-  id: number
-  userName: string
-  rating: number
-  comment: string
-  date: string
-  location: string
-  verified: boolean
-  ratings: {
-    value: number
-    warmth: number
-    breathability: number
-    lightweight: number
-  }
-}
+import toast from "react-hot-toast"
+import { counterInfoAtom } from "@/atoms/counterAtom"
 
 
 const enhancedProducts = prdctdetails;
@@ -65,6 +28,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState(true);
   const userId = userData?._id || ""; 
+
+  const [counter, setCounter] = useAtom(counterInfoAtom); // Use the counterInfoAtom to manage cart and wishlist state in nav
 
   useEffect(() => {
     axios
@@ -105,7 +70,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
     return average.toFixed(1);
   };
   
-  
 
   // Calculate rating distribution
   const calculateRatingDistribution = () => {
@@ -127,20 +91,13 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const prevImage = () => {
     setSelectedImage((prev) => (prev === 0 ? productpp.additionalImages.length : prev - 1))
   }
-
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-
-  const isInCart = (id: string) => {
-    return cartItems.some((item) => item.id === id);
-  };
-  
-  
+   
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
   const isInWishlist = (id: string, productVariationId: string ) =>
     wishlistItems.some((item) => item.id === id && item.productVariationId === productVariationId);
+
 
   const navigate = useNavigate();
 
@@ -155,6 +112,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
       quantity: number,
       userId: string
     ) => {
+
+      if (!userId) {
+        toast.error("You must be logged in to add to the cart!");
+      }else{
        
       try {
         
@@ -167,28 +128,30 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             quantity,
             
           }
-        );
-  
-        dispatch(
-          addToCart({
-            id: productId,
-            productVariationId,
-            name,
-            price,
-            image,
-          })
-        );
+        ).then((res) => {
+          if (res.data.success) {
+            setCounter((prev) => prev + 1);
+            toast.success("Added to cart successfully");
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to add to cart:", error);
+          toast.error("Failed to add to cart");
+        })
     
       } catch (error) {
         console.error("Failed to add to cart:", error);
         
       }
+    }
     };
 
 
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+
+
       {/* Back button */}
       <button
       onClick={() => navigate(-1)}
@@ -208,7 +171,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           >
             <img
               src={selectedImage === 0 ? product?.image : productpp?.additionalImages[selectedImage - 1]}
-              alt={productpp?.name}
+              alt={product?.name}
               className="object-contain w-full h-full transition-all duration-300 hover:scale-105"
             />
           </motion.div>
@@ -229,8 +192,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             >
               <ChevronRight className="h-5 w-5" />
             </button>
-          {/* </div> */}
-
+          
           {/* Thumbnails */}
           <div className="relative">
             <div className="flex space-x-2 overflow-x-auto py-2 scrollbar-hide">
@@ -293,7 +255,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           {/* Brand and Title */}
           <div>
             <h2 className="text-lg font-bold uppercase">{product?.brand}</h2>
-            <h1 className="text-xl font-medium mt-1">{productpp?.name}</h1>
+            <h1 className="text-xl font-medium mt-1">{product?.name}</h1>
           </div>
           <div>
             <div className="text-base font-normal text-gray-800 ">{product?.shortDescription}</div>
@@ -363,9 +325,9 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-4">
+          <div className="flex gap-2 pt-4 justify-between items-center ">
           <button
-                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    className=" bg-blue-600 flex-1 text-white py-2 rounded-lg hover:bg-blue-700 hover:cursor-pointer"
                     onClick={() =>
                       handleAddToCart(
                         product._id,
@@ -381,29 +343,18 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                   Add to Cart
                 </button>
 
-          {/* <Button
-            className={`flex-1 ${isInCart(product.id.toString()) ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}`}
-            onClick={() => {
-              if (!isInCart(product.id)) {
-                dispatch(
-                  addToCart({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image
-                  })
-                );
-              }
-            }}
-          >
-            {isInCart(product.id) ? "ADDED TO CART" : "ADD TO CART"}
-          </Button> */}
 
 
 <Button
   variant={isInWishlist(product?.id, product?.productVariationId) ? "default" : "outline"}
-  className="flex-1"
+  className="flex-1 hover:cursor-pointer"
   onClick={() => {
+    if (!userId) {
+      toast.error("You must be logged in to add to the wishlist!");
+
+    } else{
+
+
     if (isInWishlist(product?.id, product?.productVariationId)) {
       dispatch(removeFromWishlist({ id: product?.id, productVariationId: product?.productVariationId }));
     } else {
@@ -416,7 +367,12 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           productVariationId: product?.productVariationId,
         })
       );
+      toast.success(
+        `Added ${product?.name} to your wishlist!`,
+        { duration: 2000 }
+      );
     }
+  }
   }}
 >
   {isInWishlist(product?.id, product?.productVariationId) ? "WISHLISTED" : "ADD TO WISHLIST"}

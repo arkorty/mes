@@ -174,7 +174,6 @@ export default function SwapAuth() {
                   Create Account <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
-                {/* Decorative elements */}
                 <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
                 <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
                 <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
@@ -207,7 +206,7 @@ export default function SwapAuth() {
                   Sign In <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
-                {/* Decorative elements */}
+                
                 <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-green-500 opacity-20"></div>
                 <div className="absolute -top-46 -right-4 h-40 w-40 rounded-full bg-green-400 opacity-20"></div>
                 <div className="absolute bottom-12 left-74 h-24 w-24 rounded-full bg-green-300 opacity-20"></div>
