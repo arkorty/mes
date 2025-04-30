@@ -33,13 +33,13 @@ const WishlistPage: React.FC = () => {
         .catch(err => console.error(err));
     }, [userId, dispatch]);
 
-    const handleRemove = (productId: string, productVariationId: string ) => {
-      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/remove/${productId}/${userId}`).then(res => {
+    const handleRemove = (productId: string, productVariationId: any , id) => {
+      axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/remove/`, {userId, productId, productVariationId: productVariationId?._id}).then(res => {
         if (res.data.success) {
           dispatch(removeFromWishlist({id: productId,productVariationId}));
           toast.success("Removed from wishlist");
           setCounter(prev => prev + 1); // Update the counter state
-          setWishlist(prev => prev.filter(item => item.id !== productId)); // Update wishlist state locally
+          setWishlist(prev => prev.filter(item => item.id !== id)); // Update wishlist state locally
         }
       })
       .catch(err => console.error(err));      
@@ -48,7 +48,7 @@ const WishlistPage: React.FC = () => {
   
   const handleAddToCart = async (
     productId: string,
-    productVariationId: string,
+    productVariationId: any,
     name: string,
     price: number,
     image: string | undefined,
@@ -63,7 +63,7 @@ const WishlistPage: React.FC = () => {
         `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
         {
           productId,
-          productVariationId,
+          productVariationId: productVariationId?._id,
           quantity,
           
         }
@@ -115,7 +115,7 @@ const WishlistPage: React.FC = () => {
                   className="bg-blue-600 text-white rounded-xl py-2 hover:bg-blue-700 flex items-center justify-center gap-2"
                   onClick={() =>
                     handleAddToCart(
-                      item.id,
+                      item.productId._id,
                       item.productVariationId,
                       item.name,
                       item.price,
@@ -131,7 +131,7 @@ const WishlistPage: React.FC = () => {
 
                 <button
                   className="bg-red-100 text-red-500 rounded-xl py-2 hover:bg-red-200"
-                  onClick={() => handleRemove(item.id, item.productVariationId)}
+                  onClick={() => handleRemove(item.productId._id, item.productVariationId, item._id)}
                 >
                   Remove from Wishlist
                 </button>

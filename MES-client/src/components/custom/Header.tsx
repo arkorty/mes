@@ -155,13 +155,19 @@ const Header: React.FC = () => {
           });
       }
 
-      const { data } = await getWishlist(userId);
-
-      if (data) {
-        setWishlistCount(data.length ?? 0);
-        console.log("wishlist api ");
-        console.log(data.length);
-      }
+      axios
+        .get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
+        .then((res) => {
+          if (res.data.success) {
+            setWishlistCount(res.data.data.length ?? res.data.itemCount ?? 0);
+            console.log("wishlist api ");
+            console.log(res.data.data.length);
+          }
+        })
+        .catch((err) => {
+          setWishlistCount(0);
+          console.error(err);
+        });
     };
 
     // Initial fetch
@@ -174,10 +180,6 @@ const Header: React.FC = () => {
     return () => clearInterval(intervalId);
   }, [
     userId,
-    isLoggedIn,
-    location.pathname,
-    location.search,
-    location.hash,
     counter,
   ]);
 
