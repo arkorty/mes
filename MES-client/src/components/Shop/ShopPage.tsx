@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -78,7 +79,8 @@ const ShopPage = () => {
             quantity,
           }
         );
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
         setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
 
         toast.success("Added to cart successfully");
@@ -113,6 +115,7 @@ const ShopPage = () => {
         );
 
         if (res.data.success) {
+          // @ts-expect-error
           setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
           toast.success("Added to wishlist successfully");
         }
@@ -139,11 +142,29 @@ const ShopPage = () => {
     }
   };
 
-  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+  const [wishlistItems, setWishlistItems] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!userData?._id) return;
+  
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userData._id}`)
+      .then((res) => {
+        if (res.data.success) {
+          setWishlistItems(res.data.data);
+        }
+      })
+      .catch((err) => {
+        setWishlistItems([]);
+        console.error("Error fetching wishlist:", err);
+      });
+  }, [userData?._id, counter]);
+  
 
   const isInWishlist = (id: string, productVariationId: string): boolean => {
+    
     return wishlistItems.some(
-      (item) => item.id === id && item.productVariationId === productVariationId
+      (item) => item.id === id || item.productVariationId === productVariationId || item._id == id
     );
   };
 
