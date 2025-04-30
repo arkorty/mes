@@ -61,13 +61,15 @@ export const Login = catchAsync(async (req: Request, res: Response, next: NextFu
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new AppError('Please provide email and password!', 400));
+    res.status(400).json({success:false,message:"Please provide email and password"});
+    return;
   }
 
   const user = await User.findOne({ email });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
-    return next(new AppError('Incorrect email or password', 401));
+    res.status(401).json({success:false,message:"Incorrect email or password"});
+    return;
   }
 
   const token = signToken(user._id);

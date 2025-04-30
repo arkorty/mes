@@ -1,50 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/store";
-import { removeFromCart, setCartItemsFromBackend, updateQuantity } from "../../redux/cartSlice";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect } from "react";
+import {  useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useAtom } from "jotai";
-import { userAtom } from "@/atoms/userAtom";
 import axios from "axios";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import { useAtom, useAtomValue } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
+import { counterInfoAtom } from "@/atoms/counterAtom";
 
 const CartPage: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const cart = useSelector((state: RootState) => state.cart.items);
+  const userData = useAtomValue(userAtom);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [l , setCounter] = useAtom(counterInfoAtom); // Use the counterInfoAtom to manage the counter state
+  const [cartItems, setCartItems] = React.useState<any[]>([]); // Initialize cartItems state
 
-  const [user] = useAtom(userAtom);
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-  //const[cartItems, setCartItems] = useState<any[]>([]);
-
-  //const userId: string | null = user?._id ?? ""
-  //const userId  = user?._id ?? ""; 
-  const userId = localStorage.getItem("userId");
+  const userId = userData?._id || ""; // Get userId from userData or set to empty string if not available
 
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
       .then(res => {
         if (res.data.success) {
-          dispatch(setCartItemsFromBackend(res.data.data)); 
+          setCartItems(res.data.data);
         }
       })
-      .catch(err => console.error(err));
+      .catch(err => {setCartItems([]); console.error(err)});
   }, [userId, dispatch]);
   
-  
-
-  // useEffect(() => {
-  //   axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
-  //     .then(res => {
-  //       if (res.data.success) {
-  //         setCartItems(res.data.data);
-          
-  //         console.log(res.data.data);
-  //       }
-  //     })
-  //     .catch(err => console.error(err));
-  // }, [userId]);
 
   useScrollToTop();
 
@@ -56,52 +40,42 @@ const CartPage: React.FC = () => {
     userId: string
   ) => {
     if (quantity >= 1) {
-      dispatch(updateQuantity({ id: productId, productVariationId, quantity, userId }));
-  
       axios
         .post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
           productId,
           productVariationId,
           quantity
         })
-        // .then(() => {
-        //   // Update cartItems manually so the UI reflects changes without reload
-        //   setCartItems(prev =>
-        //     prev.map(item =>
-        //       item.id === productId && item.productVariationId === productVariationId
-        //         ? { ...item, quantity }
-        //         : item
-        //     )
-        //   );
-        // })
+        .then(() => {
+          setCounter(prev => prev + 1);
+          // Update cartItems manually so the UI reflects changes without reload
+          setCartItems(prev =>
+            prev.map(item =>
+              item.id === productId && item.productVariationId === productVariationId
+                ? { ...item, quantity }
+                : item
+            )
+          );
+        })
         .catch(err => console.error(err));
     }
   };
 
-  
-
-  // const handleQuantityChange = (productId: string | number, productVariationId: string, quantity: number, userId:string) => {
-  //   if (quantity >= 1) {
-  //     dispatch(updateQuantity({ id:productId,productVariationId , quantity, userId, }));
-  //     axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
-  //       productId,
-  //       productVariationId,
-  //       quantity
-       
-  //     })
-  //     // (cartItems.id , cartItems.productVariationId , cartItems.quantity)
-  //   }
-  // };
-
-
-
-
-
-
   const handleRemove = (productId: string, productVariationId: string ) => {
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${productId}/${userId}`)
-    dispatch(removeFromCart({id: productId,productVariationId}));
-    
+      .then(res => {
+        if (res.data.success) {
+          setCartItems(prev =>
+            prev.filter(
+              item =>
+                !(item.id === productId && item.productVariationId === productVariationId)
+            )
+          );
+          setCounter(prev => prev + 1);
+        }
+      })
+      .catch(err => console.error(err));
+
   };
 
   const getTotalPrice = () => {

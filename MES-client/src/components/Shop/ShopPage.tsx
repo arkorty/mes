@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { addToCart, setCartItemsFromBackend } from "@/redux/cartSlice";
+import { setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
-import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import { Heart } from "lucide-react";
 import axios from "axios";
 import fallbackImage from '/src/assets/Shop/product.png';
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-
+import toast from "react-hot-toast";
+import { useAtom } from "jotai";
+import { counterInfoAtom } from "@/atoms/counterAtom";
+import { userAtom } from "@/atoms/userAtom";
 
 interface Product {
   _id: string;
@@ -23,6 +25,10 @@ interface Product {
 }
 
 const ShopPage: React.FC = () => {
+  // use to sync with wishlist, cart in nav bar
+  const [counter, setCounterInfo] = useAtom(counterInfoAtom);
+
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
@@ -61,7 +67,6 @@ const ShopPage: React.FC = () => {
      
     try {
       
-              
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
         {
@@ -72,19 +77,12 @@ const ShopPage: React.FC = () => {
         }
       );
 
-      dispatch(
-        addToCart({
-          id: productId,
-          productVariationId,
-          name,
-          price,
-          image,
-        })
-      );
-  
+      setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
+
+      toast.success("Added to cart successfully");
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      
+      toast.error("Failed to add to cart");
     }
   };
 
@@ -110,17 +108,14 @@ const ShopPage: React.FC = () => {
           userId,
           
         }
-      );
+      ).then((res) => {
+        if (res.data.success) {
+          setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
+          toast.success("Added to wishlist successfully");
+        }
+      });
+      
 
-      dispatch(
-        addToWishlist({
-          id: productId,
-          productVariationId:baseVariationId,
-          name,
-          price,
-          image,
-        })
-      );
   
     } catch (error) {
       console.error("Failed to add to wishlist:", error);
@@ -129,15 +124,9 @@ const ShopPage: React.FC = () => {
   };
 
 
-
-  const userId = localStorage.getItem("userId");
+const [userData] = useAtom(userAtom);
+  const userId = userData._id;
     
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setFilteredProducts(
-      category === "" ? products : products.filter((product) => product.category === category)
-    );
-  };
 
   const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMin = Number(e.target.value);
@@ -367,21 +356,6 @@ const Modal = () => (
 
                 <button
                   className="cursor-pointer mt-3"
-                  // onClick={() => {
-                  //   if (isInWishlist(product._id)) {
-                  //     dispatch(removeFromWishlist(product._id));
-                  //   } else {
-                  //     dispatch(
-                  //       addToWishlist({
-                  //         id: product._id,
-                  //         productVariationId: product.baseVariationId,
-                  //         name: product.name,
-                  //         price: product.price,
-                  //         image: product.image || fallbackImage,
-                  //       })
-                  //     );
-                  //   }
-                  // }}
                   onClick={() =>
                     handleAddToWishlist(
                       product._id,
