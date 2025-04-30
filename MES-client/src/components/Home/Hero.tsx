@@ -18,14 +18,13 @@ const Hero = () => {
                   YOUR BEST VACATION DECISION
                 </p>
 
-                <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-5xl 2xl:text-9xl font-bold text-center text-[#FFFFFF]">
+                <h1 className="text-xl md:text-2xl lg:text-3xl xl:text-5xl 2xl:text-9xl font-semibold text-center text-[#FFFFFF]">
                   Welcome to Mountain <br /> Expedition Supply
                 </h1>
               </div>
             </div>
           </div>
 
-          {/* Content Container */}
           <div className="w-[90%] md:w-[86%] lg:w-[75%] xl:w-[76%] mx-auto text-center px-4">
             <div className="space-y-4">
               <h2 className="text-xl xl:text-3xl 2xl:text-5xl font-medium">
