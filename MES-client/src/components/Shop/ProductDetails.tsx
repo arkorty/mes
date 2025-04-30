@@ -12,46 +12,10 @@ import { RootState } from "@/redux/store"
 import { addToWishlist, removeFromWishlist } from "@/redux/wishlistSlice";
 import axios from "axios"
 import { addToCart as addToCartAPI } from "../../api/index"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/atoms/userAtom"
-
-
-
-// Enhanced product type with additional images
-interface Product {
-  id: string 
-  name: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  image: string
-  additionalImages: string[]
-  description: string
-  shortDescription: string
-  productVariationId: string | "123456789"
-  category: string
-  rating: number
-  color?: string
-  availableColors?: { name: string; value: string }[]
-  availableSizes?: string[]
-  reviews?: Review[]
-}
-
-interface Review {
-  id: number
-  userName: string
-  rating: number
-  comment: string
-  date: string
-  location: string
-  verified: boolean
-  ratings: {
-    value: number
-    warmth: number
-    breathability: number
-    lightweight: number
-  }
-}
+import toast from "react-hot-toast"
+import { counterInfoAtom } from "@/atoms/counterAtom"
 
 
 const enhancedProducts = prdctdetails;
@@ -64,6 +28,8 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const [loading, setLoading] = useState(true);
   const [similarProducts, setSimilarProducts] = useState(true);
   const userId = userData?._id || ""; 
+
+  const [counter, setCounter] = useAtom(counterInfoAtom); // Use the counterInfoAtom to manage cart and wishlist state in nav
 
   useEffect(() => {
     axios
@@ -125,18 +91,13 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   const prevImage = () => {
     setSelectedImage((prev) => (prev === 0 ? productpp.additionalImages.length : prev - 1))
   }
-
-  const cartItems = useSelector((state: RootState) => state.cart.items);
-
-  const isInCart = (id: string) => {
-    return cartItems.some((item) => item.id === id);
-  };
    
 
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
   const isInWishlist = (id: string, productVariationId: string ) =>
     wishlistItems.some((item) => item.id === id && item.productVariationId === productVariationId);
+
 
   const navigate = useNavigate();
 
@@ -154,7 +115,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
       if (!userId) {
         toast.error("You must be logged in to add to the cart!");
-        setShowAuthModal(true);
       }else{
        
       try {
@@ -168,17 +128,16 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
             quantity,
             
           }
-        );
-  
-        dispatch(
-          addToCart({
-            id: productId,
-            productVariationId,
-            name,
-            price,
-            image,
-          })
-        );
+        ).then((res) => {
+          if (res.data.success) {
+            setCounter((prev) => prev + 1);
+            toast.success("Added to cart successfully");
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to add to cart:", error);
+          toast.error("Failed to add to cart");
+        })
     
       } catch (error) {
         console.error("Failed to add to cart:", error);
@@ -191,32 +150,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {showAuthModal && (
-        // <Modal>
-        <div className="fixed inset-0 bg-gray-500 bg - opacity-90 flex justify-center items-center z-90">
-          <div className="modal-content p-8 w-[90%] lg:w-[56%] bg-white rounded-lg shadow-lg">
-            <p className="text-xl font-bold mb-4 text-emerald-900">Please Log In</p>
-            <p className="text-gray-800 mb-4">
-              You need to be logged in to add items to your cart or wishlist.
-            </p>
-            <div className="flex justify-between gap-4">
-              <button
-                onClick={() => setShowAuthModal(false)}
-                className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
-              >
-                Close
-              </button>
-              <Link to="/auth"
-               onClick={() => setShowAuthModal(false)}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center">
-                Login
-              </Link>
-            </div>
-          </div>
-        </div> 
-
-        //</Modal>
-      )}
 
 
       {/* Back button */}
@@ -410,23 +343,6 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
                   Add to Cart
                 </button>
 
-          {/* <Button
-            className={`flex-1 ${isInCart(product.id.toString()) ? "bg-green-600 hover:bg-green-700" : "bg-blue-600 hover:bg-blue-700"}`}
-            onClick={() => {
-              if (!isInCart(product.id)) {
-                dispatch(
-                  addToCart({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image
-                  })
-                );
-              }
-            }}
-          >
-            {isInCart(product.id) ? "ADDED TO CART" : "ADD TO CART"}
-          </Button> */}
 
 
 <Button
@@ -435,7 +351,7 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
   onClick={() => {
     if (!userId) {
       toast.error("You must be logged in to add to the wishlist!");
-      setShowAuthModal(true);
+
     } else{
 
 
@@ -450,6 +366,10 @@ export default function ProductDetail({ productId = '1' }: { productId?: string 
           image: product?.image,
           productVariationId: product?.productVariationId,
         })
+      );
+      toast.success(
+        `Added ${product?.name} to your wishlist!`,
+        { duration: 2000 }
       );
     }
   }
