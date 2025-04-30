@@ -7,14 +7,11 @@ import {
   Store,
   Heart,
   ShoppingCart,
-  HelpCircle,
   X,
   LogOut,
 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { getUserDetails } from "../../api";
+import { getUserDetails, getWishlist } from "../../api";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAtom } from "jotai";
@@ -98,9 +95,6 @@ const Header: React.FC = () => {
   }, [isMenuOpen]);
 
   const navigate = useNavigate();
-  const wishlistCount = useSelector(
-    (state: RootState) => state.wishlist.items.length
-  );
 
   useEffect(() => {
     const token = user?.token;
@@ -136,11 +130,14 @@ const Header: React.FC = () => {
   };
 
   const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
   const userId = user?._id;
-  const [counter] = useAtom(counterInfoAtom)
+  const [counter] = useAtom(counterInfoAtom);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Function to fetch cart data
-    const fetchCartData = () => {
+    const fetchCartData = async () => {
       if (userId) {
         // Only fetch if userId exists
         axios
@@ -157,6 +154,14 @@ const Header: React.FC = () => {
             console.error(err);
           });
       }
+
+      const { data } = await getWishlist(userId);
+
+      if (data) {
+        setWishlistCount(data.length ?? 0);
+        console.log("wishlist api ");
+        console.log(data.length);
+      }
     };
 
     // Initial fetch
@@ -167,7 +172,14 @@ const Header: React.FC = () => {
 
     // Clean up the interval when component unmounts or dependencies change
     return () => clearInterval(intervalId);
-  }, [userId, isLoggedIn, location.pathname, location.search, location.hash, counter]);
+  }, [
+    userId,
+    isLoggedIn,
+    location.pathname,
+    location.search,
+    location.hash,
+    counter,
+  ]);
 
   return (
     <nav className="bg-white text-white">
@@ -344,38 +356,6 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Dropdown Menu */}
-      {/* {isMenuOpen && (
-        <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">
-          
-          <span className="cursor-pointer relative left-[15rem] lg:left-[34rem] lg:top-1" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <X className="h-6 w-6 text-green-900" />
-          </span>
-          
-          <div className="flex space-x-6 border-b">
-            {Object.keys(menuItems).map((tab) => (
-              <button
-                key={tab}
-                className={`pb-2 font-semibold ${
-                  activeTab === tab ? "border-b-2 border-green-900 text-green-900" : "text-gray-600"
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-4">
-            {menuItems[activeTab].map((item, index) => (
-              <p key={index} className="py-1 text-lg cursor-pointer hover:underline">
-                {item}
-              </p>
-            ))}
-          </div>
-        </div>
-      )} */}
 
       {isMenuOpen && (
         <div className="absolute top-24 left-0 w-[94%] md:w-[46%] bg-white text-black shadow-md z-50 p-4">

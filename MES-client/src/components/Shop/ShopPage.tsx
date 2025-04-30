@@ -56,8 +56,6 @@ const ShopPage = () => {
       .catch((err) => console.error(err));
   }, [dispatch]);
 
-
-
   const handleAddToCart = async (
     productId: string,
     productVariationId: string,
@@ -106,7 +104,7 @@ const ShopPage = () => {
     } else {
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/wishlist/add/${userId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/wishlist/add/`,
           {
             productId,
             productVariationId: baseVariationId,
@@ -186,34 +184,6 @@ const ShopPage = () => {
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
       {showModal && <Modal />}
-
-      {showAuthModal && (
-        <div className="fixed inset-0 bg-gray-500 bg - opacity-90 flex justify-center items-center z-90">
-          <div className="modal-content p-8 w-[90%] lg:w-[56%] bg-white rounded-lg shadow-lg">
-            <p className="text-xl font-bold mb-4 text-emerald-900">
-              Please Log In
-            </p>
-            <p className="text-gray-800 mb-4">
-              You need to be logged in to add items to your cart or wishlist.
-            </p>
-            <div className="flex justify-between gap-4">
-              <button
-                onClick={() => setShowAuthModal(false)}
-                className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
-              >
-                Close
-              </button>
-              <Link
-                to="/auth"
-                onClick={() => setShowAuthModal(false)}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-center"
-              >
-                Login
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Filter Section */}
       <div className="w-[25%] hidden md:block border-r p-6 bg-gray-50 z-10 ">

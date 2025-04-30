@@ -6,11 +6,19 @@ import { HeartOff } from "lucide-react";
 import { addToCart } from "../../redux/cartSlice";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { userAtom } from "@/atoms/userAtom";
+import { useAtom } from "jotai";
+import { counterInfoAtom } from "@/atoms/counterAtom";
 
 const WishlistPage: React.FC = () => {
   const dispatch = useDispatch();
-  const wishlist = useSelector((state: RootState) => state.wishlist.items);
-  const userId = localStorage.getItem("userId");
+
+  const [wishlist, setWishlist] = React.useState<any[]>([]); // Initialize wishlist state
+  const [userData] = useAtom(userAtom)
+  const userId = userData?._id || ""; 
+
+  const [counter, setCounter] = useAtom(counterInfoAtom)
 
   useScrollToTop();
 
@@ -18,16 +26,23 @@ const WishlistPage: React.FC = () => {
       axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userId}`)
         .then(res => {
           if (res.data.success) {
-            dispatch(setWishlistItemsFromBackend(res.data.data)); 
+            setWishlist(res.data.data);
+            dispatch(setWishlistItemsFromBackend(res.data.data)); // Dispatch action to set wishlist items in Redux store
           }
         })
         .catch(err => console.error(err));
     }, [userId, dispatch]);
 
     const handleRemove = (productId: string, productVariationId: string ) => {
-      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/remove/${productId}/${userId}`)
-      dispatch(removeFromWishlist({id: productId,productVariationId}));
-      
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/remove/${productId}/${userId}`).then(res => {
+        if (res.data.success) {
+          dispatch(removeFromWishlist({id: productId,productVariationId}));
+          toast.success("Removed from wishlist");
+          setCounter(prev => prev + 1); // Update the counter state
+          setWishlist(prev => prev.filter(item => item.id !== productId)); // Update wishlist state locally
+        }
+      })
+      .catch(err => console.error(err));      
     };
 
   
@@ -53,7 +68,8 @@ const WishlistPage: React.FC = () => {
           
         }
       );
-
+      setCounter(prev => prev + 1); // Update the counter state
+      toast.success("Added to cart successfully");
       dispatch(
         addToCart({
           id: productId,
@@ -112,47 +128,6 @@ const WishlistPage: React.FC = () => {
                   
                   Add to Cart
                 </button>
-
-
-                  {/* <button
-                                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                                    onClick={async () => {
-                                      
-                                      dispatch(
-                                        addToCart({
-                                          id: product.id,
-                                          name: product.name,
-                                          price: product.price,
-                                          image: product.image || fallbackImage,
-                                        })
-                                      );
-                
-                                      const userId = localStorage.getItem("userId");
-                
-                                      if (!userId) {
-                                        console.warn("User ID not found in localStorage.");
-                                        return;
-                                      }
-                
-                                      // Call backend API to sync with server
-                                      try {
-                                        await addToCartAPI({
-                                          productId: product.id,
-                                          productVariationId: "", 
-                                          quantity: 1,
-                                          userId: userId, 
-                                        });
-                                      } catch (error) {
-                                        console.error("Failed to add to cart on backend:", error);
-                                      }
-                                    }}
-                                  >
-                                    <ShoppingCart className="h-5 w-5" />
-                                  Add to Cart
-                                </button> */}
-
-
-
 
                 <button
                   className="bg-red-100 text-red-500 rounded-xl py-2 hover:bg-red-200"

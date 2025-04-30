@@ -5,7 +5,7 @@ import { AddToWishlist, GetWishlist, RemoveFromWishlist } from "../Controllers/W
 
 
 wishListRouter.post('/add',AddToWishlist)
-wishListRouter.get('/',GetWishlist)
+wishListRouter.get('/:userId',GetWishlist)
 wishListRouter.post('/remove',RemoveFromWishlist)
 
 export default wishListRouter
