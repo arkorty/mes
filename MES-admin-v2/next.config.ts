@@ -1,5 +1,6 @@
 export default {
   assetPrefix: '/admin',
+  basePath: '/admin',
   images: {
     remotePatterns: [
       {
