@@ -8,16 +8,15 @@ import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Toaster } from 'react-hot-toast';
 import AboutPage from "./pages/About/AboutPage";
+import ContactPage from "./pages/Contact/ContactPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
 const ShopPage = lazy(() => import("./components/Shop/ShopPage"));
 const SwapAuth = lazy(() => import("./components/Auth/SwapAuth"));
 
-
 function App() {
   return (
-    
     <Router>
       <Suspense fallback={<Loading />}>
         <Toaster />
@@ -31,11 +30,11 @@ function App() {
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Route>
         </Routes>
       </Suspense>
     </Router>
-    
   );
 }
 
