@@ -7,6 +7,7 @@ import Cart from "./pages/Cart/Cart";
 import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Toaster } from 'react-hot-toast';
+import AboutPage from "./pages/About/AboutPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
@@ -19,16 +20,17 @@ function App() {
     
     <Router>
       <Suspense fallback={<Loading />}>
-      <Toaster />
+        <Toaster />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/auth" element={<SwapAuth />} />
-            <Route path="shop" element={<ShopPage />} />
+            <Route path="/shop" element={<ShopPage />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/about" element={<AboutPage />} />
           </Route>
         </Routes>
       </Suspense>
