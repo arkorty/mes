@@ -7,33 +7,34 @@ import Cart from "./pages/Cart/Cart";
 import WishlistPage from "./pages/Wishlist/WishlistPage";
 import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Toaster } from 'react-hot-toast';
+import AboutPage from "./pages/About/AboutPage";
+import ContactPage from "./pages/Contact/ContactPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
 const ShopPage = lazy(() => import("./components/Shop/ShopPage"));
 const SwapAuth = lazy(() => import("./components/Auth/SwapAuth"));
 
-
 function App() {
   return (
-    
     <Router>
       <Suspense fallback={<Loading />}>
-      <Toaster />
+        <Toaster />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/auth" element={<SwapAuth />} />
-            <Route path="shop" element={<ShopPage />} />
+            <Route path="/shop" element={<ShopPage />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Route>
         </Routes>
       </Suspense>
     </Router>
-    
   );
 }
 
