@@ -7,6 +7,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'MES Typeface';
+  src: url('/fonts/mnt-exp-sup.otf') format('opentype');
+}
+
+.mes-typeface {
+  font-family: 'MES Typeface', sans-serif;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.13 0.028 261.692);
