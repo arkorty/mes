@@ -48,7 +48,22 @@ const ShopPage = () => {
   });
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
-  const [showModal, setShowModal] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      if (pref) {
+        try {
+          const userPreference = JSON.parse(pref);
+          if (userPreference.selectedGender) {
+            return false;
+          }
+        } catch {
+          // ignore parse error
+        }
+      }
+    }
+    return true;
+  });
   const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
 
   useScrollToTop();
@@ -217,28 +232,49 @@ const ShopPage = () => {
     setShowModal(false);
   };
 
+  // Load gender state from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      if (pref) {
+        try {
+          const userPreference = JSON.parse(pref);
+          if (userPreference.selectedGender) {
+            setSelectedGender(userPreference.selectedGender);
+            setShowModal(false); // ensure modal is closed if gender is present
+          }
+        } catch {
+          // ignore parse error
+        }
+      }
+    }
+  }, []);
+
   // Modal Component
   const Modal = () => (
     <div className="fixed inset-0 bg-gray-600 bg - opacity-96 flex justify-center items-center z-90">
       <div className="bg-white p-8 rounded-lg w-[90%] lg:w-[60%] text-center">
         <h2 className="text-2xl font-bold text-green-900 mb-4">
-          Select Gear Type/ Category
+          What are you shopping for?
         </h2>
         <button
           className="w-full py-2 bg-green-600 text-white rounded mb-2"
-          onClick={() => handleModalClose("Men")}
-        >
-          Men's Gear
-        </button>
-        <button
-          className="w-full py-2 bg-emerald-600 text-white rounded"
-          onClick={() => handleModalClose("Women")}
+          onClick={e => handleModalClose(e.currentTarget.value)}
+          value="women"
         >
           Women's Gear
         </button>
         <button
+          className="w-full py-2 bg-emerald-600 text-white rounded"
+          onClick={e => handleModalClose(e.currentTarget.value)}
+          value="men"
+        >
+          Men's Gear
+        </button>
+        <button
           className="w-full py-2 bg-gray-600 text-white rounded mt-2"
-          onClick={() => handleModalClose("Other")}
+          onClick={e => handleModalClose(e.currentTarget.value)}
+          value="all"
         >
           All
         </button>
@@ -362,23 +398,116 @@ const ShopPage = () => {
     }
   };
 
+  // Helper to update all filter preferences in localStorage
+  const updateUserPreferences = (prefs: {
+    selectedGender?: string;
+    selectedCategory?: string;
+    selectedSize?: string;
+    selectedGearType?: string;
+  }) => {
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      let userPreference: Record<string, any> = {};
+      if (pref) {
+        try {
+          userPreference = JSON.parse(pref);
+        } catch {
+          userPreference = {};
+        }
+      }
+      userPreference = { ...userPreference, ...prefs };
+      localStorage.setItem("userPreference", JSON.stringify(userPreference));
+    }
+  };
+
+  // Gender filter change handler
+  const handleGenderChange = (gender: string) => {
+    setSelectedGender(gender);
+    updateUserPreferences({
+      selectedGender: gender,
+      selectedCategory,
+      selectedSize,
+      selectedGearType,
+    });
+  };
+
+  // Category filter change handler (multi-select, comma separated)
+  const handleCategoryChange = (category: string) => {
+    let updated = selectedCategory
+      ? selectedCategory.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(category)) {
+      updated = updated.filter((c) => c !== category);
+    } else {
+      updated.push(category);
+    }
+    const newValue = updated.join(",");
+    setSelectedCategory(newValue);
+    updateUserPreferences({
+      selectedGender,
+      selectedCategory: newValue,
+      selectedSize,
+      selectedGearType,
+    });
+  };
+
+  // Size filter change handler (multi-select, comma separated)
+  const handleSizeChange = (size: string) => {
+    let updated = selectedSize
+      ? selectedSize.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(size)) {
+      updated = updated.filter((s) => s !== size);
+    } else {
+      updated.push(size);
+    }
+    const newValue = updated.join(",");
+    setSelectedSize(newValue);
+    updateUserPreferences({
+      selectedGender,
+      selectedCategory,
+      selectedSize: newValue,
+      selectedGearType,
+    });
+  };
+
+  // Gear type filter change handler (multi-select, comma separated)
+  const handleGearTypeChange = (gearType: string) => {
+    let updated = selectedGearType
+      ? selectedGearType.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(gearType)) {
+      updated = updated.filter((g) => g !== gearType);
+    } else {
+      updated.push(gearType);
+    }
+    const newValue = updated.join(",");
+    setSelectedGearType(newValue);
+    updateUserPreferences({
+      selectedGender,
+      selectedCategory,
+      selectedSize,
+      selectedGearType: newValue,
+    });
+  };
+
+  // On mount and when modal closes, sync sidebar filter UI with userPreference from localStorage
   useEffect(() => {
-    // On mount, load gender from userPreference in localStorage if present
     if (typeof window !== "undefined") {
       const pref = localStorage.getItem("userPreference");
       if (pref) {
         try {
           const userPreference = JSON.parse(pref);
-          if (userPreference.selectedGender) {
-            setSelectedGender(userPreference.selectedGender);
-            setShowModal(false);
-          }
+          if (userPreference.selectedGender) setSelectedGender(userPreference.selectedGender);
+          if (userPreference.selectedCategory) setSelectedCategory(userPreference.selectedCategory);
+          if (userPreference.selectedSize) setSelectedSize(userPreference.selectedSize);
+          if (userPreference.selectedGearType) setSelectedGearType(userPreference.selectedGearType);
         } catch {
           // ignore parse error
         }
       }
     }
-  }, []);
+  }, [showModal]);
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
@@ -480,8 +609,9 @@ const ShopPage = () => {
               <input
                 type="radio"
                 name="gender"
-                value="Women"
-                onChange={() => setSelectedGender("Women")}
+                value="women"
+                checked={selectedGender === "women"}
+                onChange={() => handleGenderChange("women")}
                 className="accent-green-900"
               />{" "}
               Women
@@ -490,11 +620,23 @@ const ShopPage = () => {
               <input
                 type="radio"
                 name="gender"
-                value="Men"
-                onChange={() => setSelectedGender("Men")}
+                value="men"
+                checked={selectedGender === "men"}
+                onChange={() => handleGenderChange("men")}
                 className="accent-green-900"
               />{" "}
               Men
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="all"
+                checked={selectedGender === "all"}
+                onChange={() => handleGenderChange("all")}
+                className="accent-green-900"
+              />{" "}
+              All
             </label>
           </div>
         </div>
@@ -511,7 +653,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Fleece")}
+                checked={selectedCategory.split(",").includes("Fleece")}
+                onChange={() => handleCategoryChange("Fleece")}
                 className="accent-green-900"
               />{" "}
               Fleece
@@ -519,7 +662,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Sweatshirt")}
+                checked={selectedCategory.split(",").includes("Sweatshirt")}
+                onChange={() => handleCategoryChange("Sweatshirt")}
                 className="accent-green-900"
               />{" "}
               Sweatshirt
@@ -527,7 +671,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Pullover")}
+                checked={selectedCategory.split(",").includes("Pullover")}
+                onChange={() => handleCategoryChange("Pullover")}
                 className="accent-green-900"
               />{" "}
               Pullover
@@ -547,7 +692,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("XL")}
+                checked={selectedSize.split(",").includes("XL")}
+                onChange={() => handleSizeChange("XL")}
                 className="accent-green-900"
               />{" "}
               xl
@@ -555,7 +701,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("XXL")}
+                checked={selectedSize.split(",").includes("XXL")}
+                onChange={() => handleSizeChange("XXL")}
                 className="accent-green-900"
               />{" "}
               xxl
@@ -563,7 +710,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("Large")}
+                checked={selectedSize.split(",").includes("Large")}
+                onChange={() => handleSizeChange("Large")}
                 className="accent-green-900"
               />{" "}
               large
@@ -583,7 +731,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("XL")}
+                checked={selectedGearType.split(",").includes("XL")}
+                onChange={() => handleGearTypeChange("XL")}
                 className="accent-green-900"
               />{" "}
               xl
@@ -591,7 +740,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("XXL")}
+                checked={selectedGearType.split(",").includes("XXL")}
+                onChange={() => handleGearTypeChange("XXL")}
                 className="accent-green-900"
               />{" "}
               xxl
@@ -599,7 +749,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("Large")}
+                checked={selectedGearType.split(",").includes("Large")}
+                onChange={() => handleGearTypeChange("Large")}
                 className="accent-green-900"
               />{" "}
               Large
