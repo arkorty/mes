@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
-import { Heart } from "lucide-react";
+import { Heart, Plus, Minus } from "lucide-react";
 import axios from "axios";
 import fallbackImage from "/src/assets/Shop/product.png";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -69,25 +69,43 @@ const ShopPage = () => {
     if (!userId) {
       toast.error("You must be logged in to add to the cart!");
       setShowAuthModal(true);
-    } else {
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
-          {
-            productId,
-            productVariationId,
-            quantity,
-          }
-        );
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-        setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
+      return;
+    }
 
-        toast.success("Added to cart successfully");
-      } catch (error) {
-        console.error("Failed to add to cart:", error);
-        toast.error("Failed to add to cart");
-      }
+    try {
+      // Optimistic update - update local state immediately
+      setCartQuantities((prev) => ({
+        ...prev,
+        [productId]: (prev[productId] || 0) + 1,
+      }));
+
+      // Update counter
+      setCounterInfo((prev: number) => ({ ...prev, count: prev.count + 1 }));
+
+      // Then make the API call
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+        {
+          productId,
+          productVariationId,
+          quantity,
+        }
+      );
+
+      toast.success("Added to cart successfully");
+    } catch (error) {
+      // Roll back the optimistic update if the API call fails
+      setCartQuantities((prev) => ({
+        ...prev,
+        [productId]: Math.max((prev[productId] || 0) - 1, 0),
+      }));
+      setCounterInfo((prev: any) => ({
+        ...prev,
+        count: Math.max(prev.count - 1, 0),
+      }));
+
+      console.error("Failed to add to cart:", error);
+      toast.error("Failed to add to cart");
     }
   };
 
@@ -146,7 +164,7 @@ const ShopPage = () => {
 
   useEffect(() => {
     if (!userData?._id) return;
-  
+
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userData._id}`)
       .then((res) => {
@@ -159,12 +177,13 @@ const ShopPage = () => {
         console.error("Error fetching wishlist:", err);
       });
   }, [userData?._id, counter]);
-  
 
   const isInWishlist = (id: string, productVariationId: string): boolean => {
-    
     return wishlistItems.some(
-      (item) => item.id === id || item.productVariationId === productVariationId || item._id == id
+      (item) =>
+        item.id === id ||
+        item.productVariationId === productVariationId ||
+        item._id == id
     );
   };
 
@@ -201,6 +220,122 @@ const ShopPage = () => {
       </div>
     </div>
   );
+
+  const [cartQuantities, setCartQuantities] = useState<{
+    [productId: string]: number;
+  }>({});
+
+  // Fetch cart quantities for all products for the logged-in user
+  useEffect(() => {
+    const fetchCartQuantities = async () => {
+      if (!userData?._id || products.length === 0) {
+        setCartQuantities({});
+        return;
+      }
+      const quantities: { [productId: string]: number } = {};
+      await Promise.all(
+        products.map(async (product) => {
+          try {
+            const res = await axios.get(
+              `${import.meta.env.VITE_API_BASE_URL}/api/product/quantity/${
+                userData._id
+              }/${product._id}`
+            );
+            if (res.data && typeof res.data.quantity === "number") {
+              quantities[product._id] = res.data.quantity;
+            }
+          } catch {
+            quantities[product._id] = 0;
+          }
+        })
+      );
+      setCartQuantities(quantities);
+    };
+
+    fetchCartQuantities();
+  }, [userData?._id, products]);
+
+  // Handler to increment cart quantity
+  const handleIncrement = async (product: Product) => {
+    if (!userData?._id) {
+      toast.error("You must be logged in to add to the cart!");
+      setShowAuthModal(true);
+      return;
+    }
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userData._id}`,
+        {
+          productId: product._id,
+          productVariationId: product.baseVariationId,
+          quantity: 1,
+        }
+      );
+      setCartQuantities((prev) => ({
+        ...prev,
+        [product._id]: (prev[product._id] || 0) + 1,
+      }));
+      setCounterInfo((prev: any) => ({ ...prev, count: prev.count + 1 }));
+      toast.success("Added to cart");
+    } catch (error) {
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  // Handler to decrement cart quantity
+  const handleDecrement = async (product: Product) => {
+    if (!userData?._id) {
+      toast.error("You must be logged in to remove from the cart!");
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      const currentQuantity = cartQuantities[product._id] || 0;
+
+      if (currentQuantity <= 1) {
+        // If quantity is 1 or less, remove the item completely
+        await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${
+            product._id
+          }/${userData._id}`
+        );
+
+        setCartQuantities((prev) => {
+          const newQuantities = { ...prev };
+          delete newQuantities[product._id]; // Remove the item from local state
+          return newQuantities;
+        });
+
+        toast.success("Item removed from cart");
+      } else {
+        // Decrement quantity normally
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${
+            userData._id
+          }`,
+          {
+            productId: product._id,
+            productVariationId: product.baseVariationId,
+            quantity: currentQuantity - 1,
+          }
+        );
+
+        setCartQuantities((prev) => ({
+          ...prev,
+          [product._id]: currentQuantity - 1,
+        }));
+
+        toast.success("Quantity decreased");
+      }
+
+      // Update cart counter
+      setCounterInfo((prev: any) => ({ ...prev, count: prev.count - 1 }));
+    } catch (error) {
+      console.error("Failed to update cart:", error);
+      toast.error("Failed to update cart");
+    }
+  };
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
@@ -457,22 +592,42 @@ const ShopPage = () => {
               </Link>
 
               <div className="w-[86%] mx-auto flex justify-between">
-                <button
-                  className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() =>
-                    handleAddToCart(
-                      product._id,
-                      product.baseVariationId,
-                      product.name,
-                      product.price,
-                      product.image,
-                      1,
-                      userData._id
-                    )
-                  }
-                >
-                  Add to Cart
-                </button>
+                {cartQuantities[product._id] > 0 ? (
+                  <div className="flex items-center gap-2 w-[70%] mt-3">
+                    <button
+                      className="bg-gray-200 rounded-full p-2"
+                      onClick={() => handleDecrement(product)}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-3 py-1 bg-green-100 text-green-900 rounded font-semibold">
+                      {cartQuantities[product._id]}
+                    </span>
+                    <button
+                      className="bg-gray-200 rounded-full p-2"
+                      onClick={() => handleIncrement(product)}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={() =>
+                      handleAddToCart(
+                        product._id,
+                        product.baseVariationId,
+                        product.name,
+                        product.price,
+                        product.image,
+                        1,
+                        userData._id
+                      )
+                    }
+                  >
+                    Add to Cart
+                  </button>
+                )}
 
                 <button
                   className="cursor-pointer mt-3"

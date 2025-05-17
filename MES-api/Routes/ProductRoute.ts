@@ -18,5 +18,8 @@ productRouter
   .get("/:id", (req, res) => productController.ProductDetails(req, res))
   .delete("/:id", (req, res) => productController.DeleteProduct(req, res));
 productRouter.get("", (req, res) => productController.ProductList(req, res));
+productRouter.get("/quantity/:userid/:productid", (req, res) =>
+  productController.GetCartProductQuantity(req, res)
+);
 
 export default productRouter;

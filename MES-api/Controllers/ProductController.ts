@@ -69,6 +69,19 @@ export class ProductController{
       res.status(500).json({success:false,message:error});
     }
   }
+  public async GetCartProductQuantity(req: Request, res: Response) {
+    const userId = req.params.userid;
+    const productId = req.params.productid;
+    if (!userId || !productId) {
+      return res.status(400).json({ success: false, message: "Missing userId or productId" });
+    }
+    try {
+      const quantity = await this._productService.GetProductCartQuantity(userId, productId);
+      return res.status(200).json({ success: true, quantity });
+    } catch (error: any) {
+      res.status(500).json({ success: false, message: error });
+    }
+  }
 
 }
 const stockService=new StockService();
