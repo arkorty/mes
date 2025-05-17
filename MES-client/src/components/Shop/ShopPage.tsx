@@ -33,7 +33,19 @@ const ShopPage = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
-  const [selectedGender, setSelectedGender] = useState<string>("");
+  const [selectedGender, setSelectedGender] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      if (pref) {
+        try {
+          return JSON.parse(pref).selectedGender || "";
+        } catch {
+          return "";
+        }
+      }
+    }
+    return "";
+  });
   const [selectedGearType, setSelectedGearType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
   const [showModal, setShowModal] = useState<boolean>(true);
@@ -189,7 +201,20 @@ const ShopPage = () => {
 
   const handleModalClose = (gender: string) => {
     setSelectedGender(gender);
-    setShowModal(false); // Close modal after a selection
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      let userPreference: Record<string, any> = {};
+      if (pref) {
+        try {
+          userPreference = JSON.parse(pref);
+        } catch {
+          userPreference = {};
+        }
+      }
+      userPreference.selectedGender = gender;
+      localStorage.setItem("userPreference", JSON.stringify(userPreference));
+    }
+    setShowModal(false);
   };
 
   // Modal Component
@@ -336,6 +361,24 @@ const ShopPage = () => {
       toast.error("Failed to update cart");
     }
   };
+
+  useEffect(() => {
+    // On mount, load gender from userPreference in localStorage if present
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      if (pref) {
+        try {
+          const userPreference = JSON.parse(pref);
+          if (userPreference.selectedGender) {
+            setSelectedGender(userPreference.selectedGender);
+            setShowModal(false);
+          }
+        } catch {
+          // ignore parse error
+        }
+      }
+    }
+  }, []);
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
