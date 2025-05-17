@@ -387,7 +387,7 @@ const ShopPage = () => {
           [product._id]: currentQuantity - 1,
         }));
 
-        toast.success("Quantity decreased");
+        toast.success("Removed from cart");
       }
 
       // Update cart counter
