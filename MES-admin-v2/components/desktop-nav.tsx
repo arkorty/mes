@@ -3,6 +3,7 @@ import { APP_NAME } from 'constants/strings';
 import { URL_ROUTES } from 'constants/urls.routes';
 import {
   ChartColumnStacked,
+  MessageCircleQuestion,
   Package,
   ShoppingCart,
   Users2
@@ -35,6 +36,10 @@ const DesktopNav = () => {
 
           <NavItem href={URL_ROUTES.categories} label="Categories">
             <ChartColumnStacked className="h-5 w-5 text-black" />
+          </NavItem>
+
+          <NavItem href={URL_ROUTES.enquiries} label="Enquiries">
+            <MessageCircleQuestion className="h-5 w-5 text-black" />
           </NavItem>
         </nav>
       </aside>

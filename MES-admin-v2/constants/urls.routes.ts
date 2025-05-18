@@ -10,5 +10,6 @@ export const URL_ROUTES = {
   categoryEdit: (id: string) => `/categories/${id}`,
   users: '/users',
   userAdd: '/users/add',
-  userEdit: (id: string) => `/users/${id}`
+  userEdit: (id: string) => `/users/${id}`,
+  enquiries: '/enquiries',
 };

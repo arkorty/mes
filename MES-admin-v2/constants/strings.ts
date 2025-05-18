@@ -5,5 +5,6 @@ export const TITLE_MAP: Record<string, string> = {
   products: 'Products',
   categories: 'Categories',
   users: 'Users',
+  enquiries: 'Enquiries',
   add: 'Add',
 };

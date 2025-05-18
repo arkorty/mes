@@ -16,19 +16,19 @@ export class EnquiryController {
     }
   }
 
-  public async GetEnquiryById(req: Request, res: Response) {
-    const { id } = req.params;
+  public async GetAllEnquiries(req: Request, res: Response) {
     try {
-      let result = await this._enquiryService.getEnquiryById(id);
+      let result = await this._enquiryService.getAllEnquiries();
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });
     }
   }
 
-  public async GetAllEnquiries(req: Request, res: Response) {
+  public async DeleteEnquiry(req: Request, res: Response) {
+    const { id } = req.params;
     try {
-      let result = await this._enquiryService.getAllEnquiries();
+      let result = await this._enquiryService.deleteEnquiry(id);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(500).json({ message: error.message });

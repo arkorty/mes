@@ -3,7 +3,7 @@ import Enquiry from "../Models/Enquiries";
 interface IEnquiryService {
   createEnquiry(enquiry: any): Promise<any>;
   getAllEnquiries(): Promise<any>;
-  getEnquiryById(id: string): Promise<any>;
+  deleteEnquiry(id: string): Promise<any>;
 }
 
 export class EnquiryService implements IEnquiryService {
@@ -32,9 +32,9 @@ export class EnquiryService implements IEnquiryService {
     }
   }
 
-  async getEnquiryById(id: string): Promise<any> {
+  async deleteEnquiry(id: string): Promise<any> {
     try {
-      const enquiry = await Enquiry.findById(id);
+      const enquiry = await Enquiry.findByIdAndDelete(id);
       return { success: true, data: enquiry };
     } catch (error: any) {
       return { success: false, message: error.message, data: null };
