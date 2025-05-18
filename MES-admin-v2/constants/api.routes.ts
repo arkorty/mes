@@ -27,5 +27,10 @@ export const API_ROUTES = {
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/${id}`,
   deleteUser: (id: any) => `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/${id}`,
 
+  getEnquiries: () =>
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/enquiry/`,
+  deleteEnquiry: (id: any) =>
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/enquiry/${id}`,
+
   adminLogin: `/user/admin/login`
 };
