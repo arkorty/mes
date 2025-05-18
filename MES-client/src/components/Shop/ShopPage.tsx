@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { useAtom } from "jotai";
 import { counterInfoAtom } from "@/atoms/counterAtom";
 import { userAtom } from "@/atoms/userAtom";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface Product {
   _id: string;
@@ -25,45 +26,43 @@ interface Product {
   rating: number;
 }
 
+interface UserPreference {
+  selectedGender?: string;
+  selectedCategory?: string;
+  selectedSize?: string;
+  selectedGearType?: string;
+}
+
 const ShopPage = () => {
   // use to sync with wishlist, cart in nav bar
   const [counter, setCounterInfo] = useAtom(counterInfoAtom);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedSize, setSelectedSize] = useState<string>("");
-  const [selectedGender, setSelectedGender] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const pref = localStorage.getItem("userPreference");
-      if (pref) {
-        try {
-          return JSON.parse(pref).selectedGender || "";
-        } catch {
-          return "";
-        }
-      }
-    }
-    return "";
-  });
-  const [selectedGearType, setSelectedGearType] = useState<string>("");
+
+  // Replace localStorage direct access with custom hook
+  const [userPreference, setUserPreference] = useLocalStorage<UserPreference>(
+    "userPreference",
+    {}
+  );
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    userPreference.selectedCategory || ""
+  );
+  const [selectedSize, setSelectedSize] = useState<string>(
+    userPreference.selectedSize || ""
+  );
+  const [selectedGender, setSelectedGender] = useState<string>(
+    userPreference.selectedGender || ""
+  );
+  const [selectedGearType, setSelectedGearType] = useState<string>(
+    userPreference.selectedGearType || ""
+  );
+
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
-  const [showModal, setShowModal] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const pref = localStorage.getItem("userPreference");
-      if (pref) {
-        try {
-          const userPreference = JSON.parse(pref);
-          if (userPreference.selectedGender) {
-            return false;
-          }
-        } catch {
-          // ignore parse error
-        }
-      }
-    }
-    return true;
-  });
+  const [showModal, setShowModal] = useState<boolean>(
+    !userPreference.selectedGender
+  );
   const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
 
   useScrollToTop();
@@ -216,75 +215,86 @@ const ShopPage = () => {
 
   const handleModalClose = (gender: string) => {
     setSelectedGender(gender);
-    if (typeof window !== "undefined") {
-      const pref = localStorage.getItem("userPreference");
-      let userPreference: Record<string, any> = {};
-      if (pref) {
-        try {
-          userPreference = JSON.parse(pref);
-        } catch {
-          userPreference = {};
-        }
-      }
-      userPreference.selectedGender = gender;
-      localStorage.setItem("userPreference", JSON.stringify(userPreference));
-    }
+    setUserPreference({
+      ...userPreference,
+      selectedGender: gender,
+    });
     setShowModal(false);
   };
 
-  // Load gender state from localStorage on mount
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pref = localStorage.getItem("userPreference");
-      if (pref) {
-        try {
-          const userPreference = JSON.parse(pref);
-          if (userPreference.selectedGender) {
-            setSelectedGender(userPreference.selectedGender);
-            setShowModal(false); // ensure modal is closed if gender is present
-          }
-        } catch {
-          // ignore parse error
-        }
-      }
+  // Helper to update all filter preferences
+  const updateUserPreferences = (prefs: {
+    selectedGender?: string;
+    selectedCategory?: string;
+    selectedSize?: string;
+    selectedGearType?: string;
+  }) => {
+    setUserPreference({
+      ...userPreference,
+      ...prefs,
+    });
+  };
+
+  // Gender filter change handler
+  const handleGenderChange = (gender: string) => {
+    setSelectedGender(gender);
+    updateUserPreferences({
+      ...userPreference,
+      selectedGender: gender,
+    });
+  };
+
+  // Category filter change handler (multi-select, comma separated)
+  const handleCategoryChange = (category: string) => {
+    let updated = selectedCategory
+      ? selectedCategory.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(category)) {
+      updated = updated.filter((c) => c !== category);
+    } else {
+      updated.push(category);
     }
-  }, []);
+    const newValue = updated.join(",");
+    setSelectedCategory(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedCategory: newValue,
+    });
+  };
 
-  // Modal Component
-  const Modal = () => (
-    <div className="fixed inset-0 bg-gray-600 bg - opacity-96 flex justify-center items-center z-90">
-      <div className="bg-white p-8 rounded-lg w-[90%] lg:w-[60%] text-center">
-        <h2 className="text-2xl font-bold text-green-900 mb-4">
-          What are you shopping for?
-        </h2>
-        <button
-          className="w-full py-2 bg-green-600 text-white rounded mb-2"
-          onClick={e => handleModalClose(e.currentTarget.value)}
-          value="women"
-        >
-          Women's Gear
-        </button>
-        <button
-          className="w-full py-2 bg-emerald-600 text-white rounded"
-          onClick={e => handleModalClose(e.currentTarget.value)}
-          value="men"
-        >
-          Men's Gear
-        </button>
-        <button
-          className="w-full py-2 bg-gray-600 text-white rounded mt-2"
-          onClick={e => handleModalClose(e.currentTarget.value)}
-          value="all"
-        >
-          All
-        </button>
-      </div>
-    </div>
-  );
+  // Size filter change handler (multi-select, comma separated)
+  const handleSizeChange = (size: string) => {
+    let updated = selectedSize ? selectedSize.split(",").filter(Boolean) : [];
+    if (updated.includes(size)) {
+      updated = updated.filter((s) => s !== size);
+    } else {
+      updated.push(size);
+    }
+    const newValue = updated.join(",");
+    setSelectedSize(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedSize: newValue,
+    });
+  };
 
-  const [cartQuantities, setCartQuantities] = useState<{
-    [productId: string]: number;
-  }>({});
+  // Gear type filter change handler (multi-select, comma separated)
+  const handleGearTypeChange = (gearType: string) => {
+    let updated = selectedGearType
+      ? selectedGearType.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(gearType)) {
+      updated = updated.filter((g) => g !== gearType);
+    } else {
+      updated.push(gearType);
+    }
+    const newValue = updated.join(",");
+    setSelectedGearType(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedGearType: newValue,
+    });
+  };
 
   // Fetch cart quantities for all products for the logged-in user
   useEffect(() => {
@@ -398,98 +408,41 @@ const ShopPage = () => {
     }
   };
 
-  // Helper to update all filter preferences in localStorage
-  const updateUserPreferences = (prefs: {
-    selectedGender?: string;
-    selectedCategory?: string;
-    selectedSize?: string;
-    selectedGearType?: string;
-  }) => {
-    if (typeof window !== "undefined") {
-      const pref = localStorage.getItem("userPreference");
-      let userPreference: Record<string, any> = {};
-      if (pref) {
-        try {
-          userPreference = JSON.parse(pref);
-        } catch {
-          userPreference = {};
-        }
-      }
-      userPreference = { ...userPreference, ...prefs };
-      localStorage.setItem("userPreference", JSON.stringify(userPreference));
-    }
-  };
+  // Modal Component
+  const Modal = () => (
+    <div className="fixed inset-0 bg-gray-600 bg - opacity-96 flex justify-center items-center z-90">
+      <div className="bg-white p-8 rounded-lg w-[90%] lg:w-[60%] text-center">
+        <h2 className="text-2xl font-bold text-green-900 mb-4">
+          What are you shopping for?
+        </h2>
+        <button
+          className="w-full py-2 bg-green-600 text-white rounded mb-2"
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="women"
+        >
+          Women's Gear
+        </button>
+        <button
+          className="w-full py-2 bg-emerald-600 text-white rounded"
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="men"
+        >
+          Men's Gear
+        </button>
+        <button
+          className="w-full py-2 bg-gray-600 text-white rounded mt-2"
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="all"
+        >
+          All
+        </button>
+      </div>
+    </div>
+  );
 
-  // Gender filter change handler
-  const handleGenderChange = (gender: string) => {
-    setSelectedGender(gender);
-    updateUserPreferences({
-      selectedGender: gender,
-      selectedCategory,
-      selectedSize,
-      selectedGearType,
-    });
-  };
-
-  // Category filter change handler (multi-select, comma separated)
-  const handleCategoryChange = (category: string) => {
-    let updated = selectedCategory
-      ? selectedCategory.split(",").filter(Boolean)
-      : [];
-    if (updated.includes(category)) {
-      updated = updated.filter((c) => c !== category);
-    } else {
-      updated.push(category);
-    }
-    const newValue = updated.join(",");
-    setSelectedCategory(newValue);
-    updateUserPreferences({
-      selectedGender,
-      selectedCategory: newValue,
-      selectedSize,
-      selectedGearType,
-    });
-  };
-
-  // Size filter change handler (multi-select, comma separated)
-  const handleSizeChange = (size: string) => {
-    let updated = selectedSize
-      ? selectedSize.split(",").filter(Boolean)
-      : [];
-    if (updated.includes(size)) {
-      updated = updated.filter((s) => s !== size);
-    } else {
-      updated.push(size);
-    }
-    const newValue = updated.join(",");
-    setSelectedSize(newValue);
-    updateUserPreferences({
-      selectedGender,
-      selectedCategory,
-      selectedSize: newValue,
-      selectedGearType,
-    });
-  };
-
-  // Gear type filter change handler (multi-select, comma separated)
-  const handleGearTypeChange = (gearType: string) => {
-    let updated = selectedGearType
-      ? selectedGearType.split(",").filter(Boolean)
-      : [];
-    if (updated.includes(gearType)) {
-      updated = updated.filter((g) => g !== gearType);
-    } else {
-      updated.push(gearType);
-    }
-    const newValue = updated.join(",");
-    setSelectedGearType(newValue);
-    updateUserPreferences({
-      selectedGender,
-      selectedCategory,
-      selectedSize,
-      selectedGearType: newValue,
-    });
-  };
+  const [cartQuantities, setCartQuantities] = useState<{
+    [productId: string]: number;
+  }>({});
 
   // On mount and when modal closes, sync sidebar filter UI with userPreference from localStorage
   useEffect(() => {
@@ -498,10 +451,14 @@ const ShopPage = () => {
       if (pref) {
         try {
           const userPreference = JSON.parse(pref);
-          if (userPreference.selectedGender) setSelectedGender(userPreference.selectedGender);
-          if (userPreference.selectedCategory) setSelectedCategory(userPreference.selectedCategory);
-          if (userPreference.selectedSize) setSelectedSize(userPreference.selectedSize);
-          if (userPreference.selectedGearType) setSelectedGearType(userPreference.selectedGearType);
+          if (userPreference.selectedGender)
+            setSelectedGender(userPreference.selectedGender);
+          if (userPreference.selectedCategory)
+            setSelectedCategory(userPreference.selectedCategory);
+          if (userPreference.selectedSize)
+            setSelectedSize(userPreference.selectedSize);
+          if (userPreference.selectedGearType)
+            setSelectedGearType(userPreference.selectedGearType);
         } catch {
           // ignore parse error
         }
