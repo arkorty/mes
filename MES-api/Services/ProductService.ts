@@ -403,7 +403,7 @@ export class ProductService implements IProductService {
   public async GetProductCartQuantity(userId: string, productId: string): Promise<number> {
     const cart = await Cart.findOne({ userId });
     if (!cart || !cart.items) return 0;
-    type CartItem = { productId: any; quantity: number };
+    type CartItem = { productId: string; quantity: number };
     const item = (cart.items as CartItem[]).find(
       (cartItem) => cartItem.productId?.toString() === productId
     );
