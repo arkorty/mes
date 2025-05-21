@@ -8,6 +8,7 @@ import {
 } from "../Config/AwsS3Config";
 import { IStockDto } from "../Models/Dto/IStockDto";
 import { StockService } from "./StockService";
+import { Cart } from "../Models/Cart";
 
 interface IProductService {
   DeleteProduct(id: string): Promise<Boolean>;
@@ -397,6 +398,16 @@ export class ProductService implements IProductService {
     } catch (error) {
       throw error;
     }
+  }
+
+  public async GetProductCartQuantity(userId: string, productId: string): Promise<number> {
+    const cart = await Cart.findOne({ userId });
+    if (!cart || !cart.items) return 0;
+    type CartItem = { productId: string; quantity: number };
+    const item = (cart.items as CartItem[]).find(
+      (cartItem) => cartItem.productId?.toString() === productId
+    );
+    return item ? item.quantity : 0;
   }
 
   private async GenerateSKUForProductVariation(

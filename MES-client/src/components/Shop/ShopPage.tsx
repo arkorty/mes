@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setCartItemsFromBackend } from "@/redux/cartSlice";
 import { RootState } from "@/redux/store";
-import { Heart } from "lucide-react";
+import { Heart, Plus, Minus } from "lucide-react";
 import axios from "axios";
 import fallbackImage from "/src/assets/Shop/product.png";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 import { useAtom } from "jotai";
 import { counterInfoAtom } from "@/atoms/counterAtom";
 import { userAtom } from "@/atoms/userAtom";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface Product {
   _id: string;
@@ -25,18 +26,43 @@ interface Product {
   rating: number;
 }
 
+interface UserPreference {
+  selectedGender?: string;
+  selectedCategory?: string;
+  selectedSize?: string;
+  selectedGearType?: string;
+}
+
 const ShopPage = () => {
   // use to sync with wishlist, cart in nav bar
   const [counter, setCounterInfo] = useAtom(counterInfoAtom);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedSize, setSelectedSize] = useState<string>("");
-  const [selectedGender, setSelectedGender] = useState<string>("");
-  const [selectedGearType, setSelectedGearType] = useState<string>("");
+
+  // Replace localStorage direct access with custom hook
+  const [userPreference, setUserPreference] = useLocalStorage<UserPreference>(
+    "userPreference",
+    {}
+  );
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    userPreference.selectedCategory || ""
+  );
+  const [selectedSize, setSelectedSize] = useState<string>(
+    userPreference.selectedSize || ""
+  );
+  const [selectedGender, setSelectedGender] = useState<string>(
+    userPreference.selectedGender || ""
+  );
+  const [selectedGearType, setSelectedGearType] = useState<string>(
+    userPreference.selectedGearType || ""
+  );
+
   const [priceRange, setPriceRange] = useState<[number, number]>([299, 11999]);
-  const [showModal, setShowModal] = useState<boolean>(true);
+  const [showModal, setShowModal] = useState<boolean>(
+    !userPreference.selectedGender
+  );
   const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
 
   useScrollToTop();
@@ -69,25 +95,43 @@ const ShopPage = () => {
     if (!userId) {
       toast.error("You must be logged in to add to the cart!");
       setShowAuthModal(true);
-    } else {
-      try {
-        await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
-          {
-            productId,
-            productVariationId,
-            quantity,
-          }
-        );
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-        setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
+      return;
+    }
 
-        toast.success("Added to cart successfully");
-      } catch (error) {
-        console.error("Failed to add to cart:", error);
-        toast.error("Failed to add to cart");
-      }
+    try {
+      // Optimistic update - update local state immediately
+      setCartQuantities((prev) => ({
+        ...prev,
+        [productId]: (prev[productId] || 0) + 1,
+      }));
+
+      // Update counter
+      setCounterInfo((prev: number) => ({ ...prev, count: prev.count + 1 }));
+
+      // Then make the API call
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userId}`,
+        {
+          productId,
+          productVariationId,
+          quantity,
+        }
+      );
+
+      toast.success("Added to cart successfully");
+    } catch (error) {
+      // Roll back the optimistic update if the API call fails
+      setCartQuantities((prev) => ({
+        ...prev,
+        [productId]: Math.max((prev[productId] || 0) - 1, 0),
+      }));
+      setCounterInfo((prev: any) => ({
+        ...prev,
+        count: Math.max(prev.count - 1, 0),
+      }));
+
+      console.error("Failed to add to cart:", error);
+      toast.error("Failed to add to cart");
     }
   };
 
@@ -146,7 +190,7 @@ const ShopPage = () => {
 
   useEffect(() => {
     if (!userData?._id) return;
-  
+
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/wishlist/${userData._id}`)
       .then((res) => {
@@ -159,18 +203,209 @@ const ShopPage = () => {
         console.error("Error fetching wishlist:", err);
       });
   }, [userData?._id, counter]);
-  
 
   const isInWishlist = (id: string, productVariationId: string): boolean => {
-    
     return wishlistItems.some(
-      (item) => item.id === id || item.productVariationId === productVariationId || item._id == id
+      (item) =>
+        item.id === id ||
+        item.productVariationId === productVariationId ||
+        item._id == id
     );
   };
 
   const handleModalClose = (gender: string) => {
     setSelectedGender(gender);
-    setShowModal(false); // Close modal after a selection
+    setUserPreference({
+      ...userPreference,
+      selectedGender: gender,
+    });
+    setShowModal(false);
+  };
+
+  // Helper to update all filter preferences
+  const updateUserPreferences = (prefs: {
+    selectedGender?: string;
+    selectedCategory?: string;
+    selectedSize?: string;
+    selectedGearType?: string;
+  }) => {
+    setUserPreference({
+      ...userPreference,
+      ...prefs,
+    });
+  };
+
+  // Gender filter change handler
+  const handleGenderChange = (gender: string) => {
+    setSelectedGender(gender);
+    updateUserPreferences({
+      ...userPreference,
+      selectedGender: gender,
+    });
+  };
+
+  // Category filter change handler (multi-select, comma separated)
+  const handleCategoryChange = (category: string) => {
+    let updated = selectedCategory
+      ? selectedCategory.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(category)) {
+      updated = updated.filter((c) => c !== category);
+    } else {
+      updated.push(category);
+    }
+    const newValue = updated.join(",");
+    setSelectedCategory(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedCategory: newValue,
+    });
+  };
+
+  // Size filter change handler (multi-select, comma separated)
+  const handleSizeChange = (size: string) => {
+    let updated = selectedSize ? selectedSize.split(",").filter(Boolean) : [];
+    if (updated.includes(size)) {
+      updated = updated.filter((s) => s !== size);
+    } else {
+      updated.push(size);
+    }
+    const newValue = updated.join(",");
+    setSelectedSize(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedSize: newValue,
+    });
+  };
+
+  // Gear type filter change handler (multi-select, comma separated)
+  const handleGearTypeChange = (gearType: string) => {
+    let updated = selectedGearType
+      ? selectedGearType.split(",").filter(Boolean)
+      : [];
+    if (updated.includes(gearType)) {
+      updated = updated.filter((g) => g !== gearType);
+    } else {
+      updated.push(gearType);
+    }
+    const newValue = updated.join(",");
+    setSelectedGearType(newValue);
+    updateUserPreferences({
+      ...userPreference,
+      selectedGearType: newValue,
+    });
+  };
+
+  // Fetch cart quantities for all products for the logged-in user
+  useEffect(() => {
+    const fetchCartQuantities = async () => {
+      if (!userData?._id || products.length === 0) {
+        setCartQuantities({});
+        return;
+      }
+      const quantities: { [productId: string]: number } = {};
+      await Promise.all(
+        products.map(async (product) => {
+          try {
+            const res = await axios.get(
+              `${import.meta.env.VITE_API_BASE_URL}/api/product/quantity/${
+                userData._id
+              }/${product._id}`
+            );
+            if (res.data && typeof res.data.quantity === "number") {
+              quantities[product._id] = res.data.quantity;
+            }
+          } catch {
+            quantities[product._id] = 0;
+          }
+        })
+      );
+      setCartQuantities(quantities);
+    };
+
+    fetchCartQuantities();
+  }, [userData?._id, products]);
+
+  // Handler to increment cart quantity
+  const handleIncrement = async (product: Product) => {
+    if (!userData?._id) {
+      toast.error("You must be logged in to add to the cart!");
+      setShowAuthModal(true);
+      return;
+    }
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userData._id}`,
+        {
+          productId: product._id,
+          productVariationId: product.baseVariationId,
+          quantity: 1,
+        }
+      );
+      setCartQuantities((prev) => ({
+        ...prev,
+        [product._id]: (prev[product._id] || 0) + 1,
+      }));
+      setCounterInfo((prev: any) => ({ ...prev, count: prev.count + 1 }));
+      toast.success("Added to cart");
+    } catch (error) {
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  // Handler to decrement cart quantity
+  const handleDecrement = async (product: Product) => {
+    if (!userData?._id) {
+      toast.error("You must be logged in to remove from the cart!");
+      setShowAuthModal(true);
+      return;
+    }
+
+    try {
+      const currentQuantity = cartQuantities[product._id] || 0;
+
+      if (currentQuantity <= 1) {
+        // If quantity is 1 or less, remove the item completely
+        await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${
+            product._id
+          }/${userData._id}`
+        );
+
+        setCartQuantities((prev) => {
+          const newQuantities = { ...prev };
+          delete newQuantities[product._id]; // Remove the item from local state
+          return newQuantities;
+        });
+
+        toast.success("Item removed from cart");
+      } else {
+        // Decrement quantity normally
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${
+            userData._id
+          }`,
+          {
+            productId: product._id,
+            productVariationId: product.baseVariationId,
+            quantity: currentQuantity - 1,
+          }
+        );
+
+        setCartQuantities((prev) => ({
+          ...prev,
+          [product._id]: currentQuantity - 1,
+        }));
+
+        toast.success("Removed from cart");
+      }
+
+      // Update cart counter
+      setCounterInfo((prev: any) => ({ ...prev, count: prev.count - 1 }));
+    } catch (error) {
+      console.error("Failed to update cart:", error);
+      toast.error("Failed to update cart");
+    }
   };
 
   // Modal Component
@@ -178,29 +413,58 @@ const ShopPage = () => {
     <div className="fixed inset-0 bg-gray-600 bg - opacity-96 flex justify-center items-center z-90">
       <div className="bg-white p-8 rounded-lg w-[90%] lg:w-[60%] text-center">
         <h2 className="text-2xl font-bold text-green-900 mb-4">
-          Select Gear Type/ Category
+          What are you shopping for?
         </h2>
         <button
           className="w-full py-2 bg-green-600 text-white rounded mb-2"
-          onClick={() => handleModalClose("Men")}
-        >
-          Men's Gear
-        </button>
-        <button
-          className="w-full py-2 bg-emerald-600 text-white rounded"
-          onClick={() => handleModalClose("Women")}
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="women"
         >
           Women's Gear
         </button>
         <button
+          className="w-full py-2 bg-emerald-600 text-white rounded"
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="men"
+        >
+          Men's Gear
+        </button>
+        <button
           className="w-full py-2 bg-gray-600 text-white rounded mt-2"
-          onClick={() => handleModalClose("Other")}
+          onClick={(e) => handleModalClose(e.currentTarget.value)}
+          value="all"
         >
           All
         </button>
       </div>
     </div>
   );
+
+  const [cartQuantities, setCartQuantities] = useState<{
+    [productId: string]: number;
+  }>({});
+
+  // On mount and when modal closes, sync sidebar filter UI with userPreference from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pref = localStorage.getItem("userPreference");
+      if (pref) {
+        try {
+          const userPreference = JSON.parse(pref);
+          if (userPreference.selectedGender)
+            setSelectedGender(userPreference.selectedGender);
+          if (userPreference.selectedCategory)
+            setSelectedCategory(userPreference.selectedCategory);
+          if (userPreference.selectedSize)
+            setSelectedSize(userPreference.selectedSize);
+          if (userPreference.selectedGearType)
+            setSelectedGearType(userPreference.selectedGearType);
+        } catch {
+          // ignore parse error
+        }
+      }
+    }
+  }, [showModal]);
 
   return (
     <div className="w-[96%] md:w-[90%] mx-auto py-6 flex gap-8">
@@ -302,8 +566,9 @@ const ShopPage = () => {
               <input
                 type="radio"
                 name="gender"
-                value="Women"
-                onChange={() => setSelectedGender("Women")}
+                value="women"
+                checked={selectedGender === "women"}
+                onChange={() => handleGenderChange("women")}
                 className="accent-green-900"
               />{" "}
               Women
@@ -312,11 +577,23 @@ const ShopPage = () => {
               <input
                 type="radio"
                 name="gender"
-                value="Men"
-                onChange={() => setSelectedGender("Men")}
+                value="men"
+                checked={selectedGender === "men"}
+                onChange={() => handleGenderChange("men")}
                 className="accent-green-900"
               />{" "}
               Men
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="gender"
+                value="all"
+                checked={selectedGender === "all"}
+                onChange={() => handleGenderChange("all")}
+                className="accent-green-900"
+              />{" "}
+              All
             </label>
           </div>
         </div>
@@ -333,7 +610,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Fleece")}
+                checked={selectedCategory.split(",").includes("Fleece")}
+                onChange={() => handleCategoryChange("Fleece")}
                 className="accent-green-900"
               />{" "}
               Fleece
@@ -341,7 +619,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Sweatshirt")}
+                checked={selectedCategory.split(",").includes("Sweatshirt")}
+                onChange={() => handleCategoryChange("Sweatshirt")}
                 className="accent-green-900"
               />{" "}
               Sweatshirt
@@ -349,7 +628,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedCategory("Pullover")}
+                checked={selectedCategory.split(",").includes("Pullover")}
+                onChange={() => handleCategoryChange("Pullover")}
                 className="accent-green-900"
               />{" "}
               Pullover
@@ -369,7 +649,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("XL")}
+                checked={selectedSize.split(",").includes("XL")}
+                onChange={() => handleSizeChange("XL")}
                 className="accent-green-900"
               />{" "}
               xl
@@ -377,7 +658,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("XXL")}
+                checked={selectedSize.split(",").includes("XXL")}
+                onChange={() => handleSizeChange("XXL")}
                 className="accent-green-900"
               />{" "}
               xxl
@@ -385,7 +667,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedSize("Large")}
+                checked={selectedSize.split(",").includes("Large")}
+                onChange={() => handleSizeChange("Large")}
                 className="accent-green-900"
               />{" "}
               large
@@ -405,7 +688,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("XL")}
+                checked={selectedGearType.split(",").includes("XL")}
+                onChange={() => handleGearTypeChange("XL")}
                 className="accent-green-900"
               />{" "}
               xl
@@ -413,7 +697,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("XXL")}
+                checked={selectedGearType.split(",").includes("XXL")}
+                onChange={() => handleGearTypeChange("XXL")}
                 className="accent-green-900"
               />{" "}
               xxl
@@ -421,7 +706,8 @@ const ShopPage = () => {
             <label>
               <input
                 type="checkbox"
-                onChange={() => setSelectedGearType("Large")}
+                checked={selectedGearType.split(",").includes("Large")}
+                onChange={() => handleGearTypeChange("Large")}
                 className="accent-green-900"
               />{" "}
               Large
@@ -457,22 +743,42 @@ const ShopPage = () => {
               </Link>
 
               <div className="w-[86%] mx-auto flex justify-between">
-                <button
-                  className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
-                  onClick={() =>
-                    handleAddToCart(
-                      product._id,
-                      product.baseVariationId,
-                      product.name,
-                      product.price,
-                      product.image,
-                      1,
-                      userData._id
-                    )
-                  }
-                >
-                  Add to Cart
-                </button>
+                {cartQuantities[product._id] > 0 ? (
+                  <div className="flex items-center gap-2 w-[70%] mt-3">
+                    <button
+                      className="bg-gray-200 rounded-full p-2"
+                      onClick={() => handleDecrement(product)}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-3 py-1 bg-green-100 text-green-900 rounded font-semibold">
+                      {cartQuantities[product._id]}
+                    </span>
+                    <button
+                      className="bg-gray-200 rounded-full p-2"
+                      onClick={() => handleIncrement(product)}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="w-[70%] bg-blue-600 text-white py-2 mt-3 rounded-lg hover:bg-blue-700"
+                    onClick={() =>
+                      handleAddToCart(
+                        product._id,
+                        product.baseVariationId,
+                        product.name,
+                        product.price,
+                        product.image,
+                        1,
+                        userData._id
+                      )
+                    }
+                  >
+                    Add to Cart
+                  </button>
+                )}
 
                 <button
                   className="cursor-pointer mt-3"
