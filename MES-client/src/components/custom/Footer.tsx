@@ -1,4 +1,13 @@
 const Footer = () => {
+  const navigationLinks = [
+    { title: "Home", path: "/#" },
+    { title: "Events", path: "/events" },
+    { title: "About Us", path: "/about" },
+    { title: "Contact Us", path: "/contact" },
+    //{ title: "Categories", path: "#" },
+    //{ title: "Services", path: "#" },
+  ];
+
   return (
     <footer className="bg-[#164734] text-gray-50">
       <div className="container mx-auto px-6 py-6 grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
