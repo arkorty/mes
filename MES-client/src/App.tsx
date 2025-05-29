@@ -9,6 +9,7 @@ import CheckoutPage from "./pages/Checkout/CheckoutPage";
 import { Toaster } from 'react-hot-toast';
 import AboutPage from "./pages/About/AboutPage";
 import ContactPage from "./pages/Contact/ContactPage";
+import ClassesPage from "./pages/Classes/ClassesPage";
 
 const Home = lazy(() => import("./pages/Home"));
 const ProductDetails = lazy(() => import("./components/Shop/ProductDetails"));
@@ -31,6 +32,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/classes" element={<ClassesPage />} />
           </Route>
         </Routes>
       </Suspense>

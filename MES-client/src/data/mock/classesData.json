@@ -1,0 +1,170 @@
+{
+  "classes": [
+    {
+      "id": "1",
+      "title": "Introduction to Alpine Climbing",
+      "shortDescription": "Learn the basics of mountaineering in this beginner-friendly course.",
+      "description": "This comprehensive course covers the fundamental skills needed for alpine climbing. From rope management to ice axe techniques, you'll gain confidence in the mountains under expert guidance.",
+      "image": "https://images.unsplash.com/photo-1522163182402-834f871fd851",
+      "instructor": "Alex Johnson",
+      "instructorBio": "Former National Park ranger with 15+ years of alpine guiding experience.",
+      "instructorImage": "https://randomuser.me/api/portraits/men/32.jpg",
+      "level": "Beginner",
+      "duration": "2 Days",
+      "location": "Cascade Mountains, WA",
+      "dates": ["June 15-16, 2024", "July 20-21, 2024", "August 10-11, 2024"],
+      "price": 349,
+      "capacity": 8,
+      "spotsLeft": 3,
+      "skillsCovered": ["Rope Management", "Ice Axe Techniques", "Crampon Use", "Route Finding", "Weather Assessment"],
+      "details": {
+        "whatToBring": [
+          "Hiking boots with ankle support",
+          "Day pack (30-40L capacity)",
+          "Weather-appropriate clothing (layers recommended)",
+          "Water bottle or hydration system",
+          "Sunglasses and sunscreen",
+          "Lunch for both days"
+        ],
+        "whatWeProvide": [
+          "All technical climbing equipment (harness, helmet, ice axe)",
+          "Basic mountaineering safety gear",
+          "Instructional materials",
+          "Hot beverages throughout the day"
+        ],
+        "instructorCertifications": [
+          "International Mountain Guide Certification",
+          "Wilderness First Responder",
+          "Avalanche Safety Level 2",
+          "Leave No Trace Trainer"
+        ],
+        "priceNote": "All technical equipment and materials included"
+      }
+    },
+    {
+      "id": "2",
+      "title": "Advanced Ice Climbing",
+      "shortDescription": "Take your ice climbing skills to the next level with professional instruction.",
+      "description": "Designed for experienced climbers, this advanced course focuses on technical ice climbing skills in challenging alpine environments. Learn how to lead on ice, manage complex anchors, and climb with efficiency and safety.",
+      "image": "https://images.unsplash.com/photo-1551632811-561732d1e306",
+      "instructor": "Sarah Winters",
+      "instructorBio": "Professional alpine guide with expeditions on four continents.",
+      "instructorImage": "https://randomuser.me/api/portraits/women/44.jpg",
+      "level": "Advanced",
+      "duration": "3 Days",
+      "location": "North Cascades, WA",
+      "dates": ["January 5-7, 2025", "February 12-14, 2025"],
+      "price": 599,
+      "capacity": 6,
+      "spotsLeft": 2,
+      "skillsCovered": ["Leading on Ice", "Mixed Climbing Techniques", "Advanced Anchor Systems", "Rescue Scenarios", "Steep Ice Techniques"],
+      "details": {
+        "whatToBring": [
+          "Personal ice climbing gear (if you have it)",
+          "Mountaineering boots compatible with crampons",
+          "Insulated and waterproof apparel for cold conditions",
+          "Thermos for hot drinks",
+          "High-calorie snacks and lunch",
+          "Headlamp with extra batteries"
+        ],
+        "whatWeProvide": [
+          "Technical ice climbing equipment (can be rented if needed)",
+          "Ice screws and protection",
+          "Ropes and group safety gear",
+          "Hot drinks and light breakfast"
+        ],
+        "instructorCertifications": [
+          "AMGA Alpine Guide Certification",
+          "Wilderness First Responder",
+          "Avalanche Safety Level 3",
+          "Extensive expedition leadership experience"
+        ],
+        "priceNote": "Basic equipment included; specialized personal gear available for rent"
+      }
+    },
+    {
+      "id": "3",
+      "title": "Winter Survival Skills",
+      "shortDescription": "Essential knowledge for staying safe in harsh winter mountain conditions.",
+      "description": "Learn critical survival techniques for winter expeditions. This course covers everything from building snow shelters to avalanche assessment, and emergency first aid in cold environments.",
+      "image": "https://images.unsplash.com/photo-1491555103944-7c647fd857e6",
+      "instructor": "Daniel Berg",
+      "instructorBio": "Wilderness survival expert and former search and rescue team leader.",
+      "instructorImage": "https://randomuser.me/api/portraits/men/22.jpg",
+      "level": "Intermediate",
+      "duration": "2 Days",
+      "location": "Mt. Baker Area, WA",
+      "dates": ["December 8-9, 2024", "January 15-16, 2025"],
+      "price": 399,
+      "capacity": 10,
+      "spotsLeft": 5,
+      "skillsCovered": ["Snow Shelter Construction", "Cold Weather First Aid", "Avalanche Assessment", "Winter Navigation", "Emergency Response"],
+      "details": {
+        "whatToBring": [
+          "Winter hiking/snow boots",
+          "Snow clothes (waterproof outer layers)",
+          "Insulated gloves and hat",
+          "Sleeping bag rated for 0°F or lower",
+          "Insulated sleeping pad",
+          "Headlamp",
+          "Emergency kit (if you have one)"
+        ],
+        "whatWeProvide": [
+          "Snow tools and equipment",
+          "Emergency shelter materials",
+          "Avalanche safety equipment",
+          "Navigation tools",
+          "Hot meals and drinks"
+        ],
+        "instructorCertifications": [
+          "Search and Rescue Certification",
+          "Wilderness First Responder",
+          "Avalanche Safety Instructor",
+          "Cold Weather Survival Specialist"
+        ],
+        "priceNote": "Includes overnight camping experience and all meals"
+      }
+    },
+    {
+      "id": "4",
+      "title": "Rock Climbing Fundamentals",
+      "shortDescription": "Master the essential techniques for outdoor rock climbing.",
+      "description": "Build a solid foundation in rock climbing skills with this comprehensive course. Perfect for those transitioning from indoor to outdoor climbing, you'll learn proper technique, safety protocols, and gain confidence on natural rock.",
+      "image": "https://images.unsplash.com/photo-1522163182402-834f871fd851",
+      "instructor": "Mia Rodriguez",
+      "instructorBio": "Certified climbing instructor with 12 years of experience.",
+      "instructorImage": "https://randomuser.me/api/portraits/women/28.jpg",
+      "level": "Beginner",
+      "duration": "2 Days",
+      "location": "Leavenworth, WA",
+      "dates": ["May 18-19, 2024", "June 22-23, 2024", "July 13-14, 2024"],
+      "price": 299,
+      "capacity": 8,
+      "spotsLeft": 4,
+      "skillsCovered": ["Belaying Techniques", "Anchor Building", "Lead Climbing Basics", "Route Assessment", "Climbing Movement"],
+      "details": {
+        "whatToBring": [
+          "Comfortable, flexible clothing",
+          "Climbing shoes (rentals available if needed)",
+          "Day pack with water and snacks",
+          "Sunscreen and hat",
+          "Personal climbing gear if you have it",
+          "Enthusiasm and a can-do attitude"
+        ],
+        "whatWeProvide": [
+          "All necessary climbing equipment",
+          "Safety gear (helmets, harnesses, ropes)",
+          "Guidebooks and instructional materials",
+          "Transportation from meeting point to climbing areas"
+        ],
+        "instructorCertifications": [
+          "AMGA Single Pitch Instructor",
+          "Wilderness First Aid",
+          "Professional Climbing Guides Institute Certification",
+          "CPR and Safety Training"
+        ],
+        "priceNote": "Equipment rental included in price if needed"
+      }
+    }
+  ]
+}
