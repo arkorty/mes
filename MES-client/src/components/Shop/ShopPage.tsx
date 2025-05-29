@@ -35,7 +35,7 @@ interface UserPreference {
 
 const ShopPage = () => {
   // use to sync with wishlist, cart in nav bar
-  const [counter, setCounterInfo] = useAtom(counterInfoAtom);
+  const [counter, setCounter] = useAtom(counterInfoAtom);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -106,7 +106,7 @@ const ShopPage = () => {
       }));
 
       // Update counter
-      setCounterInfo((prev: number) => ({ ...prev, count: prev.count + 1 }));
+      setCounter(prev => prev + 1);
 
       // Then make the API call
       await axios.post(
@@ -125,10 +125,7 @@ const ShopPage = () => {
         ...prev,
         [productId]: Math.max((prev[productId] || 0) - 1, 0),
       }));
-      setCounterInfo((prev: any) => ({
-        ...prev,
-        count: Math.max(prev.count - 1, 0),
-      }));
+      setCounter(prev => Math.max(prev - 1, 0));
 
       console.error("Failed to add to cart:", error);
       toast.error("Failed to add to cart");
@@ -159,8 +156,7 @@ const ShopPage = () => {
         );
 
         if (res.data.success) {
-          // @ts-expect-error
-          setCounterInfo((prev) => ({ ...prev, count: prev.count + 1 }));
+          setCounter(prev => prev + 1);
           toast.success("Added to wishlist successfully");
         }
       } catch (error) {
@@ -346,7 +342,7 @@ const ShopPage = () => {
         ...prev,
         [product._id]: (prev[product._id] || 0) + 1,
       }));
-      setCounterInfo((prev: any) => ({ ...prev, count: prev.count + 1 }));
+      setCounter(prev => prev + 1);
       toast.success("Added to cart");
     } catch (error) {
       toast.error("Failed to add to cart");
@@ -401,7 +397,7 @@ const ShopPage = () => {
       }
 
       // Update cart counter
-      setCounterInfo((prev: any) => ({ ...prev, count: prev.count - 1 }));
+      setCounter(prev => prev - 1);
     } catch (error) {
       console.error("Failed to update cart:", error);
       toast.error("Failed to update cart");
