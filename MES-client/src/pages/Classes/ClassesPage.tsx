@@ -4,7 +4,6 @@ import ForestImage from "@/assets/forest.jpg";
 import HeroBanner from "@/components/common/HeroBanner";
 import ClassList from "@/components/Classes/ClassList";
 import ClassDetails from "@/components/Classes/ClassDetails";
-import mockData from "@/data/mock/classesData.json";
 import { ClassInfo } from "@/types/class"
 
 const ClassesPage: React.FC = () => {
@@ -17,10 +16,19 @@ const ClassesPage: React.FC = () => {
     const fetchClasses = async () => {
       setLoading(true);
       try {
-        setClasses(mockData.classes);
-        setSelectedClass(mockData.classes[0]);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/class`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data)) {
+          setClasses(data.data);
+          setSelectedClass(data.data[0] || null);
+        } else {
+          setClasses([]);
+          setSelectedClass(null);
+        }
       } catch (error) {
         console.error("Error fetching classes:", error);
+        setClasses([]);
+        setSelectedClass(null);
       } finally {
         setLoading(false);
       }
@@ -44,7 +52,7 @@ const ClassesPage: React.FC = () => {
           <div className="lg:w-1/3">
             <ClassList 
               classes={classes}
-              selectedClassId={selectedClass?.id || null}
+              selectedClassId={selectedClass?._id || null}
               loading={loading}
               onClassSelect={setSelectedClass}
             />
