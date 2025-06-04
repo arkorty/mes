@@ -1,0 +1,189 @@
+{
+  "events": [
+    {
+      "id": "1",
+      "title": "Annual Mountain Clean-Up Day",
+      "shortDescription": "Join us for a day of trail maintenance and environmental stewardship.",
+      "description": "Help preserve our mountain ecosystems by participating in our annual clean-up event. We'll focus on removing trash from popular trails, repairing eroded paths, and restoring natural habitats. Lunch and equipment provided to all volunteers.",
+      "image": "https://images.unsplash.com/photo-1532939624-3af1308db9a5",
+      "date": "May 22, 2024",
+      "time": "8:00 AM - 4:00 PM",
+      "location": "Mount Rainier National Park",
+      "locationDetails": "Paradise Visitor Center Parking Lot",
+      "capacity": 50,
+      "spotsLeft": 22,
+      "price": 0,
+      "type": "community",
+      "tags": ["Volunteer", "Conservation", "Family-Friendly"],
+      "organizer": "Mountain Expedition Supply & National Park Service",
+      "contactEmail": "events@summitsupply.com",
+      "highlights": [
+        "Help preserve mountain ecosystems",
+        "Learn trail maintenance techniques",
+        "Meet fellow outdoor enthusiasts",
+        "Lunch and refreshments provided",
+        "Participants receive a 15% discount coupon"
+      ],
+      "details": {
+        "whatToBring": [
+          "Work gloves (if you have them)",
+          "Comfortable outdoor clothing appropriate for weather",
+          "Water bottle",
+          "Sun protection",
+          "Your enthusiasm!"
+        ],
+        "refundPolicy": "This is a free event. Please notify us if you're unable to attend so we can offer your spot to someone else.",
+        "parkingInfo": "Parking is available at the Paradise Visitor Center. National Park Pass required for entry.",
+        "transportation": "Carpooling is encouraged. We will organize shared transportation from Seattle for those who need it."
+      }
+    },
+    {
+      "id": "2",
+      "title": "Night Sky Photography Workshop",
+      "shortDescription": "Learn to capture stunning mountain and sky landscapes after dark.",
+      "description": "Join professional photographer Emma Richards for an evening of instruction and hands-on practice shooting mountain landscapes and night skies. This workshop covers camera settings, composition techniques, light painting, and post-processing basics specifically for night photography in mountain environments.",
+      "image": "https://images.unsplash.com/photo-1542224566-6e85f2e6772f",
+      "date": "June 15, 2024",
+      "time": "7:00 PM - 11:00 PM",
+      "location": "Artist Point, Mt. Baker",
+      "locationDetails": "Meet at the upper parking lot",
+      "capacity": 15,
+      "spotsLeft": 6,
+      "price": 129,
+      "type": "workshop",
+      "tags": ["Photography", "Night Sky", "Beginner-Friendly"],
+      "organizer": "Mountain Expedition Supply & Alpine Exposures",
+      "contactEmail": "workshops@summitsupply.com",
+      "highlights": [
+        "Small group instruction with a pro photographer",
+        "Hands-on practice in the field",
+        "Learn night sky composition techniques",
+        "Post-processing tips and tricks",
+        "Hot beverages and snacks provided"
+      ],
+      "details": {
+        "whatToBring": [
+          "Camera with manual mode capability",
+          "Tripod",
+          "Extra batteries and memory cards",
+          "Warm clothing (temperatures drop significantly after dark)",
+          "Headlamp with red light mode"
+        ],
+        "refundPolicy": "Full refunds available up to 7 days before the event. 50% refund available 3-7 days before the event. No refunds within 72 hours of the event.",
+        "parkingInfo": "Northwest Forest Pass required for parking at Artist Point. Limited parking available.",
+        "transportation": "The location is approximately 3 hours from Seattle. Carpooling options will be coordinated via email one week before the event."
+      }
+    },
+    {
+      "id": "3",
+      "title": "Adventure Film Festival",
+      "shortDescription": "A celebration of outdoor films featuring local and international filmmakers.",
+      "description": "The annual Mountain Adventure Film Festival showcases inspiring documentaries and shorts about climbing, hiking, conservation, and outdoor adventure. Join us for screenings, Q&A sessions with filmmakers, and networking with fellow outdoor enthusiasts.",
+      "image": "https://images.unsplash.com/photo-1536440136628-849c177e76a1",
+      "date": "July 8-10, 2024",
+      "time": "Various times",
+      "location": "Downtown Seattle",
+      "locationDetails": "Pike Place Theater",
+      "capacity": 200,
+      "spotsLeft": 85,
+      "price": 49,
+      "type": "festival",
+      "tags": ["Film", "Entertainment", "Networking"],
+      "organizer": "Mountain Expedition Supply & Pacific Film Alliance",
+      "contactEmail": "festival@summitsupply.com",
+      "highlights": [
+        "Screenings of award-winning outdoor films",
+        "Meet directors and cinematographers",
+        "Networking opportunities",
+        "Opening night reception included",
+        "Full festival pass includes access to all screenings"
+      ],
+      "details": {
+        "whatToBring": [
+          "Festival pass (digital or printed)",
+          "Note-taking materials for filmmaker Q&As",
+          "Business cards for networking events",
+          "Questions for the panel discussions",
+          "Open mind and enthusiasm for outdoor stories"
+        ],
+        "refundPolicy": "Full refunds available up to 14 days before the festival. 50% refund available 7-14 days before. No refunds within 7 days of the event start date.",
+        "parkingInfo": "Several paid parking garages available near the theater. Weekend rates apply.",
+        "transportation": "Easily accessible via public transportation. Bus routes 10, 11, 43, 47, and 49 stop within one block."
+      }
+    },
+    {
+      "id": "4",
+      "title": "Gear Swap & Sale",
+      "shortDescription": "Buy, sell, and trade outdoor gear while supporting a good cause.",
+      "description": "Our bi-annual gear swap is the perfect opportunity to refresh your outdoor equipment collection. Bring your gently used gear to sell or trade, or simply come to shop for great deals. A portion of all proceeds goes to support youth outdoor education programs.",
+      "image": "https://images.unsplash.com/photo-1709517659952-263e00150b65",
+      "date": "April 29, 2024",
+      "time": "10:00 AM - 3:00 PM",
+      "location": "Mountain Expedition Supply Store",
+      "locationDetails": "Main store - outdoor pavilion",
+      "capacity": 0,
+      "spotsLeft": 0,
+      "price": 5,
+      "type": "community",
+      "tags": ["Shopping", "Community", "Sustainability"],
+      "organizer": "Mountain Expedition Supply",
+      "contactEmail": "gearswap@summitsupply.com",
+      "highlights": [
+        "Find deals on quality used gear",
+        "Sell your unused equipment",
+        "Expert gear appraisals available",
+        "Proceeds support youth outdoor programs",
+        "Refreshments and music throughout the day"
+      ],
+      "details": {
+        "whatToBring": [
+          "Clean, functional gear to sell (if participating as a seller)",
+          "Cash for purchases (though credit cards are accepted)",
+          "List of gear you're looking for",
+          "Reusable shopping bag",
+          "Patience and good bargaining spirit"
+        ],
+        "refundPolicy": "Entrance fee is non-refundable. Purchased items must be inspected before leaving - all sales are final.",
+        "parkingInfo": "Free parking available in the store lot and adjacent overflow area.",
+        "transportation": "Located 2 miles from downtown. Ride share recommended as public transportation is limited."
+      }
+    },
+    {
+      "id": "5",
+      "title": "Wilderness First Aid Course",
+      "shortDescription": "Essential medical training for the backcountry enthusiast.",
+      "description": "This intensive two-day course teaches you how to respond to medical emergencies when you're miles from help. Learn to assess injuries, provide stabilizing care, and make evacuation decisions in remote environments from certified wilderness medicine instructors.",
+      "image": "https://images.unsplash.com/photo-1630964046403-8b745c1e3c69",
+      "date": "May 4-5, 2024",
+      "time": "8:00 AM - 5:00 PM",
+      "location": "Mountain Expedition Supply Training Center",
+      "locationDetails": "Second floor classroom",
+      "capacity": 24,
+      "spotsLeft": 13,
+      "price": 249,
+      "type": "training",
+      "tags": ["Safety", "Education", "Certification"],
+      "organizer": "Mountain Expedition Supply & Wilderness Medicine Institute",
+      "contactEmail": "training@summitsupply.com",
+      "highlights": [
+        "Hands-on scenarios and practice",
+        "Taught by certified instructors",
+        "2-year certification upon completion",
+        "Comprehensive course materials included",
+        "Lunch provided both days"
+      ],
+      "details": {
+        "whatToBring": [
+          "Notebook and pen",
+          "Comfortable clothing that can get dirty",
+          "Outdoor clothing for scenarios",
+          "Water bottle and snacks",
+          "Optional: Any wilderness medical supplies you currently carry"
+        ],
+        "refundPolicy": "Full refunds available up to 14 days before the course. 75% refund available 7-14 days before. No refunds within 7 days of the course start date.",
+        "parkingInfo": "Free parking available in the training center garage. Enter from the south entrance.",
+        "transportation": "Located near bus routes 28 and 40. The nearest stop is two blocks away at Fremont Ave."
+      }
+    }
+  ]
+}

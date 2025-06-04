@@ -1,6 +1,7 @@
 const Footer = () => {
   const navigationLinks = [
     { title: "Home", path: "/#" },
+    { title: "Events", path: "/events" },
     { title: "Classes", path: "/classes" },
     { title: "About Us", path: "/about" },
     { title: "Contact Us", path: "/contact" },
