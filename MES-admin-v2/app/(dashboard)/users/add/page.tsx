@@ -1,11 +1,11 @@
-import UserForm from "@/components/user-form"
+import UserForm from '@/components/user-form';
 
 const AddUser = () => {
   return (
     <>
-     <UserForm /> 
+      <UserForm />
     </>
-  )
-}
+  );
+};
 
-export default AddUser
+export default AddUser;

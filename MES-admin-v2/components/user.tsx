@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import {
@@ -9,11 +11,21 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { FormEvent } from 'react';
 
-export async function User() {
+export function User() {
+  const router = useRouter();
+
   const user = {
     name: 'John Doe',
     image: null
+  };
+
+  const handleSignOut = (e: FormEvent) => {
+    e.preventDefault();
+    alert("You've been signed out.");
+    router.push('/');
   };
 
   return (
@@ -38,14 +50,16 @@ export async function User() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {user ? (
-          <DropdownMenuItem>
-            <form>
-              <button type="submit">Sign Out</button>
+          <DropdownMenuItem asChild>
+            <form onSubmit={handleSignOut}>
+              <button type="submit" className="w-full text-left">
+                Sign Out
+              </button>
             </form>
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem>
-            <Link href="/login">Sign In</Link>
+          <DropdownMenuItem asChild>
+            <Link href="/">Sign In</Link>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

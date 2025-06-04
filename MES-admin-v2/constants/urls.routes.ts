@@ -1,5 +1,4 @@
 export const URL_ROUTES = {
-  login: '/login',
   orders: '/orders',
   orderView: (id: string) => `/orders/${id}`,
   products: '/products',

@@ -58,9 +58,17 @@ export const productTableColumns: Column<any>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={URL_ROUTES.productEdit(item._id)}>Edit</Link>
+            <Link
+              href={URL_ROUTES.productEdit(item._id)}
+              className="cursor-pointer"
+            >
+              Edit
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={async () => await deleteProduct(item._id)}>
+          <DropdownMenuItem
+            onClick={async () => await deleteProduct(item._id)}
+            className="cursor-pointer"
+          >
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

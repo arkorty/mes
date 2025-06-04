@@ -11,8 +11,8 @@ export type UserFields = {
   password: string;
   mobile: string;
   role: UserRole;
-  picture: string;
-  address: string;
+  picture?: string;
+  address?: string;
 };
 
 export const userFields: UserFields = {

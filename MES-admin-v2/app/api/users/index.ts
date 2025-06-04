@@ -3,6 +3,7 @@
 import api from '@/lib/axios';
 import { API_ROUTES } from 'constants/api.routes';
 import { revalidatePath } from 'next/cache';
+import { UserFields } from 'types/user.types';
 
 export const getUsers = async ({
   page,
@@ -45,3 +46,24 @@ export const deleteUser = async (id: any) => {
     throw new Error(JSON.stringify(error, null, 2));
   }
 };
+
+export const addUser = async (user: UserFields) => {
+  try {
+    const { data } = await api.post(API_ROUTES.addUser, user);
+    if (data.success) revalidatePath('/users');
+    return data;
+  } catch (error) {
+    console.error(JSON.stringify(error, null, 2));
+    throw new Error(JSON.stringify(error, null, 2));
+  }
+}
+
+export const updateUser = async (id: any, user: UserFields) => {
+  try {
+    const { data } = await api.patch(API_ROUTES.editUser(id), user);
+    return data;
+  } catch (error) {
+    console.error(JSON.stringify(error, null, 2));
+    throw new Error(JSON.stringify(error, null, 2));
+  }
+}

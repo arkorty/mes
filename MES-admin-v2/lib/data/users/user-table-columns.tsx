@@ -49,9 +49,17 @@ export const userTableColumns: Column<any>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={URL_ROUTES.userEdit(user._id)}>Edit</Link>
+            <Link
+              href={URL_ROUTES.userEdit(user._id)}
+              className="cursor-pointer"
+            >
+              Edit
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={async () => await deleteUser(user._id)}>
+          <DropdownMenuItem
+            onClick={async () => await deleteUser(user._id)}
+            className="cursor-pointer"
+          >
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>

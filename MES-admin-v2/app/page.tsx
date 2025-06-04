@@ -23,7 +23,7 @@ export default function LoginPage() {
         password
       });
       if (data.success) {
-        console.log('login successful');
+        alert('login successful');
         router.push('/orders');
       }
     } catch (error) {
