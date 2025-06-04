@@ -35,7 +35,7 @@ export const orderTableColumns: Column<any>[] = [
     label: 'Actions',
     accessor: 'id',
     render: (item: any) => (
-      <Link href={URL_ROUTES.orderView(item._id)}>
+      <Link href={URL_ROUTES.orderView(item._id)} className="cursor-pointer">
         <Eye className="w-4 h-4" />
         <span className="sr-only">Edit</span>
       </Link>

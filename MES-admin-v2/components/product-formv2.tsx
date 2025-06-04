@@ -269,8 +269,7 @@ const ProductForm = ({
     // for (const pair of formData.entries()) {
     //   console.log(`${pair[0]} = ${pair[1]}`);
     // }
-
-    // TODO: Submit formData to API
+    
     try {
       const res = await addUpdateProduct(formData);
       if (res.success) alert('Product added/updated successfully');

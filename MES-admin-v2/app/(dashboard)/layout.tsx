@@ -1,7 +1,7 @@
 import MobileNav from '@/components/mobile-nav';
 import DesktopNav from '@/components/desktop-nav';
 import DashboardBreadcrumb from '@/components/dashboard-breadcrumb';
-import { ReactNode, Suspense } from 'react';
+import { ReactNode } from 'react';
 import Providers from 'app/providers';
 import { User } from '@/components/user';
 
@@ -14,7 +14,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             <MobileNav />
             <DashboardBreadcrumb />
-            {/* <SearchInput /> */}
             <User />
           </header>
 

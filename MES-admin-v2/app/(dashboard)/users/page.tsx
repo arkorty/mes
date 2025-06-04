@@ -1,4 +1,5 @@
 import { DataTable } from '@/components/data-table';
+import { SearchInput } from '@/components/search';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { userTableColumns } from '@/lib/data/users/user-table-columns';
@@ -29,6 +30,7 @@ export default async function ViewUsers(props: {
             <TabsTrigger value="all">All</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
+            <SearchInput />
             <Button size="sm" className="h-8 gap-1" asChild>
               <Link href={URL_ROUTES.userAdd}>
                 <PlusCircle className="h-3.5 w-3.5" />

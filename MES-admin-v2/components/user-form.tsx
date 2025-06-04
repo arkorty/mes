@@ -21,14 +21,37 @@ import {
 } from '@/components/ui/card';
 import {
   userFieldLabels,
-  userFields,
+  userFields as userFieldValues,
   UserFields,
   UserRole
 } from 'types/user.types';
 import Image from 'next/image';
+import { addUser, updateUser } from 'app/api/users';
 
-const UserForm = ({ initialUser }: { initialUser?: UserFields }) => {
-  const [user, setUser] = useState<UserFields>(initialUser || userFields);
+const UserForm = ({ initialUser }: { initialUser?: any }) => {
+  const [user, setUser] = useState<UserFields>(initialUser || userFieldValues);
+
+  const handleAddUser = async (user: UserFields) => {
+    try {
+      const data = await addUser(user);
+      if (data) alert('User added successfully!');
+      else alert('Could not add user, try again.');
+    } catch (error) {
+      console.error('Error adding user:', error);
+    } finally {
+      setUser(userFieldValues);
+    }
+  };
+
+  const handleUpdateUser = async (user: UserFields) => {
+    try {
+      const data = await updateUser(initialUser?._id, user);
+      if (data) alert('User updated successfully!');
+      else alert('Could not update user, try again.');
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -52,10 +75,13 @@ const UserForm = ({ initialUser }: { initialUser?: UserFields }) => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log('Submitted:', user);
-    // TODO: Submit logic
+    if (initialUser) {
+      await handleUpdateUser(user);
+    } else {
+      await handleAddUser(user);
+    }
   };
 
   return (
@@ -71,89 +97,95 @@ const UserForm = ({ initialUser }: { initialUser?: UserFields }) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(Object.keys(userFields) as (keyof UserFields)[]).map((field) => {
-              if (field === 'address') {
-                return (
-                  <div key={field} className="md:col-span-2 lg:col-span-3">
-                    <Label>{userFieldLabels[field]}</Label>
-                    <Textarea
-                      value={user.address}
-                      onChange={(e) => handleChange(e, field)}
-                      placeholder="Enter address"
-                    />
-                  </div>
-                );
-              }
+            {(Object.keys(userFieldValues) as (keyof UserFields)[]).map(
+              (field) => {
+                if (field === 'address') {
+                  return (
+                    <div key={field} className="md:col-span-2 lg:col-span-3">
+                      <Label>{userFieldLabels[field]}</Label>
+                      <Textarea
+                        value={user.address}
+                        onChange={(e) => handleChange(e, field)}
+                        placeholder="Enter address"
+                      />
+                    </div>
+                  );
+                }
 
-              if (field === 'role') {
-                return (
-                  <div key={field}>
-                    <Label>{userFieldLabels[field]}</Label>
-                    <Select
-                      value={
-                        String(user.role) === '-1' ? '' : String(user.role)
-                      }
-                      onValueChange={handleRoleChange}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Object.keys(UserRole)
-                          .filter(
-                            (key) =>
-                              key !== 'None' &&
-                              !isNaN(Number(UserRole[key as any]))
-                          )
-                          .map((key) => (
-                            <SelectItem
-                              key={UserRole[key as any]}
-                              value={String(UserRole[key as any])}
-                            >
-                              {key}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                );
-              }
+                if (field === 'role') {
+                  return (
+                    <div key={field}>
+                      <Label>{userFieldLabels[field]}</Label>
+                      <Select
+                        value={
+                          String(user.role) === '-1' ? '' : String(user.role)
+                        }
+                        onValueChange={handleRoleChange}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(UserRole)
+                            .filter(
+                              (key) =>
+                                key !== 'None' &&
+                                !isNaN(Number(UserRole[key as any]))
+                            )
+                            .map((key) => (
+                              <SelectItem
+                                key={UserRole[key as any]}
+                                value={String(UserRole[key as any])}
+                              >
+                                {key}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  );
+                }
 
-              if (field === 'picture') {
+                if (field === 'picture') {
+                  return (
+                    <div key={field}>
+                      <Label>{userFieldLabels[field]}</Label>
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleChange(e, field)}
+                      />
+                      {initialUser?.picture && (
+                        <div className="relative w-full aspect-[4/3] max-w-sm border rounded-md">
+                          <Image
+                            src={initialUser.picture}
+                            alt={initialUser.name}
+                            fill
+                            className="object-contain rounded"
+                            sizes="(max-width: 768px) 100vw, 33vw"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field}>
                     <Label>{userFieldLabels[field]}</Label>
                     <Input
-                      type="file"
-                      accept="image/*"
+                      type={field === 'password' ? 'password' : 'text'}
+                      disabled={
+                        initialUser &&
+                        (field === 'password' || field === 'email')
+                      }
+                      value={(user[field] as string) || ''}
                       onChange={(e) => handleChange(e, field)}
                     />
-                    {initialUser?.picture && (
-                      <div className="relative w-full aspect-[4/3] max-w-sm border rounded-md">
-                        <Image
-                          src={initialUser.picture}
-                          alt={initialUser.name}
-                          fill
-                          className="object-contain rounded"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
-                      </div>
-                    )}
                   </div>
                 );
               }
-
-              return (
-                <div key={field}>
-                  <Label>{userFieldLabels[field]}</Label>
-                  <Input
-                    type={field === 'password' ? 'password' : 'text'}
-                    value={(user[field] as string) || ''}
-                    onChange={(e) => handleChange(e, field)}
-                  />
-                </div>
-              );
-            })}
+            )}
           </div>
           <div className="w-full flex justify-end">
             <Button type="submit" className="mt-6">
