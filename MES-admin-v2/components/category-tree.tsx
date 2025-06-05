@@ -30,8 +30,8 @@ export default function CategoryTree({ categories }: { categories: any[] }) {
           className="border rounded-lg px-4"
         >
           <AccordionTrigger className="py-4 hover:underline">
-            <div className="flex justify-between items-center gap-4 w-full text-left">
-              <div className="flex justify-center items-center gap-4">
+            <div className="flex justify-between items-center md:gap-4 w-full text-left">
+              <div className="flex flex-col md:flex-row md:justify-center md:items-center gap-4">
                 <Image
                   src={category.imageUrl}
                   alt={category.name}

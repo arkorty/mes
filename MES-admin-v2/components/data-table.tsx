@@ -46,7 +46,7 @@ export function DataTable<T>({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className='w-full'>
         <Table>
           <TableHeader>
             <TableRow>

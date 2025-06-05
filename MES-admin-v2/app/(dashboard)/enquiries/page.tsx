@@ -7,7 +7,7 @@ export default async function ViewEnquiries() {
   const { data: enquiries } = await getEnquiries();
 
   return (
-    <Tabs defaultValue="all">
+    <Tabs defaultValue="all" className='w-full overflow-x-auto'>
       <TabsList>
         <TabsTrigger value="all">All Enquiries</TabsTrigger>
       </TabsList>

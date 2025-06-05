@@ -1,7 +1,9 @@
 import { NavItem } from '@/components/nav-item';
 import { APP_NAME } from 'constants/strings';
-import { URL_ROUTES } from 'constants/urls.routes';
+import { NAV_ROUTES, URL_ROUTES } from 'constants/urls.routes';
 import {
+  Album,
+  Award,
   ChartColumnStacked,
   MessageCircleQuestion,
   Package,
@@ -22,25 +24,12 @@ const DesktopNav = () => {
             <span>MES</span>
             <span className="sr-only">{APP_NAME}</span>
           </Link>
-          <NavItem href={URL_ROUTES.orders} label="Orders">
-            <ShoppingCart className="h-5 w-5 text-black" />
-          </NavItem>
 
-          <NavItem href={URL_ROUTES.products} label="Products">
-            <Package className="h-5 w-5 text-black" />
-          </NavItem>
-
-          <NavItem href={URL_ROUTES.users} label="Users">
-            <Users2 className="h-5 w-5 text-black" />
-          </NavItem>
-
-          <NavItem href={URL_ROUTES.categories} label="Categories">
-            <ChartColumnStacked className="h-5 w-5 text-black" />
-          </NavItem>
-
-          <NavItem href={URL_ROUTES.enquiries} label="Enquiries">
-            <MessageCircleQuestion className="h-5 w-5 text-black" />
-          </NavItem>
+          {NAV_ROUTES.map((route) => (
+            <NavItem key={route.url} href={route.url} label={route.label}>
+              <route.icon className="h-5 w-5 text-black" />
+            </NavItem>
+          ))}
         </nav>
       </aside>
     </>

@@ -11,7 +11,7 @@ export default async function ViewCategories() {
   const categories = data.data;
   return (
     <>
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="all" className='w-full overflow-x-auto'>
         <div className="px-6 flex items-center">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
