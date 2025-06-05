@@ -9,11 +9,11 @@ import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function ViewUsers(props: {
-  searchParams: Promise<{ q: string; currentPage: string }>;
+  searchParams: Promise<{ q: string; page: string }>;
 }) {
   const searchParams = await props.searchParams;
   const search = searchParams.q ?? '';
-  const currentPage = searchParams.currentPage ?? 1;
+  const currentPage = searchParams.page ?? 1;
   const data = await getUsers({
     page: +currentPage,
     search
@@ -24,7 +24,7 @@ export default async function ViewUsers(props: {
 
   return (
     <>
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="all" className='w-full overflow-x-auto'>
         <div className="flex items-center">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
@@ -42,14 +42,14 @@ export default async function ViewUsers(props: {
           </div>
         </div>
         <TabsContent value="all">
-          <DataTable
-            items={users}
-            columns={userTableColumns}
-            title="Users"
-            description="Manage users"
-            currentPage={data.currentPage ?? 1}
-            totalItems={totalItems}
-          />
+            <DataTable
+              items={users}
+              columns={userTableColumns}
+              title="Users"
+              description="Manage users"
+              currentPage={data.currentPage ?? 1}
+              totalItems={totalItems}
+            />
         </TabsContent>
       </Tabs>
     </>

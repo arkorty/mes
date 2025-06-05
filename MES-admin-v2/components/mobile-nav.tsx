@@ -8,7 +8,7 @@ import {
   SheetTrigger
 } from '@/components/ui/sheet';
 import { APP_NAME } from 'constants/strings';
-import { URL_ROUTES } from 'constants/urls.routes';
+import { NAV_ROUTES, URL_ROUTES } from 'constants/urls.routes';
 import {
   ChartColumnStacked,
   Package,
@@ -30,38 +30,20 @@ const MobileNav = () => {
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs pt-16">
           <SheetHeader className="mt-2 mb-6">
-            <SheetTitle>{APP_NAME}</SheetTitle>
+            <SheetTitle className='text-2xl'>{APP_NAME}</SheetTitle>
             <SheetDescription aria-describedby={undefined} />
           </SheetHeader>
           <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              href={URL_ROUTES.orders}
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
-            </Link>
-            <Link
-              href={URL_ROUTES.products}
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
-            >
-              <Package className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href={URL_ROUTES.users}
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
-            >
-              <Users2 className="h-5 w-5" />
-              Users
-            </Link>
-            <Link
-              href={URL_ROUTES.categories}
-              className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground active:text-foreground"
-            >
-              <ChartColumnStacked className="h-5 w-5" />
-              Categories
-            </Link>
+            {NAV_ROUTES.map((route) => (
+              <Link
+                key={route.url}
+                href={route.url}
+                className="flex items-center gap-4 px-2.5"
+              >
+                <route.icon className="h-5 w-5" />
+                {route.label}
+              </Link>
+            ))}
           </nav>
         </SheetContent>
       </Sheet>
