@@ -10,6 +10,7 @@ import cartRouter from "./Routes/CartRouter";
 import wishListRouter from "./Routes/WishlistRouter";
 import enquiryRouter from "./Routes/EnquiryRouter";
 import classRouter from "./Routes/ClassRouter";
+import instructorRoutes from './Routes/instructorRoutes';
 
 dotenv.config();
 const port= process.env.PORT || 3000;
@@ -44,6 +45,7 @@ app.use('/api/cart/',cartRouter)
 app.use('/api/wishlist', wishListRouter)
 app.use('/api/enquiry', enquiryRouter)
 app.use('/api/class', classRouter)
+app.use('/api/instructor', instructorRoutes)
 
 
 

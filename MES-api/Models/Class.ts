@@ -1,13 +1,11 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IClass extends Document {
   title: string;
   shortDescription: string;
   description: string;
   image: string;
-  instructor: string;
-  instructorBio?: string;
-  instructorImage?: string;
+  instructor: Schema.Types.ObjectId;
   level: string;
   duration: string;
   location: string;
@@ -30,9 +28,11 @@ const ClassSchema = new mongoose.Schema<IClass>(
     shortDescription: { type: String, required: true },
     description: { type: String, required: true },
     image: { type: String, required: true },
-    instructor: { type: String, required: true },
-    instructorBio: { type: String, required: false },
-    instructorImage: { type: String, required: false },
+    instructor: {
+      type: Schema.Types.ObjectId,
+      ref: "Instructor",
+      required: true,
+    },
     level: { type: String, required: true },
     duration: { type: String, required: true },
     location: { type: String, required: true },
