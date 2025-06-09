@@ -1,10 +1,90 @@
 import { Request, Response } from "express";
 import { ClassModel } from "../Models/Class";
 
+const validateClassData = (data: any) => {
+  const requiredFields = [
+    "title",
+    "shortDescription",
+    "description",
+    "image",
+    "instructor",
+    "level",
+    "duration",
+    "location",
+    "dates",
+    "price",
+    "capacity",
+    "spotsLeft",
+  ];
+
+  const missingFields = requiredFields.filter((field) => {
+    if (field === "dates") {
+      return (
+        !data[field] || !Array.isArray(data[field]) || data[field].length === 0
+      );
+    }
+    return (
+      data[field] === undefined || data[field] === null || data[field] === ""
+    );
+  });
+
+  return {
+    isValid: missingFields.length === 0,
+    missingFields,
+  };
+};
+
 export const createClass = async (req: Request, res: Response) => {
   try {
-    const data = req.body;
-    const newClass = await ClassModel.create(data);
+    const {
+      title,
+      shortDescription,
+      description,
+      image,
+      instructor,
+      instructorBio,
+      instructorImage,
+      level,
+      duration,
+      location,
+      dates,
+      price,
+      capacity,
+      spotsLeft,
+      skillsCovered,
+      details,
+    } = req.body;
+
+    const classData = {
+      title,
+      shortDescription,
+      description,
+      image,
+      instructor,
+      instructorBio,
+      instructorImage,
+      level,
+      duration,
+      location,
+      dates,
+      price,
+      capacity,
+      spotsLeft,
+      skillsCovered,
+      details,
+    };
+
+    const validation = validateClassData(classData);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: `Missing required fields: ${validation.missingFields.join(
+          ", "
+        )}`,
+      });
+    }
+
+    const newClass = await ClassModel.create(classData);
     return res.status(201).json({ success: true, data: newClass });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
@@ -37,9 +117,61 @@ export const getClassById = async (req: Request, res: Response) => {
 export const updateClassById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const updated = await ClassModel.findByIdAndUpdate(id, req.body, {
+    const {
+      title,
+      shortDescription,
+      description,
+      image,
+      instructor,
+      instructorBio,
+      instructorImage,
+      level,
+      duration,
+      location,
+      dates,
+      price,
+      capacity,
+      spotsLeft,
+      skillsCovered,
+      details,
+    } = req.body;
+
+    const updateData = {
+      ...(title !== undefined && { title }),
+      ...(shortDescription !== undefined && { shortDescription }),
+      ...(description !== undefined && { description }),
+      ...(image !== undefined && { image }),
+      ...(instructor !== undefined && { instructor }),
+      ...(instructorBio !== undefined && { instructorBio }),
+      ...(instructorImage !== undefined && { instructorImage }),
+      ...(level !== undefined && { level }),
+      ...(duration !== undefined && { duration }),
+      ...(location !== undefined && { location }),
+      ...(dates !== undefined && { dates }),
+      ...(price !== undefined && { price }),
+      ...(capacity !== undefined && { capacity }),
+      ...(spotsLeft !== undefined && { spotsLeft }),
+      ...(skillsCovered !== undefined && { skillsCovered }),
+      ...(details !== undefined && { details }),
+    };
+
+    if (Object.keys(updateData).length > 1) {
+      const validation = validateClassData(updateData);
+      if (!validation.isValid) {
+        return res.status(400).json({
+          success: false,
+          message: `Missing required fields: ${validation.missingFields.join(
+            ", "
+          )}`,
+        });
+      }
+    }
+
+    const updated = await ClassModel.findByIdAndUpdate(id, updateData, {
       new: true,
+      runValidators: true,
     });
+
     if (!updated)
       return res
         .status(404)
