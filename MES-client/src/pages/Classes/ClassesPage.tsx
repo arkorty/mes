@@ -4,8 +4,7 @@ import ForestImage from "@/assets/forest.jpg";
 import HeroBanner from "@/components/common/HeroBanner";
 import ClassList from "@/components/Classes/ClassList";
 import ClassDetails from "@/components/Classes/ClassDetails";
-import mockData from "@/data/mock/classesData.json";
-import { ClassInfo } from "@/types/class"
+import { ClassInfo } from "@/types/class";
 
 const ClassesPage: React.FC = () => {
   useScrollToTop();
@@ -13,20 +12,31 @@ const ClassesPage: React.FC = () => {
   const [selectedClass, setSelectedClass] = useState<ClassInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchClasses = async () => {
-      setLoading(true);
-      try {
-        setClasses(mockData.classes);
-        setSelectedClass(mockData.classes[0]);
-      } catch (error) {
-        console.error("Error fetching classes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/class`);
+    return res.json();
+  };
 
-    fetchClasses();
+  useEffect(() => {
+    setLoading(true);
+    fetchData()
+      .then((data) => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setClasses(data.data);
+          setSelectedClass(data.data[0] || null);
+        } else {
+          setClasses([]);
+          setSelectedClass(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching classes:", error);
+        setClasses([]);
+        setSelectedClass(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -42,9 +52,9 @@ const ClassesPage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left Column - Class List */}
           <div className="lg:w-1/3">
-            <ClassList 
+            <ClassList
               classes={classes}
-              selectedClassId={selectedClass?.id || null}
+              selectedClassId={selectedClass?._id || null}
               loading={loading}
               onClassSelect={setSelectedClass}
             />
@@ -56,7 +66,9 @@ const ClassesPage: React.FC = () => {
               <ClassDetails classInfo={selectedClass} />
             ) : (
               <div className="bg-white rounded-xl shadow-md p-8 text-center">
-                <p className="text-gray-500">Please select a class to view details</p>
+                <p className="text-gray-500">
+                  Please select a class to view details
+                </p>
               </div>
             )}
           </div>
