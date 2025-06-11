@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/icons';
 import { Search } from 'lucide-react';
 import { useDebounce } from 'hooks/useDebounce';
+import { URL_ROUTES } from 'constants/urls.routes';
 
-export function SearchInput() {
+export function SearchInput({ url }: { url: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
@@ -22,7 +23,7 @@ export function SearchInput() {
       } else {
         params.delete('q');
       }
-      router.push(`/users?${params.toString()}`);
+      router.push(`/${URL_ROUTES[url.toLowerCase()]}?${params.toString()}`);
     });
   }, [debouncedValue]);
 

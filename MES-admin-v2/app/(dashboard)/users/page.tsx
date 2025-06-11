@@ -25,12 +25,12 @@ export default async function ViewUsers(props: {
   return (
     <>
       <Tabs defaultValue="all" className='w-full overflow-x-auto'>
-        <div className="flex items-center">
+        <div className="flex items-center space-y-2">
           <TabsList>
             <TabsTrigger value="all">All</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
-            <SearchInput />
+            <SearchInput url='users' />
             <Button size="sm" className="h-8 gap-1" asChild>
               <Link href={URL_ROUTES.userAdd}>
                 <PlusCircle className="h-3.5 w-3.5" />

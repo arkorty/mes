@@ -8,7 +8,7 @@ import {
   Users2
 } from 'lucide-react';
 
-export const URL_ROUTES = {
+export const URL_ROUTES: any = {
   orders: '/orders',
   orderView: (id: string) => `/orders/${id}`,
   products: '/products',
@@ -29,7 +29,7 @@ export const URL_ROUTES = {
   events: '/events'
 };
 
-export const NAV_ROUTES = [
+export const NAV_ROUTES: any = [
   { url: URL_ROUTES.users, label: 'Users', icon: Users2 },
   { url: URL_ROUTES.orders, label: 'Orders', icon: Package },
   {
