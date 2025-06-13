@@ -48,7 +48,7 @@ export class ClassService {
       return {
         success: true,
         message: "Class image uploaded successfully",
-        response: {
+        data: {
           image,
           url,
         },

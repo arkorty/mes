@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
   createClass,
-  getAllClasses,
+  getClasses,
   getClassById,
   updateClassById,
   deleteClassById,
@@ -12,7 +12,7 @@ import { upload } from "../Config/FileStorageConfig";
 const classRouter = Router();
 
 classRouter.post("/", upload.single("image"), createClass);
-classRouter.get("/", getAllClasses);
+classRouter.get("/", getClasses);
 classRouter.get("/:id", getClassById);
 classRouter.put("/:id", updateClassById);
 classRouter.delete("/:id", deleteClassById);

@@ -118,12 +118,40 @@ export const createClass = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllClasses = async (_req: Request, res: Response) => {
+export const getClasses = async (req: Request, res: Response) => {
   try {
-    const classes = await ClassModel.find({});
-    return res.status(200).json({ success: true, data: classes });
+    const page = Math.max(1, parseInt(req.query.page as string)) || 1;
+    const limit =
+      Math.min(100, Math.max(1, parseInt(req.query.limit as string))) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const [classes, totalCount] = await Promise.all([
+      ClassModel.find({}).skip(skip).limit(limit).lean(),
+      ClassModel.countDocuments({}),
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.status(200).json({
+      success: true,
+      data: classes,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    });
   } catch (error: any) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Error fetching classes:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch classes",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 };
 
