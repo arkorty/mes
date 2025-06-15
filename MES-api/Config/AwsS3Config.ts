@@ -141,3 +141,51 @@ export const DeleteImageFromS3 = async (
     throw new Error("Image deletion failed");
   }
 };
+
+export const UploadClassImageToS3 = async (
+  classId: string,
+  file: Express.Multer.File
+) => {
+  if (!file) {
+    throw new Error("No image file provided");
+  }
+
+  if (!file.mimetype.startsWith("image/")) {
+    throw new Error("Uploaded file must be an image");
+  }
+
+  const fileName = `${Date.now()}_${file.originalname}`;
+
+  try {
+    const resizedBuffer = await sharp(file.buffer).resize(1200, 600).toBuffer();
+
+    const originalCommand = new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Key: `classes/${classId}/${fileName}`,
+      Body: resizedBuffer,
+      ContentType: file.mimetype,
+    });
+    await r2Client.send(originalCommand);
+
+    return {
+      image: `classes/${classId}/${fileName}`,
+      url: `${process.env.R2_PUBLIC_URL}/classes/${classId}/${fileName}`,
+    };
+  } catch (error) {
+    console.error("Error uploading image to R2:", error);
+    throw new Error("Class image upload failed to R2 storage");
+  }
+};
+
+export const DeleteClassImageFromS3 = async (key: string): Promise<void> => {
+  try {
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME,
+      Key: key,
+    });
+    await r2Client.send(command);
+  } catch (error) {
+    console.error("Error deleting class image from S3:", error);
+    throw new Error("Class image deletion failed");
+  }
+};
