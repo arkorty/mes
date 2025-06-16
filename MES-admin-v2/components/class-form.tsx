@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -31,6 +33,7 @@ const ClassForm = ({
   handleChange,
   handleSubmit,
   formData,
+  isSubmitDisabled,
   props
 }: any) => {
   const [optionsMap, setOptionsMap] = useState<Record<string, any[]>>({});
@@ -57,7 +60,7 @@ const ClassForm = ({
     const fieldValue =
       resolveValueFromDot(formData, field.name) ?? field.getValue?.(props);
 
-    if (field.type === 'text' || field.type === 'number') {
+    if (field.type === 'text' || field.type === 'number' || field.type === 'email') {
       return (
         <div key={field.name} className="space-y-1">
           <Label htmlFor={field.name}>{field.label}</Label>
@@ -137,6 +140,7 @@ const ClassForm = ({
               />
             </div>
           )}
+          <p className='text-xs text-muted-foreground'>Maximum File Size: 2mb</p>
         </div>
       );
     }
@@ -160,7 +164,7 @@ const ClassForm = ({
       };
 
       const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === ',' || e.key === 'Enter') {
+        if (e.key === 'Enter') {
           e.preventDefault();
           handleAdd(inputValue);
           setInputValue('');
@@ -199,6 +203,7 @@ const ClassForm = ({
               onKeyDown={handleKeyDown}
             />
           </div>
+          <span className='text-xs text-muted-foreground'>press enter to add or backspace to remove</span>
         </div>
       );
     }
@@ -218,7 +223,7 @@ const ClassForm = ({
             {fields.map(renderField)}
           </div>
           <div className="w-full flex justify-end">
-            <Button type="submit" className="mt-6">
+            <Button type="submit" className="mt-6" disabled={isSubmitDisabled}>
               Submit
             </Button>
           </div>

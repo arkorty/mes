@@ -6,7 +6,7 @@ export interface ClassDetails {
 }
 
 export interface ClassInfo {
-  id: string;
+  _id: string;
   title: string;
   shortDescription: string;
   description: string;

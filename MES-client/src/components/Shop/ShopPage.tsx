@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import { counterInfoAtom } from "@/atoms/counterAtom";
 import { userAtom } from "@/atoms/userAtom";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import PriceRange from "@/components/Shop/priceRange";
 
 interface Product {
   _id: string;
@@ -24,6 +25,7 @@ interface Product {
   baseVariationId: string;
   category: string;
   rating: number;
+  stock?: number;
 }
 
 interface UserPreference {
@@ -46,6 +48,10 @@ const ShopPage = () => {
     {}
   );
 
+  const [cartQuantities, setCartQuantities] = useState<{
+    [productId: string]: number;
+  }>({});
+
   const [selectedCategory, setSelectedCategory] = useState<string>(
     userPreference.selectedCategory || ""
   );
@@ -64,6 +70,7 @@ const ShopPage = () => {
     !userPreference.selectedGender
   );
   const [showAuthModal, setShowAuthModal] = useState<boolean>(true);
+  const [quantityChangeLoading, setQuantityChangeLoading] = useState(false);
 
   useScrollToTop();
 
@@ -77,7 +84,6 @@ const ShopPage = () => {
           dispatch(setCartItemsFromBackend(res.data.data));
           setProducts(res.data.data);
           setFilteredProducts(res.data.data);
-          console.log(res.data.data);
         }
       })
       .catch((err) => console.error(err));
@@ -106,7 +112,7 @@ const ShopPage = () => {
       }));
 
       // Update counter
-      setCounter(prev => prev + 1);
+      setCounter((prev) => prev + 1);
 
       // Then make the API call
       await axios.post(
@@ -125,7 +131,7 @@ const ShopPage = () => {
         ...prev,
         [productId]: Math.max((prev[productId] || 0) - 1, 0),
       }));
-      setCounter(prev => Math.max(prev - 1, 0));
+      setCounter((prev) => Math.max(prev - 1, 0));
 
       console.error("Failed to add to cart:", error);
       toast.error("Failed to add to cart");
@@ -156,7 +162,7 @@ const ShopPage = () => {
         );
 
         if (res.data.success) {
-          setCounter(prev => prev + 1);
+          setCounter((prev) => prev + 1);
           toast.success("Added to wishlist successfully");
         }
       } catch (error) {
@@ -167,20 +173,6 @@ const ShopPage = () => {
   };
 
   const [userData] = useAtom(userAtom);
-
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = Number(e.target.value);
-    if (newMin < priceRange[1]) {
-      setPriceRange([newMin, priceRange[1]]);
-    }
-  };
-
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = Number(e.target.value);
-    if (newMax > priceRange[0]) {
-      setPriceRange([priceRange[0], newMax]);
-    }
-  };
 
   const [wishlistItems, setWishlistItems] = useState<any[]>([]);
 
@@ -329,23 +321,30 @@ const ShopPage = () => {
       setShowAuthModal(true);
       return;
     }
+    setQuantityChangeLoading(true);
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userData._id}`,
-        {
-          productId: product._id,
-          productVariationId: product.baseVariationId,
-          quantity: 1,
+      if (cartQuantities[product._id] < product.stock) {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/add/${userData._id}`,
+          {
+            productId: product._id,
+            productVariationId: product.baseVariationId,
+            quantity: 1,
+          }
+        );
+        if (data.success) {
+          setCartQuantities((prev) => ({
+            ...prev,
+            [product._id]: (prev[product._id] || 0) + 1,
+          }));
+          setCounter((prev) => prev + 1);
+          toast.success("Added to cart");
         }
-      );
-      setCartQuantities((prev) => ({
-        ...prev,
-        [product._id]: (prev[product._id] || 0) + 1,
-      }));
-      setCounter(prev => prev + 1);
-      toast.success("Added to cart");
+      } else toast.error("Out of stock");
     } catch (error) {
       toast.error("Failed to add to cart");
+    } finally {
+      setQuantityChangeLoading(false);
     }
   };
 
@@ -397,7 +396,7 @@ const ShopPage = () => {
       }
 
       // Update cart counter
-      setCounter(prev => prev - 1);
+      setCounter((prev) => prev - 1);
     } catch (error) {
       console.error("Failed to update cart:", error);
       toast.error("Failed to update cart");
@@ -436,10 +435,6 @@ const ShopPage = () => {
     </div>
   );
 
-  const [cartQuantities, setCartQuantities] = useState<{
-    [productId: string]: number;
-  }>({});
-
   // On mount and when modal closes, sync sidebar filter UI with userPreference from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -473,85 +468,7 @@ const ShopPage = () => {
         {/* Price Range */}
         <div>
           <h3 className="font-medium mb-2">Price</h3>
-          <div className="relative w-full flex items-center">
-            {/* Slider Background */}
-            <div className="absolute left-0 top-1/2 w-full h-[4px] bg-gray-300 rounded-full"></div>
-
-            {/* Selected Range Highlight */}
-            <div
-              className="absolute top-1/2 h-[4px] bg-green-900 rounded-full"
-              style={{
-                left: `${((priceRange[0] - 299) / (11999 - 299)) * 100}%`,
-                width: `${
-                  ((priceRange[1] - priceRange[0]) / (11999 - 299)) * 100
-                }%`,
-              }}
-            ></div>
-
-            {/* Min Range Slider */}
-            <input
-              type="range"
-              min="299"
-              max="11998"
-              value={priceRange[0]}
-              onChange={handleMinChange}
-              className="absolute w-full appearance-none bg-transparent pointer-events-auto"
-              style={{
-                zIndex: 2,
-                WebkitAppearance: "none",
-                appearance: "none",
-              }}
-            />
-
-            {/* Max Range Slider */}
-            <input
-              type="range"
-              min="299"
-              max="11999"
-              value={priceRange[1]}
-              onChange={handleMaxChange}
-              className="absolute w-full appearance-none bg-transparent pointer-events-auto"
-              style={{
-                zIndex: 2,
-                WebkitAppearance: "none",
-                appearance: "none",
-              }}
-            />
-          </div>
-
-          {/* Price Display */}
-          <div className="flex justify-between mt-2">
-            <span className="px-3 py-1 bg-gray-100 rounded">
-              {priceRange[0]}
-            </span>
-            <span>To</span>
-            <span className="px-3 py-1 bg-gray-100 rounded">
-              {priceRange[1]}
-            </span>
-          </div>
-
-          {/* Style the pointers (thumbs) */}
-          <style>
-            {`
-              input[type="range"]::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 16px;
-                height: 16px;
-                background-color: #4ade80; /* green-400 */
-                border-radius: 50%;
-                cursor: pointer;
-              }
-
-              input[type="range"]::-moz-range-thumb {
-                width: 16px;
-                height: 16px;
-                background-color: #4ade80; /* green-400 */
-                border-radius: 50%;
-                cursor: pointer;
-              }
-            `}
-          </style>
+          <PriceRange setPriceRange={setPriceRange} />
         </div>
 
         {/* Gender */}
@@ -744,6 +661,7 @@ const ShopPage = () => {
                     <button
                       className="bg-gray-200 rounded-full p-2"
                       onClick={() => handleDecrement(product)}
+                      disabled={quantityChangeLoading}
                     >
                       <Minus className="w-4 h-4" />
                     </button>
@@ -753,6 +671,7 @@ const ShopPage = () => {
                     <button
                       className="bg-gray-200 rounded-full p-2"
                       onClick={() => handleIncrement(product)}
+                      disabled={quantityChangeLoading}
                     >
                       <Plus className="w-4 h-4" />
                     </button>

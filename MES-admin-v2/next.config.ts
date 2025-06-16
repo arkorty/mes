@@ -17,6 +17,16 @@ export default {
         protocol: 'https',
         hostname: '*.r2.dev',
         search: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        search: ''
+      },
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+        search: ''
       }
     ]
   },

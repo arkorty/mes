@@ -1,6 +1,11 @@
 'use client';
-import { setNestedValue } from '@/lib/utils';
-import { FormEvent, useEffect, useState } from 'react';
+import {
+  isFormEmpty,
+  isFormUnchanged,
+  setNestedValue
+} from '@/lib/utils';
+import { createClass, editClass } from 'app/api/classes';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { ClassFieldTypes } from 'types/class-event.types';
 
 const useClassForm = (
@@ -18,6 +23,33 @@ const useClassForm = (
   }, [initialClass]);
 
   const handleChange = (field: string, value: any) => {
+    const allowedTypes = ['image/webp', 'image/jpeg', 'image/jpg', 'image/png'];
+    const maxFileSizeMB = 2;
+
+    if (field === 'image') {
+      const file = value instanceof FileList ? value[0] : value;
+      if (!file) return;
+
+      if (!allowedTypes.includes(file.type)) {
+        alert(
+          'Only .webp, .jpg, .jpeg, .png files are allowed for cover image'
+        );
+        return;
+      }
+
+      if (file.size > maxFileSizeMB * 1024 * 1024) {
+        alert('Cover image must be less than 2MB');
+        return;
+      }
+
+      setNewClass((prev: any) => {
+        const updated = { ...prev };
+        setNestedValue(updated, field, file);
+        return updated;
+      });
+
+      return;
+    }
     setNewClass((prev: any) => {
       const updated = { ...prev };
       setNestedValue(updated, field, value);
@@ -27,7 +59,7 @@ const useClassForm = (
 
   const handleAddClass = async () => {
     try {
-      // const data = await addClass(newClass);
+      // const data = await createClass(newClass);
       // if (data) alert('Class added successfully!');
       // else alert('Could not add class, try again.');
       console.log('adding class', newClass);
@@ -40,7 +72,7 @@ const useClassForm = (
 
   const handleUpdateClass = async (id: any) => {
     try {
-      // const data = await updateClass(id, newClass);
+      // const data = await editClass(id, newClass);
       // if (data) alert('Class updated successfully!');
       // else alert('Could not update class, try again.');
       console.log('updating class', newClass);
@@ -49,12 +81,44 @@ const useClassForm = (
     }
   };
 
+  const requiredFields = [
+    'title',
+    'shortDescription',
+    'description',
+    'image',
+    'instructor',
+    'level',
+    'duration',
+    'location',
+    'dates',
+    'price',
+    'capacity',
+    'spotsLeft',
+    'details.whatWeProvide',
+    'details.whatToBring'
+  ];
+
+  const isEmpty = isFormEmpty(newClass, requiredFields);
+
+  const isUnchanged = useMemo(
+    () => isFormUnchanged(newClass, initialClass, mode),
+    [newClass, initialClass, mode]
+  );
+
+  const isSubmitDisabled = mode === 'create' ? isEmpty : isUnchanged;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (mode === 'edit') handleUpdateClass(initialClass?._id);
     else handleAddClass();
   };
-  return { newClass, setInitialClass: setNewClass, handleChange, handleSubmit };
+  return {
+    formData: newClass,
+    setInitialFormData: setNewClass,
+    handleChange,
+    isSubmitDisabled,
+    handleSubmit
+  };
 };
 
 export default useClassForm;

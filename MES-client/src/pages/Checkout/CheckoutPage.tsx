@@ -1,16 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useAtom } from "jotai";
+import { userAtom } from "@/atoms/userAtom";
 // import { loadStripe } from "@stripe/stripe-js";
 //import axios from "axios";
 
 // const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY!);
 
 const CheckoutPage: React.FC = () => {
-  const cart = useSelector((state: RootState) => state.cart.items);
+  const [cart, setCart] = useState<any[]>([]);
+  const [userData] = useAtom(userAtom);
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | "cod">("stripe");
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userData._id}`);
+        if (data.success) {
+          setCart(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        toast("Error fetching cart");
+      }
+    }
+
+    fetchCart();
+  },[])
+  
   const totalPrice = cart.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0

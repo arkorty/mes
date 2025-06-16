@@ -18,3 +18,32 @@ export const setNestedValue = (obj: any, path: string, value: any) => {
 
   nested[lastKey] = value;
 };
+
+export function deepEqual(obj1: any, obj2: any): boolean {
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
+}
+
+export function isFormEmpty<T extends object>(
+  formData: T,
+  requiredFields: string[]
+): boolean {
+  return requiredFields.some((fieldPath) => {
+    const value = getNestedValue(formData, fieldPath);
+    return (
+      value === undefined ||
+      value === '' ||
+      (Array.isArray(value) && value.length === 0)
+    );
+  });
+}
+
+export function isFormUnchanged<T>(
+  currentForm: T,
+  initialForm: T | undefined,
+  mode: 'edit' | 'create'
+): boolean {
+  if (mode === 'edit' && initialForm) {
+    return deepEqual(currentForm, initialForm);
+  }
+  return false;
+}

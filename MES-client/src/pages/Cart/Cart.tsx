@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect } from "react";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
@@ -13,69 +13,94 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   const userData = useAtomValue(userAtom);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [l , setCounter] = useAtom(counterInfoAtom); // Use the counterInfoAtom to manage the counter state
+  const [l, setCounter] = useAtom(counterInfoAtom); // Use the counterInfoAtom to manage the counter state
   const [cartItems, setCartItems] = React.useState<any[]>([]); // Initialize cartItems state
+  const [products, setProducts] = React.useState<any[]>([]);
 
   const userId = userData?._id || ""; // Get userId from userData or set to empty string if not available
 
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/product`)
+      .then((res) => {
+        if (res.data.success) {
+          setProducts(res.data.data);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, [dispatch]);
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
-      .then(res => {
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/${userId}`)
+      .then((res) => {
         if (res.data.success) {
           setCartItems(res.data.data);
         }
       })
-      .catch(err => {setCartItems([]); console.error(err)});
+      .catch((err) => {
+        setCartItems([]);
+        console.error(err);
+      });
   }, [userId, dispatch]);
-  
 
   useScrollToTop();
 
-
   const handleQuantityChange = (
-    productId: string ,
+    productId: string,
     productVariationId: string,
     quantity: number,
     userId: string
   ) => {
-    if (quantity >= 1) {
+    const currentItem = products.find(item => item._id === productId);
+    if (quantity >= 1 && quantity <= currentItem?.stock) {
       axios
-        .post(`${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`, {
-          productId,
-          productVariationId,
-          quantity
-        })
+        .post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/cart/update/${userId}`,
+          {
+            productId,
+            productVariationId,
+            quantity,
+          }
+        )
         .then(() => {
-          setCounter(prev => prev + 1);
+          setCounter((prev) => prev + 1);
           // Update cartItems manually so the UI reflects changes without reload
-          setCartItems(prev =>
-            prev.map(item =>
-              item.id === productId && item.productVariationId === productVariationId
+          setCartItems((prev) =>
+            prev.map((item) =>
+              item.id === productId &&
+              item.productVariationId === productVariationId
                 ? { ...item, quantity }
                 : item
             )
           );
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
   };
 
-  const handleRemove = (productId: string, productVariationId: string ) => {
-    axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${productId}/${userId}`)
-      .then(res => {
+  const handleRemove = (productId: string, productVariationId: string) => {
+    axios
+      .get(
+        `${
+          import.meta.env.VITE_API_BASE_URL
+        }/api/cart/remove/${productId}/${userId}`
+      )
+      .then((res) => {
         if (res.data.success) {
-          setCartItems(prev =>
+          setCartItems((prev) =>
             prev.filter(
-              item =>
-                !(item.id === productId && item.productVariationId === productVariationId)
+              (item) =>
+                !(
+                  item.id === productId &&
+                  item.productVariationId === productVariationId
+                )
             )
           );
-          setCounter(prev => prev + 1);
+          setCounter((prev) => prev + 1);
         }
       })
-      .catch(err => console.error(err));
-
+      .catch((err) => console.error(err));
   };
 
   const getTotalPrice = () => {
@@ -125,7 +150,12 @@ const CartPage: React.FC = () => {
                 <div className="flex items-center gap-4 mt-4 sm:mt-0">
                   <button
                     onClick={() =>
-                      handleQuantityChange(product.id, product.productVariationId, product.quantity - 1, userId)
+                      handleQuantityChange(
+                        product.id,
+                        product.productVariationId,
+                        product.quantity - 1,
+                        userId
+                      )
                     }
                     className="px-2 py-1 bg-gray-200 rounded text-lg"
                   >
@@ -136,14 +166,21 @@ const CartPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() =>
-                      handleQuantityChange(product.id, product.productVariationId, product.quantity + 1, userId)
+                      handleQuantityChange(
+                        product.id,
+                        product.productVariationId,
+                        product.quantity + 1,
+                        userId
+                      )
                     }
                     className="px-2 py-1 bg-gray-200 rounded text-lg"
                   >
                     +
                   </button>
                   <button
-                    onClick={() => handleRemove(product.id, product.productVariationId)}
+                    onClick={() =>
+                      handleRemove(product.id, product.productVariationId)
+                    }
                     className="text-red-500 hover:underline ml-4"
                   >
                     Remove

@@ -1,16 +1,15 @@
 'use client';
 
 import ClassForm from '@/components/class-form';
-import useClassForm from 'hooks/useClassForm';
 import { useEffect } from 'react';
-import { ClassFieldTypes } from 'types/class-event.types';
 
 type Props = {
   mode: 'edit' | 'create';
   title: string;
   description: string;
-  fields: any; // or stricter type
-  initialData?: ClassFieldTypes;
+  fields: any;
+  initialData?: any;
+  useFormHook: (mode: 'edit' | 'create', initialData?: any) => any;
 };
 
 export default function ClassFormWrapper({
@@ -18,23 +17,30 @@ export default function ClassFormWrapper({
   title,
   description,
   fields,
-  initialData
+  initialData,
+  useFormHook
 }: Props) {
-  const { newClass, handleChange, handleSubmit, setInitialClass } =
-    useClassForm(mode, initialData);
+  const {
+    formData,
+    setInitialFormData,
+    handleChange,
+    handleSubmit,
+    isSubmitDisabled
+  } = useFormHook(mode, initialData);
 
   useEffect(() => {
-    if (initialData) setInitialClass(initialData);
-  }, [initialData, setInitialClass]);
+    if (initialData) setInitialFormData(initialData);
+  }, [initialData, setInitialFormData]);
 
   return (
     <ClassForm
       title={title}
       description={description}
       fields={fields}
-      formData={newClass}
+      formData={formData}
       handleChange={handleChange}
       handleSubmit={handleSubmit}
+      isSubmitDisabled={isSubmitDisabled}
     />
   );
 }

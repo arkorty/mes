@@ -9,7 +9,7 @@ export type ClassFieldTypes = {
   title: string;
   shortDescription?: string;
   description: string;
-  image: string;
+  image: string | File;
   instructor: string;
   level: 'Beginner' | 'Intermediate' | 'Advanced';
   duration: string;
@@ -21,7 +21,7 @@ export type ClassFieldTypes = {
   skillsCovered: string[];
   details: ClassDetailTypes;
   tags?: string[];
-  contactEmail: string;
+  contactEmail?: string;
 };
 
 export type ClassFieldPath =
@@ -62,4 +62,5 @@ export type ClassFormFieldConfig = {
   getOptionLabel?: (option: any) => string;
   getOptionValue?: (option: any) => string;
   options?: { label: string; value: string }[];
+  required?: boolean;
 };
