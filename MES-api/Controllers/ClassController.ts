@@ -47,8 +47,6 @@ export const createClass = async (req: Request, res: Response) => {
       description,
       image,
       instructor,
-      instructorBio,
-      instructorImage,
       level,
       duration,
       location,
@@ -64,10 +62,8 @@ export const createClass = async (req: Request, res: Response) => {
       title,
       shortDescription,
       description,
-      image,
+      image: req.file ? "pending_upload" : image,
       instructor,
-      instructorBio,
-      instructorImage,
       level,
       duration,
       location,
@@ -80,14 +76,10 @@ export const createClass = async (req: Request, res: Response) => {
     };
 
     const fieldsToValidate = [...Object.keys(classData)];
-    if (req.file) {
-      fieldsToValidate.splice(fieldsToValidate.indexOf("image"), 1);
-    }
 
-    const validation = validateClassData(
-      classData,
-      req.file ? fieldsToValidate : undefined
-    );
+    fieldsToValidate.splice(fieldsToValidate.indexOf("image"), 1);
+
+    const validation = validateClassData(classData, fieldsToValidate);
     if (!validation.isValid) {
       return res.status(400).json({
         success: false,
@@ -97,18 +89,31 @@ export const createClass = async (req: Request, res: Response) => {
       });
     }
 
+    if (!req.file && (!image || image === "")) {
+      return res.status(400).json({
+        success: false,
+        message: "Either an image file or an image URL must be provided",
+      });
+    }
+
     const newClass = await ClassModel.create(classData);
 
     if (req.file && newClass._id) {
       try {
-        const { url } = await UploadClassImageToS3(
+        const result = await classService.UploadClassImage(
           newClass._id.toString(),
           req.file
         );
-        newClass.image = url;
+        newClass.image = result.data.url;
         await newClass.save();
       } catch (error) {
         console.error("Failed to upload class image during creation", error);
+
+        await ClassModel.findByIdAndDelete(newClass._id);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload class image",
+        });
       }
     }
 
@@ -178,8 +183,6 @@ export const updateClassById = async (req: Request, res: Response) => {
       description,
       image,
       instructor,
-      instructorBio,
-      instructorImage,
       level,
       duration,
       location,
@@ -191,14 +194,44 @@ export const updateClassById = async (req: Request, res: Response) => {
       details,
     } = req.body;
 
+    const classToUpdate = await ClassModel.findById(id);
+    if (!classToUpdate) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Class not found" });
+    }
+
     const updateData = {
+      title: title !== undefined ? title : classToUpdate.title,
+      shortDescription:
+        shortDescription !== undefined
+          ? shortDescription
+          : classToUpdate.shortDescription,
+      description:
+        description !== undefined ? description : classToUpdate.description,
+      image: classToUpdate.image,
+      instructor:
+        instructor !== undefined ? instructor : classToUpdate.instructor,
+      level: level !== undefined ? level : classToUpdate.level,
+      duration: duration !== undefined ? duration : classToUpdate.duration,
+      location: location !== undefined ? location : classToUpdate.location,
+      dates: dates !== undefined ? dates : classToUpdate.dates,
+      price: price !== undefined ? price : classToUpdate.price,
+      capacity: capacity !== undefined ? capacity : classToUpdate.capacity,
+      spotsLeft: spotsLeft !== undefined ? spotsLeft : classToUpdate.spotsLeft,
+      skillsCovered:
+        skillsCovered !== undefined
+          ? skillsCovered
+          : classToUpdate.skillsCovered,
+      details: details !== undefined ? details : classToUpdate.details,
+    };
+
+    const fieldsToUpdate = {
       ...(title !== undefined && { title }),
       ...(shortDescription !== undefined && { shortDescription }),
       ...(description !== undefined && { description }),
-      ...(image !== undefined && { image }),
+      ...(image !== undefined && !req.file && { image }),
       ...(instructor !== undefined && { instructor }),
-      ...(instructorBio !== undefined && { instructorBio }),
-      ...(instructorImage !== undefined && { instructorImage }),
       ...(level !== undefined && { level }),
       ...(duration !== undefined && { duration }),
       ...(location !== undefined && { location }),
@@ -210,27 +243,48 @@ export const updateClassById = async (req: Request, res: Response) => {
       ...(details !== undefined && { details }),
     };
 
-    if (Object.keys(updateData).length > 1) {
-      const validation = validateClassData(updateData);
-      if (!validation.isValid) {
-        return res.status(400).json({
+    if (req.file) {
+      try {
+        if (
+          classToUpdate.image &&
+          process.env.R2_PUBLIC_URL &&
+          classToUpdate.image.includes(process.env.R2_PUBLIC_URL)
+        ) {
+          try {
+            const imageUrl = classToUpdate.image;
+            const imagePath = imageUrl.replace(
+              `${process.env.R2_PUBLIC_URL}/`,
+              ""
+            );
+            await DeleteClassImageFromS3(imagePath);
+          } catch (error) {
+            console.error("Failed to delete existing class image", error);
+          }
+        }
+
+        const result = await classService.UploadClassImage(id, req.file);
+        fieldsToUpdate.image = result.data.url;
+      } catch (error) {
+        console.error("Failed to upload class image during update", error);
+        return res.status(500).json({
           success: false,
-          message: `Missing required fields: ${validation.missingFields.join(
-            ", "
-          )}`,
+          message: "Failed to upload class image",
         });
       }
     }
 
-    const updated = await ClassModel.findByIdAndUpdate(id, updateData, {
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No fields provided for update",
+      });
+    }
+
+    const updated = await ClassModel.findByIdAndUpdate(id, fieldsToUpdate, {
       new: true,
       runValidators: true,
     });
 
-    if (!updated)
-      return res
-        .status(404)
-        .json({ success: false, message: "Class not found" });
     return res.status(200).json({ success: true, data: updated });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
