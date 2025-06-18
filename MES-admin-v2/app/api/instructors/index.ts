@@ -3,17 +3,13 @@ import { API_ROUTES } from 'constants/api.routes';
 
 export const getInstructors = async ({
   page,
-  limit,
-  search
+  limit
 }: {
   page?: number;
   limit?: number;
-  search?: string;
 }) => {
   try {
-    const { data } = await api.get(
-      API_ROUTES.getInstructors({ page, limit, search })
-    );
+    const { data } = await api.get(API_ROUTES.getInstructors({ page, limit }));
     return data;
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));
@@ -31,7 +27,7 @@ export const getInstructorById = async (id: any) => {
   }
 };
 
-export const createInstructor = async (formData: any) => {
+export const createInstructor = async (formData: FormData) => {
   try {
     const { data } = await api.post(API_ROUTES.createInstructor, formData);
     return data;
@@ -41,7 +37,7 @@ export const createInstructor = async (formData: any) => {
   }
 };
 
-export const editInstructor = async (id: any, formData: any) => {
+export const editInstructor = async (id: any, formData: FormData) => {
   try {
     const { data } = await api.put(API_ROUTES.editInstructor(id), formData);
     return data;

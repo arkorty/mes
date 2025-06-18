@@ -116,16 +116,16 @@ export const classFormFields: ClassFormFieldConfig[] = [
     type: 'file',
     getValue: (props: any) => props.class?.image || ''
   },
-  {
-    name: 'tags',
-    label: 'Tags',
-    type: 'array',
-    getValue: (props: any) => props.class?.tags || []
-  },
-  {
-    name: 'contactEmail',
-    label: 'Contact Email',
-    type: 'text',
-    getValue: (props: any) => props.class?.contactEmail || ''
-  }
+  // {
+  //   name: 'tags',
+  //   label: 'Tags',
+  //   type: 'array',
+  //   getValue: (props: any) => props.class?.tags || []
+  // },
+  // {
+  //   name: 'contactEmail',
+  //   label: 'Contact Email',
+  //   type: 'text',
+  //   getValue: (props: any) => props.class?.contactEmail || ''
+  // }
 ];

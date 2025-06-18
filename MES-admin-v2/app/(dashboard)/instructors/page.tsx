@@ -13,9 +13,8 @@ export default async function ViewInstructors(props: {
   searchParams: Promise<{ q: string; page: string }>;
 }) {
   const searchParams = await props.searchParams;
-  const search = searchParams.q ?? '';
   const currentPage = searchParams.page ?? 1;
-  const { data } = await getInstructors({ page: +currentPage, search });
+  const { data } = await getInstructors({ page: +currentPage });
   return (
     <>
       <Tabs defaultValue="all" className="w-full overflow-x-auto">
@@ -24,7 +23,6 @@ export default async function ViewInstructors(props: {
             <TabsTrigger value="all">All</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
-            <SearchInput url="instructors" />
             <Button size="sm" className="h-8 gap-1" asChild>
               <Link href={URL_ROUTES.instructorsAdd}>
                 <PlusCircle className="h-3.5 w-3.5" />

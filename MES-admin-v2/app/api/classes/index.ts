@@ -31,7 +31,7 @@ export const getClassById = async (id: any) => {
   }
 };
 
-export const createClass = async (formData: any) => {
+export const createClass = async (formData: FormData) => {
   try {
     const { data } = await api.post(API_ROUTES.createClass, formData);
     return data;
@@ -41,7 +41,7 @@ export const createClass = async (formData: any) => {
   }
 };
 
-export const editClass = async (id: any, formData: any) => {
+export const editClass = async (id: any, formData: FormData) => {
   try {
     const { data } = await api.put(API_ROUTES.editClass(id), formData);
     return data;

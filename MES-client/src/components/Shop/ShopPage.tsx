@@ -18,6 +18,7 @@ import PriceRange from "@/components/Shop/priceRange";
 interface Product {
   _id: string;
   name: string;
+  slug: string;
   price: number;
   image: string;
   description: string;
@@ -641,7 +642,7 @@ const ShopPage = () => {
             >
               <Link
                 className=" flex-col flex items-center text-balance"
-                to={`/product/${product._id}`}
+                to={`/product/${product.slug}`}
               >
                 <img
                   src={product.image || fallbackImage}

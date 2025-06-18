@@ -1,18 +1,19 @@
 import { Router } from "express";
 import {
   createClass,
-  getAllClasses,
+  getClasses,
   getClassById,
   updateClassById,
-  deleteClassById
+  deleteClassById,
 } from "../Controllers/ClassController";
+import { upload } from "../Config/FileStorageConfig";
 
 const classRouter = Router();
 
-classRouter.post("/", createClass);
-classRouter.get("/", getAllClasses);
+classRouter.post("/", upload.single("image"), createClass);
+classRouter.get("/", getClasses);
 classRouter.get("/:id", getClassById);
-classRouter.put("/:id", updateClassById);
+classRouter.put("/:id", upload.single("image"), updateClassById);
 classRouter.delete("/:id", deleteClassById);
 
 export default classRouter;

@@ -1,5 +1,6 @@
 'use client';
 import {
+  buildFormData,
   isFormEmpty,
   isFormUnchanged,
   setNestedValue
@@ -58,11 +59,12 @@ const useClassForm = (
   };
 
   const handleAddClass = async () => {
+    const formData = new FormData();
+    buildFormData(formData, newClass);
     try {
-      // const data = await createClass(newClass);
-      // if (data) alert('Class added successfully!');
-      // else alert('Could not add class, try again.');
-      console.log('adding class', newClass);
+      const data = await createClass(formData);
+      if (data) alert('Class added successfully!');
+      else alert('Could not add class, try again.');
     } catch (error) {
       console.error('Error adding class:', error);
     } finally {
@@ -71,11 +73,12 @@ const useClassForm = (
   };
 
   const handleUpdateClass = async (id: any) => {
+    const formData = new FormData();
+    buildFormData(formData, newClass);
     try {
-      // const data = await editClass(id, newClass);
-      // if (data) alert('Class updated successfully!');
-      // else alert('Could not update class, try again.');
-      console.log('updating class', newClass);
+      const data = await editClass(id, formData);
+      if (data) alert('Class updated successfully!');
+      else alert('Could not update class, try again.');
     } catch (error) {
       console.error('Error updating class:', error);
     }

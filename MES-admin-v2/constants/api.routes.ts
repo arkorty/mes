@@ -33,8 +33,8 @@ export const API_ROUTES = {
   deleteEnquiry: (id: any) =>
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/enquiry/${id}`,
 
-  getClasses: ({ page = 1, limit = 8, search = '' }) =>
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/class?page=${page}&limit=${limit}&search=${search}`,
+  getClasses: ({ page = 1, limit = 8 }) =>
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/class?page=${page}&limit=${limit}`,
   getClassById: (id: any) =>
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/class/${id}`,
   createClass: `${process.env.NEXT_PUBLIC_API_BASE_URL}/class/`,
@@ -42,8 +42,8 @@ export const API_ROUTES = {
   deleteClass: (id: any) =>
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/class/${id}`,
 
-  getInstructors: ({ page = 1, limit = 8, search = '' }) =>
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/instructor?page=${page}&limit=${limit}&search=${search}`,
+  getInstructors: ({ page = 1, limit = 8 }) =>
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/instructor?page=${page}&limit=${limit}`,
   getInstructorById: (id: any) =>
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/instructor/${id}`,
   createInstructor: `${process.env.NEXT_PUBLIC_API_BASE_URL}/instructor/`,

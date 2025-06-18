@@ -20,8 +20,6 @@ export type ClassFieldTypes = {
   spotsLeft: number;
   skillsCovered: string[];
   details: ClassDetailTypes;
-  tags?: string[];
-  contactEmail?: string;
 };
 
 export type ClassFieldPath =
@@ -38,8 +36,6 @@ export type ClassFieldPath =
   | 'capacity'
   | 'spotsLeft'
   | 'skillsCovered'
-  | 'tags'
-  | 'contactEmail'
   | 'details.whatToBring'
   | 'details.whatWeProvide'
   | 'details.priceNote';

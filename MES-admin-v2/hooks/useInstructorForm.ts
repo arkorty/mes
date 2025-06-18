@@ -1,6 +1,11 @@
 'use client';
 
-import { isFormEmpty, isFormUnchanged, setNestedValue } from '@/lib/utils';
+import {
+  buildFormData,
+  isFormEmpty,
+  isFormUnchanged,
+  setNestedValue
+} from '@/lib/utils';
 import { createInstructor, editInstructor } from 'app/api/instructors';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { InstructorFieldTypes } from 'types/instructor.types';
@@ -53,8 +58,10 @@ const useInstructorForm = (
   };
 
   const handleAddInstructor = async () => {
+    const instructorFormData = new FormData();
+    buildFormData(instructorFormData, formData);
     try {
-      const data = await createInstructor(formData);
+      const data = await createInstructor(instructorFormData);
       if (data) alert('Instructor added successfully!');
       else alert('Could not add instructor, try again.');
     } catch (error) {
@@ -65,8 +72,10 @@ const useInstructorForm = (
   };
 
   const handleUpdateInstructor = async (id: any) => {
+    const instructorFormData = new FormData();
+    buildFormData(instructorFormData, formData);
     try {
-      const data = await editInstructor(id, formData);
+      const data = await editInstructor(id, instructorFormData);
       if (data) alert('Instructor updated successfully!');
       else alert('Could not update instructor, try again.');
     } catch (error) {

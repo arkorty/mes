@@ -13,7 +13,7 @@ export default async function ViewClasses(props: {
 }) {
   const searchParams = await props.searchParams;
   const currentPage = searchParams.page ?? 1;
-  const { data } = await getClasses({ page: +currentPage });
+  const { data, pagination } = await getClasses({ page: +currentPage });
   return (
     <>
       <Tabs defaultValue="all" className="w-full overflow-x-auto">
@@ -37,9 +37,9 @@ export default async function ViewClasses(props: {
             title="Classes"
             description="Manage classes"
             items={data ?? []}
-            currentPage={+currentPage}
+            currentPage={pagination.page}
             columns={classTableColumns}
-            totalItems={data?.length ?? 0}
+            totalItems={pagination.total ?? 0}
           />
         </TabsContent>
       </Tabs>

@@ -27,9 +27,9 @@ const ClassList: React.FC<ClassListProps> = ({
         ) : (
           classes.map((classItem) => (
             <ClassCard 
-              key={classItem.id} 
+              key={classItem._id} 
               classInfo={classItem} 
-              isSelected={selectedClassId === classItem.id}
+              isSelected={selectedClassId === classItem._id}
               onClick={() => onClassSelect(classItem)} 
             />
           ))
