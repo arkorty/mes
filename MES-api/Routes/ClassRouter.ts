@@ -5,7 +5,6 @@ import {
   getClassById,
   updateClassById,
   deleteClassById,
-  uploadClassImage,
 } from "../Controllers/ClassController";
 import { upload } from "../Config/FileStorageConfig";
 

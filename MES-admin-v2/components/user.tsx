@@ -13,6 +13,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent } from 'react';
+import avatar from '../public/placeholder-user.jpg';
 
 export function User() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export function User() {
           className="overflow-hidden rounded-full"
         >
           <Image
-            src={user?.image ?? '/placeholder-user.jpg'}
+            src={user?.image ?? avatar}
             width={36}
             height={36}
             alt="Avatar"

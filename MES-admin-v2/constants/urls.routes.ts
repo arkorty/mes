@@ -1,6 +1,7 @@
 import {
   Album,
   Award,
+  BookUser,
   ChartColumnStacked,
   MessageCircleQuestion,
   Package,
@@ -8,7 +9,7 @@ import {
   Users2
 } from 'lucide-react';
 
-export const URL_ROUTES = {
+export const URL_ROUTES: any = {
   orders: '/orders',
   orderView: (id: string) => `/orders/${id}`,
   products: '/products',
@@ -26,11 +27,19 @@ export const URL_ROUTES = {
   classes: '/classes',
   eventsAdd: '/events/add',
   eventsEdit: (id: string) => `/events/${id}`,
+  instructors: '/instructors',
+  instructorsAdd: '/instructors/add',
+  instructorsEdit: (id: string) => `/instructors/${id}`,
   events: '/events'
 };
 
-export const NAV_ROUTES = [
+export const NAV_ROUTES: any = [
   { url: URL_ROUTES.users, label: 'Users', icon: Users2 },
+  {
+    url: URL_ROUTES.instructors,
+    label: 'Instructors',
+    icon: BookUser
+  },
   { url: URL_ROUTES.orders, label: 'Orders', icon: Package },
   {
     url: URL_ROUTES.products,

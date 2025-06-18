@@ -1,17 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+import Actions from '@/components/actions';
 import { deleteUser } from 'app/api/users';
 import { URL_ROUTES } from 'constants/urls.routes';
-import { MoreHorizontal } from 'lucide-react';
-import Link from 'next/link';
 import { Column } from 'types/data-table.types';
 
 export const userTableColumns: Column<any>[] = [
@@ -39,31 +30,10 @@ export const userTableColumns: Column<any>[] = [
     label: 'Actions',
     accessor: 'id',
     render: (user: any) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button aria-haspopup="true" size="icon" variant="ghost">
-            <MoreHorizontal className="h-4 w-4" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem asChild>
-            <Link
-              href={URL_ROUTES.userEdit(user._id)}
-              className="cursor-pointer"
-            >
-              Edit
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={async () => await deleteUser(user._id)}
-            className="cursor-pointer"
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Actions
+        editUrl={URL_ROUTES.userEdit(user._id)}
+        onDelete={async () => await deleteUser(user._id)}
+      />
     )
   }
 ];

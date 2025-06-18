@@ -19,12 +19,11 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
+import { UserFields, UserRole } from 'types/user.types';
 import {
   userFieldLabels,
-  userFields as userFieldValues,
-  UserFields,
-  UserRole
-} from 'types/user.types';
+  userFields as userFieldValues
+} from '@/lib/formFields/userFormFields';
 import Image from 'next/image';
 import { addUser, updateUser } from 'app/api/users';
 

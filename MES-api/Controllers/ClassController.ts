@@ -5,6 +5,7 @@ import {
   DeleteClassImageFromS3,
   UploadClassImageToS3,
 } from "../Config/AwsS3Config";
+import { parseIfJson } from "../utils/parseIfJSON";
 
 const validateClassData = (data: any, fieldsToValidate?: string[]) => {
   const requiredFields = fieldsToValidate || [
@@ -67,12 +68,12 @@ export const createClass = async (req: Request, res: Response) => {
       level,
       duration,
       location,
-      dates,
+      dates: parseIfJson(dates),
       price,
       capacity,
       spotsLeft,
-      skillsCovered,
-      details,
+      skillsCovered: parseIfJson(skillsCovered),
+      details: parseIfJson(details),
     };
 
     const fieldsToValidate = [...Object.keys(classData)];
@@ -117,7 +118,7 @@ export const createClass = async (req: Request, res: Response) => {
       }
     }
 
-    return res.status(201).json({ success: true, data: newClass });
+    return res.status(201).json({ success: true, data: {} });
   } catch (error: any) {
     return res.status(500).json({ success: false, message: error.message });
   }
@@ -132,7 +133,7 @@ export const getClasses = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const [classes, totalCount] = await Promise.all([
-      ClassModel.find({}).skip(skip).limit(limit).lean(),
+      ClassModel.find({}).skip(skip).limit(limit).lean().populate("instructor"),
       ClassModel.countDocuments({}),
     ]);
 
@@ -201,31 +202,6 @@ export const updateClassById = async (req: Request, res: Response) => {
         .json({ success: false, message: "Class not found" });
     }
 
-    const updateData = {
-      title: title !== undefined ? title : classToUpdate.title,
-      shortDescription:
-        shortDescription !== undefined
-          ? shortDescription
-          : classToUpdate.shortDescription,
-      description:
-        description !== undefined ? description : classToUpdate.description,
-      image: classToUpdate.image,
-      instructor:
-        instructor !== undefined ? instructor : classToUpdate.instructor,
-      level: level !== undefined ? level : classToUpdate.level,
-      duration: duration !== undefined ? duration : classToUpdate.duration,
-      location: location !== undefined ? location : classToUpdate.location,
-      dates: dates !== undefined ? dates : classToUpdate.dates,
-      price: price !== undefined ? price : classToUpdate.price,
-      capacity: capacity !== undefined ? capacity : classToUpdate.capacity,
-      spotsLeft: spotsLeft !== undefined ? spotsLeft : classToUpdate.spotsLeft,
-      skillsCovered:
-        skillsCovered !== undefined
-          ? skillsCovered
-          : classToUpdate.skillsCovered,
-      details: details !== undefined ? details : classToUpdate.details,
-    };
-
     const fieldsToUpdate = {
       ...(title !== undefined && { title }),
       ...(shortDescription !== undefined && { shortDescription }),
@@ -235,12 +211,14 @@ export const updateClassById = async (req: Request, res: Response) => {
       ...(level !== undefined && { level }),
       ...(duration !== undefined && { duration }),
       ...(location !== undefined && { location }),
-      ...(dates !== undefined && { dates }),
+      ...(dates !== undefined && { dates: parseIfJson(dates) }),
       ...(price !== undefined && { price }),
       ...(capacity !== undefined && { capacity }),
       ...(spotsLeft !== undefined && { spotsLeft }),
-      ...(skillsCovered !== undefined && { skillsCovered }),
-      ...(details !== undefined && { details }),
+      ...(skillsCovered !== undefined && {
+        skillsCovered: parseIfJson(skillsCovered),
+      }),
+      ...(details !== undefined && { details: parseIfJson(details) }),
     };
 
     if (req.file) {

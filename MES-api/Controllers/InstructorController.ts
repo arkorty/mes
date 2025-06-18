@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { InstructorModel } from "../Models/Instructor";
 import { instructorService } from "../Services/InstructorService";
 import { DeleteInstructorImageFromS3 } from "../Config/AwsS3Config";
+import { parseIfJson } from "../utils/parseIfJSON";
 
 const validateInstructorData = (data: any) => {
   const requiredFields = ["name", "mobile", "email"];
@@ -59,7 +60,7 @@ export const createInstructor = async (req: Request, res: Response) => {
       name,
       bio,
       image: req.file ? "pending_upload" : req.body.image,
-      certifications,
+      certifications: parseIfJson(certifications),
       mobile,
       email,
     };
@@ -139,7 +140,7 @@ export const updateInstructor = async (req: Request, res: Response) => {
     if (bio !== undefined) updateData.bio = bio;
     if (image !== undefined) updateData.image = image;
     if (certifications !== undefined)
-      updateData.certifications = certifications;
+      updateData.certifications = parseIfJson(certifications);
     if (mobile !== undefined) updateData.mobile = mobile;
     if (email !== undefined) updateData.email = email;
 
