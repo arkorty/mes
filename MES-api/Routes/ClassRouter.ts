@@ -14,8 +14,7 @@ const classRouter = Router();
 classRouter.post("/", upload.single("image"), createClass);
 classRouter.get("/", getClasses);
 classRouter.get("/:id", getClassById);
-classRouter.put("/:id", updateClassById);
+classRouter.put("/:id", upload.single("image"), updateClassById);
 classRouter.delete("/:id", deleteClassById);
-classRouter.post("/:id/image", upload.single("image"), uploadClassImage);
 
 export default classRouter;

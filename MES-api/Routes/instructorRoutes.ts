@@ -6,6 +6,7 @@ import {
   updateInstructor,
   deleteInstructor,
 } from "../Controllers/InstructorController";
+import { upload } from "../Config/FileStorageConfig";
 
 const router = express.Router();
 
@@ -13,9 +14,9 @@ router.get("/", getAllInstructors);
 
 router.get("/:id", getInstructorById);
 
-router.post("/", createInstructor);
+router.post("/", upload.single("image"), createInstructor);
 
-router.put("/:id", updateInstructor);
+router.put("/:id", upload.single("image"), updateInstructor);
 
 router.delete("/:id", deleteInstructor);
 

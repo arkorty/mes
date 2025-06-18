@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { InstructorModel } from "../Models/Instructor";
+import { instructorService } from "../Services/InstructorService";
+import { DeleteInstructorImageFromS3 } from "../Config/AwsS3Config";
 
 const validateInstructorData = (data: any) => {
   const requiredFields = ["name", "mobile", "email"];
@@ -51,12 +53,12 @@ export const getInstructorById = async (req: Request, res: Response) => {
 
 export const createInstructor = async (req: Request, res: Response) => {
   try {
-    const { name, bio, image, certifications, mobile, email } = req.body;
+    const { name, bio, certifications, mobile, email } = req.body;
 
     const instructorData = {
       name,
       bio,
-      image,
+      image: req.file ? "pending_upload" : req.body.image,
       certifications,
       mobile,
       email,
@@ -75,7 +77,8 @@ export const createInstructor = async (req: Request, res: Response) => {
     if (mobile && !/^[+]?[\d\s-]{10,15}$/.test(mobile)) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number must be valid and between 10-15 digits, can include spaces, hyphens and + prefix",
+        message:
+          "Mobile number must be valid and between 10-15 digits, can include spaces, hyphens and + prefix",
       });
     }
 
@@ -88,6 +91,28 @@ export const createInstructor = async (req: Request, res: Response) => {
 
     const newInstructor = new InstructorModel(instructorData);
     const savedInstructor = await newInstructor.save();
+
+    if (req.file && savedInstructor._id) {
+      try {
+        const result = await instructorService.UploadInstructorImage(
+          savedInstructor._id.toString(),
+          req.file
+        );
+        savedInstructor.image = result.data.url;
+        await savedInstructor.save();
+      } catch (error) {
+        console.error(
+          "Failed to upload instructor image during creation",
+          error
+        );
+
+        await InstructorModel.findByIdAndDelete(savedInstructor._id);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload instructor image",
+        });
+      }
+    }
 
     return res.status(201).json({ success: true, data: savedInstructor });
   } catch (error: any) {
@@ -105,7 +130,9 @@ export const updateInstructor = async (req: Request, res: Response) => {
         .json({ success: false, message: "Invalid instructor ID format" });
     }
 
-    const { name, bio, image, certifications, mobile, email } = req.body;
+    const { name, bio, certifications, mobile, email } = req.body;
+
+    const image = req.file ? undefined : req.body.image;
 
     const updateData: any = {};
     if (name !== undefined) updateData.name = name;
@@ -148,7 +175,8 @@ export const updateInstructor = async (req: Request, res: Response) => {
     if (mobile && !/^[+]?[\d\s-]{10,15}$/.test(mobile)) {
       return res.status(400).json({
         success: false,
-        message: "Mobile number must be valid and between 10-15 digits, can include spaces, hyphens and + prefix",
+        message:
+          "Mobile number must be valid and between 10-15 digits, can include spaces, hyphens and + prefix",
       });
     }
 
@@ -157,6 +185,22 @@ export const updateInstructor = async (req: Request, res: Response) => {
         success: false,
         message: "Email format is invalid",
       });
+    }
+
+    if (req.file) {
+      try {
+        const result = await instructorService.UploadInstructorImage(
+          id,
+          req.file
+        );
+        updateData.image = result.data.url;
+      } catch (error) {
+        console.error("Failed to upload instructor image during update", error);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload instructor image",
+        });
+      }
     }
 
     const updatedInstructor = await InstructorModel.findByIdAndUpdate(
@@ -185,6 +229,28 @@ export const deleteInstructor = async (req: Request, res: Response) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid instructor ID format" });
+    }
+
+    const instructorToDelete = await InstructorModel.findById(id);
+    if (!instructorToDelete) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Instructor not found" });
+    }
+
+    if (
+      instructorToDelete.image &&
+      process.env.R2_PUBLIC_URL &&
+      instructorToDelete.image.includes(process.env.R2_PUBLIC_URL)
+    ) {
+      try {
+        const imageUrl = instructorToDelete.image;
+        const imagePath = imageUrl.replace(`${process.env.R2_PUBLIC_URL}/`, "");
+
+        await DeleteInstructorImageFromS3(imagePath);
+      } catch (error) {
+        console.error("Failed to delete instructor image", error);
+      }
     }
 
     const deletedInstructor = await InstructorModel.findByIdAndDelete(id);
