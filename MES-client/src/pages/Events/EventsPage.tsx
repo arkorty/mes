@@ -4,8 +4,20 @@ import ForestImage from "@/assets/forest.jpg";
 import HeroBanner from "@/components/common/HeroBanner";
 import EventList from "@/components/Events/EventList";
 import EventDetails from "@/components/Events/EventDetails";
-import mockData from "@/data/mock/eventsData.json";
 import { EventInfo } from "@/types/event";
+
+interface EventApiResponse {
+  success: boolean;
+  data: EventInfo[];
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
 
 const EventsPage: React.FC = () => {
   useScrollToTop();
@@ -13,20 +25,31 @@ const EventsPage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<EventInfo | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        setEvents(mockData.events);
-        setSelectedEvent(mockData.events[0]);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchEvents = async () => {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/event`);
+    return res.json();
+  };
 
-    fetchEvents();
+  useEffect(() => {
+    setLoading(true);
+    fetchEvents()
+      .then((data: EventApiResponse) => {
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setEvents(data.data);
+          setSelectedEvent(data.data[0] || null);
+        } else {
+          setEvents([]);
+          setSelectedEvent(null);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+        setEvents([]);
+        setSelectedEvent(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
