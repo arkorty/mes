@@ -11,6 +11,7 @@ import wishListRouter from "./Routes/WishlistRouter";
 import enquiryRouter from "./Routes/EnquiryRouter";
 import classRouter from "./Routes/ClassRouter";
 import instructorRoutes from './Routes/instructorRoutes';
+import eventRouter from './Routes/EventRouter';
 
 dotenv.config();
 const port= process.env.PORT || 3000;
@@ -46,6 +47,7 @@ app.use('/api/wishlist', wishListRouter)
 app.use('/api/enquiry', enquiryRouter)
 app.use('/api/class', classRouter)
 app.use('/api/instructor', instructorRoutes)
+app.use('/api/event', eventRouter)
 
 
 
